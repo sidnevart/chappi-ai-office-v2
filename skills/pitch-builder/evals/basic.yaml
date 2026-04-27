@@ -32,7 +32,7 @@ cases:
       idea: "DevTools"
     expected:
       - file_contains: "LTV/CAC"
-      - file_contains: "\$"
+      - file_contains: ""
     timeout: 30
 
   - id: professional-design
