@@ -1,0 +1,7 @@
+{
+  "generated_at": "2026-04-26T18:32:56.821185+00:00",
+  "documents": 10,
+  "chunks": 20,
+  "documents_file": "/opt/openclaw-stack/workspace/state/memory-pipeline/documents.ndjson",
+  "chunks_file": "/opt/openclaw-stack/workspace/state/memory-pipeline/chunks.ndjson"
+}

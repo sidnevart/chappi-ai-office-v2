@@ -1,0 +1,80 @@
+# AI Office Research Agents
+# These are cron-triggered isolated sessions that load specific skills
+
+agents:
+  - id: trend-monitor
+    name: "📈 TrendMonitor"
+    description: "Отслеживает тренды в AI, Bioengineering, Physical AI"
+    schedule: "0 8 * * *"
+    skill: trend-monitor-agent
+    output: business/trends.json
+    
+  - id: deal-flow
+    name: "💰 DealFlow"
+    description: "Находит инвестиции и сделки в AI-секторе"
+    schedule: "0 9 * * *"
+    skill: deal-flow-tracker-agent
+    output: business/deals.json
+    
+  - id: edu-competition
+    name: "🏆 EduCompetition"
+    description: "Ищет соревнования и хакатоны"
+    schedule: "0 9 * * *"
+    skill: edu-competition-scout-agent
+    output: edu/competitions.json
+    
+  - id: edu-grant
+    name: "🎓 EduGrant"
+    description: "Ищет гранты и стипендии"
+    schedule: "0 9 * * *"
+    skill: edu-grant-scout-agent
+    output: edu/grants.json
+    
+  - id: edu-bootcamp
+    name: "📚 EduBootcamp"
+    description: "Ищет буткемпы и летние школы"
+    schedule: "30 9 * * *"
+    skill: edu-bootcamp-scout-agent
+    output: edu/bootcamps.json
+    
+  - id: job-scout
+    name: "💼 JobScout"
+    description: "Ищет вакансии AI/Backend/DevOps"
+    schedule: "0 10 * * *"
+    skill: job-scout-agent
+    output: career/jobs.json
+    
+  - id: weekly-matcher
+    name: "🎯 WeeklyMatcher"
+    description: "Сопоставляет CV с программами и вакансиями"
+    schedule: "0 11 * * 1"
+    skill: weekly-matcher-agent
+    output: edu/matched_opportunities.json + career/matched_jobs.json
+    
+  - id: edu-matcher
+    name: "🎓 EduMatcher"
+    description: "Сопоставляет CV с образовательными программами"
+    schedule: "0 11 * * 1"
+    skill: edu-opportunity-matcher-agent
+    output: edu/matched_opportunities.json
+    
+  - id: job-matcher
+    name: "💼 JobMatcher"
+    description: "Сопоставляет CV с вакансиями"
+    schedule: "0 11 * * 1"
+    skill: job-matcher-agent
+    output: career/matched_jobs.json
+    
+  - id: idea-generator
+    name: "💡 IdeaGenerator"
+    description: "Генерирует бизнес-идеи на основе трендов"
+    schedule: "0 12 * * 1"
+    skill: idea-generator-agent
+    output: business/ideas/
+    
+  - id: company-analyst
+    name: "🏢 CompanyAnalyst"
+    description: "Анализирует компании (продукты, слабости, конкуренты)"
+    schedule: "0 13 * * 1"
+    skill: company-analyst-agent
+    output: business/companies/

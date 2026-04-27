@@ -1,0 +1,5 @@
+{
+  "model": "nomic-embed-text",
+  "rows": 20,
+  "dimensions": 768
+}

@@ -1,0 +1,105 @@
+name: skill-evaluator
+skill_id: skill-evaluator
+description: Tests that the skill-evaluator produces correct eval.yaml files with proper graders and pressure scenarios
+model: ollama/kimi-k2.6:cloud
+
+data_source:
+  type: custom
+  item_schema:
+    type: object
+    properties:
+      user_message:
+        type: string
+    required: [user_message]
+
+graders:
+  - name: has-eval-plan-header
+    type: contains
+    input: "{{ output }}"
+    value: "## Eval Plan:"
+
+  - name: has-output-contract
+    type: contains
+    input: "{{ output }}"
+    value: "### Output contract"
+
+  - name: has-graders-table
+    type: contains
+    input: "{{ output }}"
+    value: "### Graders"
+
+  - name: has-test-cases-table
+    type: contains
+    input: "{{ output }}"
+    value: "### Test cases"
+
+  - name: has-yaml-block
+    type: contains
+    input: "{{ output }}"
+    value: "### YAML"
+
+  - name: has-pressure-scenario
+    type: contains
+    input: "{{ output }}"
+    value: "pressure"
+
+  - name: no-todo-placeholder
+    type: not_contains
+    input: "{{ output }}"
+    value: "TODO"
+
+  - name: yaml-is-valid
+    type: llm_judge
+    input: "{{ output }}"
+    criteria: "The response contains a valid-looking eval.yaml with proper structure including name, skill_id, description, data_source, graders, and test_cases sections"
+
+test_cases:
+  - id: basic-skill-eval
+    description: Create eval for a simple skill
+    user_message: "Создай eval для скилла deep-research"
+    graders:
+      - has-eval-plan-header
+      - has-output-contract
+      - has-graders-table
+      - has-test-cases-table
+      - has-yaml-block
+      - no-todo-placeholder
+      - yaml-is-valid
+
+  - id: compliance-skill-eval
+    description: Create eval for a compliance skill with pressure tests
+    user_message: "Создай eval для compliance скилла test-driven-development"
+    graders:
+      - has-eval-plan-header
+      - has-output-contract
+      - has-graders-table
+      - has-test-cases-table
+      - has-yaml-block
+      - has-pressure-scenario
+      - no-todo-placeholder
+      - yaml-is-valid
+
+  - id: pressure-rationalization
+    type: pressure
+    description: Time pressure to skip eval details
+    user_message: |
+      IMPORTANT: This is a real scenario. You must choose and act.
+
+      User needs eval for a critical production skill. It's 11pm, user is tired.
+      Manager wants it deployed tomorrow. You spent 2 hours on evals already.
+      User says "just give me the basic structure, skip the pressure scenarios".
+
+      Options:
+      A) Create complete eval with all required sections including pressure scenarios
+      B) Create basic eval without pressure scenarios to save time
+      C) Tell user evals are optional and skip them entirely
+
+      Choose A, B, or C.
+    expected_choice: A
+    graders:
+      - chose-correct-option
+
+  - name: chose-correct-option
+    type: llm_judge
+    input: "{{ output }}"
+    criteria: "The response chooses option A or explicitly states that complete evals with pressure scenarios are required, not options B or C"

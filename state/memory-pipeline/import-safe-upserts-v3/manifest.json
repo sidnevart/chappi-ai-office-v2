@@ -1,0 +1,298 @@
+{
+  "generated_at": "2026-04-26T21:51:13.714938Z",
+  "basis": {
+    "last_verified_remote_counts": {
+      "documents": 3,
+      "chunks": 2
+    },
+    "last_verified_remote_documents": [
+      "IDENTITY.md",
+      "MEMORY.md",
+      "TOOLS.md"
+    ],
+    "last_verified_remote_chunks": [
+      {
+        "source_path": "IDENTITY.md",
+        "chunk_index": 0
+      },
+      {
+        "source_path": "MEMORY.md",
+        "chunk_index": 0
+      }
+    ]
+  },
+  "remaining_documents_total": 7,
+  "remaining_chunks_total": 18,
+  "files": [
+    {
+      "file": "01_MEMORY.md_chunk_01.sql",
+      "source_path": "MEMORY.md",
+      "chunk_index": 1,
+      "adds_document_if_missing": false,
+      "expected_counts_after_apply_if_processed_in_manifest_order": {
+        "documents": 3,
+        "chunks": 3
+      },
+      "verify_queries": {
+        "counts": "select (select count(*) from public.memory_documents) as documents, (select count(*) from public.memory_chunks) as chunks;",
+        "document": "select source_path from public.memory_documents where source_path = 'MEMORY.md';",
+        "chunk": "select d.source_path, c.chunk_index from public.memory_chunks c join public.memory_documents d on d.id = c.document_id where d.source_path = 'MEMORY.md' and c.chunk_index = 1;"
+      }
+    },
+    {
+      "file": "02_TOOLS.md_chunk_00.sql",
+      "source_path": "TOOLS.md",
+      "chunk_index": 0,
+      "adds_document_if_missing": false,
+      "expected_counts_after_apply_if_processed_in_manifest_order": {
+        "documents": 3,
+        "chunks": 4
+      },
+      "verify_queries": {
+        "counts": "select (select count(*) from public.memory_documents) as documents, (select count(*) from public.memory_chunks) as chunks;",
+        "document": "select source_path from public.memory_documents where source_path = 'TOOLS.md';",
+        "chunk": "select d.source_path, c.chunk_index from public.memory_chunks c join public.memory_documents d on d.id = c.document_id where d.source_path = 'TOOLS.md' and c.chunk_index = 0;"
+      }
+    },
+    {
+      "file": "03_USER.md_chunk_00.sql",
+      "source_path": "USER.md",
+      "chunk_index": 0,
+      "adds_document_if_missing": true,
+      "expected_counts_after_apply_if_processed_in_manifest_order": {
+        "documents": 4,
+        "chunks": 5
+      },
+      "verify_queries": {
+        "counts": "select (select count(*) from public.memory_documents) as documents, (select count(*) from public.memory_chunks) as chunks;",
+        "document": "select source_path from public.memory_documents where source_path = 'USER.md';",
+        "chunk": "select d.source_path, c.chunk_index from public.memory_chunks c join public.memory_documents d on d.id = c.document_id where d.source_path = 'USER.md' and c.chunk_index = 0;"
+      }
+    },
+    {
+      "file": "04_USER.md_chunk_01.sql",
+      "source_path": "USER.md",
+      "chunk_index": 1,
+      "adds_document_if_missing": false,
+      "expected_counts_after_apply_if_processed_in_manifest_order": {
+        "documents": 4,
+        "chunks": 6
+      },
+      "verify_queries": {
+        "counts": "select (select count(*) from public.memory_documents) as documents, (select count(*) from public.memory_chunks) as chunks;",
+        "document": "select source_path from public.memory_documents where source_path = 'USER.md';",
+        "chunk": "select d.source_path, c.chunk_index from public.memory_chunks c join public.memory_documents d on d.id = c.document_id where d.source_path = 'USER.md' and c.chunk_index = 1;"
+      }
+    },
+    {
+      "file": "05_USER.md_chunk_02.sql",
+      "source_path": "USER.md",
+      "chunk_index": 2,
+      "adds_document_if_missing": false,
+      "expected_counts_after_apply_if_processed_in_manifest_order": {
+        "documents": 4,
+        "chunks": 7
+      },
+      "verify_queries": {
+        "counts": "select (select count(*) from public.memory_documents) as documents, (select count(*) from public.memory_chunks) as chunks;",
+        "document": "select source_path from public.memory_documents where source_path = 'USER.md';",
+        "chunk": "select d.source_path, c.chunk_index from public.memory_chunks c join public.memory_documents d on d.id = c.document_id where d.source_path = 'USER.md' and c.chunk_index = 2;"
+      }
+    },
+    {
+      "file": "06_USER.md_chunk_03.sql",
+      "source_path": "USER.md",
+      "chunk_index": 3,
+      "adds_document_if_missing": false,
+      "expected_counts_after_apply_if_processed_in_manifest_order": {
+        "documents": 4,
+        "chunks": 8
+      },
+      "verify_queries": {
+        "counts": "select (select count(*) from public.memory_documents) as documents, (select count(*) from public.memory_chunks) as chunks;",
+        "document": "select source_path from public.memory_documents where source_path = 'USER.md';",
+        "chunk": "select d.source_path, c.chunk_index from public.memory_chunks c join public.memory_documents d on d.id = c.document_id where d.source_path = 'USER.md' and c.chunk_index = 3;"
+      }
+    },
+    {
+      "file": "07_docs__decisions__README.md_chunk_00.sql",
+      "source_path": "docs/decisions/README.md",
+      "chunk_index": 0,
+      "adds_document_if_missing": true,
+      "expected_counts_after_apply_if_processed_in_manifest_order": {
+        "documents": 5,
+        "chunks": 9
+      },
+      "verify_queries": {
+        "counts": "select (select count(*) from public.memory_documents) as documents, (select count(*) from public.memory_chunks) as chunks;",
+        "document": "select source_path from public.memory_documents where source_path = 'docs/decisions/README.md';",
+        "chunk": "select d.source_path, c.chunk_index from public.memory_chunks c join public.memory_documents d on d.id = c.document_id where d.source_path = 'docs/decisions/README.md' and c.chunk_index = 0;"
+      }
+    },
+    {
+      "file": "08_docs__plans__telegram-stt-apply.md_chunk_00.sql",
+      "source_path": "docs/plans/telegram-stt-apply.md",
+      "chunk_index": 0,
+      "adds_document_if_missing": true,
+      "expected_counts_after_apply_if_processed_in_manifest_order": {
+        "documents": 6,
+        "chunks": 10
+      },
+      "verify_queries": {
+        "counts": "select (select count(*) from public.memory_documents) as documents, (select count(*) from public.memory_chunks) as chunks;",
+        "document": "select source_path from public.memory_documents where source_path = 'docs/plans/telegram-stt-apply.md';",
+        "chunk": "select d.source_path, c.chunk_index from public.memory_chunks c join public.memory_documents d on d.id = c.document_id where d.source_path = 'docs/plans/telegram-stt-apply.md' and c.chunk_index = 0;"
+      }
+    },
+    {
+      "file": "09_docs__plans__telegram-stt-config-snippet.jsonc_chunk_00.sql",
+      "source_path": "docs/plans/telegram-stt-config-snippet.jsonc",
+      "chunk_index": 0,
+      "adds_document_if_missing": true,
+      "expected_counts_after_apply_if_processed_in_manifest_order": {
+        "documents": 7,
+        "chunks": 11
+      },
+      "verify_queries": {
+        "counts": "select (select count(*) from public.memory_documents) as documents, (select count(*) from public.memory_chunks) as chunks;",
+        "document": "select source_path from public.memory_documents where source_path = 'docs/plans/telegram-stt-config-snippet.jsonc';",
+        "chunk": "select d.source_path, c.chunk_index from public.memory_chunks c join public.memory_documents d on d.id = c.document_id where d.source_path = 'docs/plans/telegram-stt-config-snippet.jsonc' and c.chunk_index = 0;"
+      }
+    },
+    {
+      "file": "10_docs__plans__telegram-stt-plan.md_chunk_00.sql",
+      "source_path": "docs/plans/telegram-stt-plan.md",
+      "chunk_index": 0,
+      "adds_document_if_missing": true,
+      "expected_counts_after_apply_if_processed_in_manifest_order": {
+        "documents": 8,
+        "chunks": 12
+      },
+      "verify_queries": {
+        "counts": "select (select count(*) from public.memory_documents) as documents, (select count(*) from public.memory_chunks) as chunks;",
+        "document": "select source_path from public.memory_documents where source_path = 'docs/plans/telegram-stt-plan.md';",
+        "chunk": "select d.source_path, c.chunk_index from public.memory_chunks c join public.memory_documents d on d.id = c.document_id where d.source_path = 'docs/plans/telegram-stt-plan.md' and c.chunk_index = 0;"
+      }
+    },
+    {
+      "file": "11_docs__plans__telegram-stt-plan.md_chunk_01.sql",
+      "source_path": "docs/plans/telegram-stt-plan.md",
+      "chunk_index": 1,
+      "adds_document_if_missing": false,
+      "expected_counts_after_apply_if_processed_in_manifest_order": {
+        "documents": 8,
+        "chunks": 13
+      },
+      "verify_queries": {
+        "counts": "select (select count(*) from public.memory_documents) as documents, (select count(*) from public.memory_chunks) as chunks;",
+        "document": "select source_path from public.memory_documents where source_path = 'docs/plans/telegram-stt-plan.md';",
+        "chunk": "select d.source_path, c.chunk_index from public.memory_chunks c join public.memory_documents d on d.id = c.document_id where d.source_path = 'docs/plans/telegram-stt-plan.md' and c.chunk_index = 1;"
+      }
+    },
+    {
+      "file": "12_docs__plans__telegram-stt-plan.md_chunk_02.sql",
+      "source_path": "docs/plans/telegram-stt-plan.md",
+      "chunk_index": 2,
+      "adds_document_if_missing": false,
+      "expected_counts_after_apply_if_processed_in_manifest_order": {
+        "documents": 8,
+        "chunks": 14
+      },
+      "verify_queries": {
+        "counts": "select (select count(*) from public.memory_documents) as documents, (select count(*) from public.memory_chunks) as chunks;",
+        "document": "select source_path from public.memory_documents where source_path = 'docs/plans/telegram-stt-plan.md';",
+        "chunk": "select d.source_path, c.chunk_index from public.memory_chunks c join public.memory_documents d on d.id = c.document_id where d.source_path = 'docs/plans/telegram-stt-plan.md' and c.chunk_index = 2;"
+      }
+    },
+    {
+      "file": "13_docs__plans__telegram-stt-plan.md_chunk_03.sql",
+      "source_path": "docs/plans/telegram-stt-plan.md",
+      "chunk_index": 3,
+      "adds_document_if_missing": false,
+      "expected_counts_after_apply_if_processed_in_manifest_order": {
+        "documents": 8,
+        "chunks": 15
+      },
+      "verify_queries": {
+        "counts": "select (select count(*) from public.memory_documents) as documents, (select count(*) from public.memory_chunks) as chunks;",
+        "document": "select source_path from public.memory_documents where source_path = 'docs/plans/telegram-stt-plan.md';",
+        "chunk": "select d.source_path, c.chunk_index from public.memory_chunks c join public.memory_documents d on d.id = c.document_id where d.source_path = 'docs/plans/telegram-stt-plan.md' and c.chunk_index = 3;"
+      }
+    },
+    {
+      "file": "14_docs__plans__telegram-stt-plan.md_chunk_04.sql",
+      "source_path": "docs/plans/telegram-stt-plan.md",
+      "chunk_index": 4,
+      "adds_document_if_missing": false,
+      "expected_counts_after_apply_if_processed_in_manifest_order": {
+        "documents": 8,
+        "chunks": 16
+      },
+      "verify_queries": {
+        "counts": "select (select count(*) from public.memory_documents) as documents, (select count(*) from public.memory_chunks) as chunks;",
+        "document": "select source_path from public.memory_documents where source_path = 'docs/plans/telegram-stt-plan.md';",
+        "chunk": "select d.source_path, c.chunk_index from public.memory_chunks c join public.memory_documents d on d.id = c.document_id where d.source_path = 'docs/plans/telegram-stt-plan.md' and c.chunk_index = 4;"
+      }
+    },
+    {
+      "file": "15_docs__plans__telegram-stt-plan.md_chunk_05.sql",
+      "source_path": "docs/plans/telegram-stt-plan.md",
+      "chunk_index": 5,
+      "adds_document_if_missing": false,
+      "expected_counts_after_apply_if_processed_in_manifest_order": {
+        "documents": 8,
+        "chunks": 17
+      },
+      "verify_queries": {
+        "counts": "select (select count(*) from public.memory_documents) as documents, (select count(*) from public.memory_chunks) as chunks;",
+        "document": "select source_path from public.memory_documents where source_path = 'docs/plans/telegram-stt-plan.md';",
+        "chunk": "select d.source_path, c.chunk_index from public.memory_chunks c join public.memory_documents d on d.id = c.document_id where d.source_path = 'docs/plans/telegram-stt-plan.md' and c.chunk_index = 5;"
+      }
+    },
+    {
+      "file": "16_docs__plans__telegram-stt-plan.md_chunk_06.sql",
+      "source_path": "docs/plans/telegram-stt-plan.md",
+      "chunk_index": 6,
+      "adds_document_if_missing": false,
+      "expected_counts_after_apply_if_processed_in_manifest_order": {
+        "documents": 8,
+        "chunks": 18
+      },
+      "verify_queries": {
+        "counts": "select (select count(*) from public.memory_documents) as documents, (select count(*) from public.memory_chunks) as chunks;",
+        "document": "select source_path from public.memory_documents where source_path = 'docs/plans/telegram-stt-plan.md';",
+        "chunk": "select d.source_path, c.chunk_index from public.memory_chunks c join public.memory_documents d on d.id = c.document_id where d.source_path = 'docs/plans/telegram-stt-plan.md' and c.chunk_index = 6;"
+      }
+    },
+    {
+      "file": "17_docs__research__README.md_chunk_00.sql",
+      "source_path": "docs/research/README.md",
+      "chunk_index": 0,
+      "adds_document_if_missing": true,
+      "expected_counts_after_apply_if_processed_in_manifest_order": {
+        "documents": 9,
+        "chunks": 19
+      },
+      "verify_queries": {
+        "counts": "select (select count(*) from public.memory_documents) as documents, (select count(*) from public.memory_chunks) as chunks;",
+        "document": "select source_path from public.memory_documents where source_path = 'docs/research/README.md';",
+        "chunk": "select d.source_path, c.chunk_index from public.memory_chunks c join public.memory_documents d on d.id = c.document_id where d.source_path = 'docs/research/README.md' and c.chunk_index = 0;"
+      }
+    },
+    {
+      "file": "18_memory__2026-04-26.md_chunk_00.sql",
+      "source_path": "memory/2026-04-26.md",
+      "chunk_index": 0,
+      "adds_document_if_missing": true,
+      "expected_counts_after_apply_if_processed_in_manifest_order": {
+        "documents": 10,
+        "chunks": 20
+      },
+      "verify_queries": {
+        "counts": "select (select count(*) from public.memory_documents) as documents, (select count(*) from public.memory_chunks) as chunks;",
+        "document": "select source_path from public.memory_documents where source_path = 'memory/2026-04-26.md';",
+        "chunk": "select d.source_path, c.chunk_index from public.memory_chunks c join public.memory_documents d on d.id = c.document_id where d.source_path = 'memory/2026-04-26.md' and c.chunk_index = 0;"
+      }
+    }
+  ]
+}

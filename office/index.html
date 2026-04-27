@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🤖 AI Office Dashboard</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: #f5f5f5; color: #333; }
+        .header { background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 20px; text-align: center; }
+        .header h1 { font-size: 28px; margin-bottom: 10px; }
+        .nav { background: white; padding: 10px 20px; display: flex; gap: 20px; justify-content: center; border-bottom: 1px solid #eee; }
+        .nav a { color: #667eea; text-decoration: none; font-weight: bold; }
+        .nav a:hover { text-decoration: underline; }
+        .dashboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 20px; padding: 20px; }
+        .card { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .card h2 { color: #667eea; margin-bottom: 15px; font-size: 18px; display: flex; align-items: center; gap: 8px; }
+        .agent-item { display: flex; align-items: center; padding: 12px; border-radius: 8px; margin: 8px 0; background: #f8f9fa; border-left: 4px solid #667eea; transition: all 0.2s; }
+        .agent-item:hover { background: #e9ecef; transform: translateX(5px); }
+        .agent-icon { font-size: 28px; margin-right: 15px; }
+        .agent-info { flex: 1; }
+        .agent-name { font-weight: bold; font-size: 15px; }
+        .agent-desc { font-size: 12px; color: #666; margin-top: 3px; }
+        .agent-meta { text-align: right; }
+        .agent-schedule { background: #e3f2fd; color: #1976d2; padding: 3px 10px; border-radius: 12px; font-size: 11px; }
+        .agent-status { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 5px; }
+        .status-active { background: #4caf50; }
+        .status-running { background: #2196f3; animation: pulse 1s infinite; }
+        .status-pending { background: #ff9800; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        .metric { display: inline-block; padding: 10px 20px; background: linear-gradient(135deg, #667eea, #764ba2); color: white; border-radius: 8px; margin: 5px; text-align: center; }
+        .metric-value { font-size: 24px; font-weight: bold; }
+        .section-title { font-size: 14px; font-weight: bold; color: #555; margin: 15px 0 5px; }
+        .pipeline-flow { display: flex; align-items: center; flex-wrap: wrap; gap: 5px; padding: 10px; background: #f0f4ff; border-radius: 8px; margin: 10px 0; }
+        .pipeline-step { background: white; padding: 5px 10px; border-radius: 4px; font-size: 12px; border: 1px solid #667eea; }
+        .communication-log { max-height: 200px; overflow-y: auto; background: #f8f9fa; padding: 10px; border-radius: 8px; font-size: 12px; }
+        .log-entry { padding: 5px 0; border-bottom: 1px solid #eee; }
+        .log-time { color: #999; font-size: 11px; }
+        .footer { text-align: center; padding: 20px; color: #666; font-size: 12px; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🤖 AI Office Dashboard</h1>
+        <p>Research System | <span id="current-date"></span> | OpenClaw v2.0</p>
+    </div>
+
+    <div class="nav">
+        <a href="#agents">🤖 Агенты</a>
+        <a href="#metrics">📊 Метрики</a>
+        <a href="#pipeline">🚀 Пайплайн</a>
+        <a href="#profile">👤 Профиль</a>
+        <a href="#communication">💬 Логи</a>
+    </div>
+
+    <div class="dashboard">
+        <!-- Agents with Communication -->
+        <div class="card" id="agents">
+            <h2>🤖 Агенты</h2>
+            <div class="section-title">📅 Ежедневно</div>
+            <div class="agent-item" onclick="showAgentLog('trend-monitor')">
+                <span class="agent-icon">📈</span>
+                <div class="agent-info">
+                    <div class="agent-name">TrendMonitor <span class="agent-schedule">08:00</span></div>
+                    <div class="agent-desc">Тренды AI, Bioengineering, Physical AI</div>
+                </div>
+                <div class="agent-meta"><span class="agent-status status-active"></span>Active</div>
+            </div>
+            <div class="agent-item" onclick="showAgentLog('deal-flow')">
+                <span class="agent-icon">💰</span>
+                <div class="agent-info">
+                    <div class="agent-name">DealFlow <span class="agent-schedule">08:30</span></div>
+                    <div class="agent-desc">Инвестиции и сделки в AI-секторе</div>
+                </div>
+                <div class="agent-meta"><span class="agent-status status-active"></span>Active</div>
+            </div>
+            <div class="agent-item" onclick="showAgentLog('edu-competition')">
+                <span class="agent-icon">🏆</span>
+                <div class="agent-info">
+                    <div class="agent-name">EduCompetition <span class="agent-schedule">09:00</span></div>
+                    <div class="agent-desc">Соревнования и хакатоны</div>
+                </div>
+                <div class="agent-meta"><span class="agent-status status-active"></span>Active</div>
+            </div>
+            <div class="agent-item" onclick="showAgentLog('edu-grant')">
+                <span class="agent-icon">🎓</span>
+                <div class="agent-info">
+                    <div class="agent-name">EduGrant <span class="agent-schedule">09:30</span></div>
+                    <div class="agent-desc">Гранты и стипендии</div>
+                </div>
+                <div class="agent-meta"><span class="agent-status status-active"></span>Active</div>
+            </div>
+            <div class="agent-item" onclick="showAgentLog('edu-bootcamp')">
+                <span class="agent-icon">📚</span>
+                <div class="agent-info">
+                    <div class="agent-name">EduBootcamp <span class="agent-schedule">10:00</span></div>
+                    <div class="agent-desc">Буткемпы и летние школы</div>
+                </div>
+                <div class="agent-meta"><span class="agent-status status-active"></span>Active</div>
+            </div>
+            <div class="agent-item" onclick="showAgentLog('job-scout')">
+                <span class="agent-icon">💼</span>
+                <div class="agent-info">
+                    <div class="agent-name">JobScout <span class="agent-schedule">10:30</span></div>
+                    <div class="agent-desc">Вакансии AI/Backend/DevOps</div>
+                </div>
+                <div class="agent-meta"><span class="agent-status status-active"></span>Active</div>
+            </div>
+
+            <div class="section-title">📆 Еженедельно (Понедельник)</div>
+            <div class="agent-item" onclick="showAgentLog('weekly-matcher')">
+                <span class="agent-icon">🎯</span>
+                <div class="agent-info">
+                    <div class="agent-name">WeeklyMatcher <span class="agent-schedule">11:00</span></div>
+                    <div class="agent-desc">Сопоставление CV с программами и вакансиями</div>
+                </div>
+                <div class="agent-meta"><span class="agent-status status-pending"></span>Пн</div>
+            </div>
+            <div class="agent-item" onclick="showAgentLog('idea-generator')">
+                <span class="agent-icon">💡</span>
+                <div class="agent-info">
+                    <div class="agent-name">IdeaGenerator <span class="agent-schedule">12:30</span></div>
+                    <div class="agent-desc">Генерация бизнес-идей из трендов</div>
+                </div>
+                <div class="agent-meta"><span class="agent-status status-pending"></span>Пн</div>
+            </div>
+            <div class="agent-item" onclick="showAgentLog('company-analyst')">
+                <span class="agent-icon">🏢</span>
+                <div class="agent-info">
+                    <div class="agent-name">CompanyAnalyst <span class="agent-schedule">13:00</span></div>
+                    <div class="agent-desc">Анализ компаний из DealFlow</div>
+                </div>
+                <div class="agent-meta"><span class="agent-status status-pending"></span>Пн</div>
+            </div>
+        </div>
+
+        <!-- Communication Log -->
+        <div class="card" id="communication">
+            <h2>💬 Логи агентов</h2>
+            <div id="agent-communication-log" class="communication-log">
+                <div class="log-entry">
+                    <span class="log-time">23:00</span> <strong>CompanyAnalyst</strong> → Запущен анализ OpenAI
+                </div>
+                <div class="log-entry">
+                    <span class="log-time">23:02</span> <strong>CompanyAnalyst</strong> → Найдено 3 продукта, 5 слабостей
+                </div>
+                <div class="log-entry">
+                    <span class="log-time">23:05</span> <strong>CompetitiveStrategist</strong> → Получены данные от CompanyAnalyst
+                </div>
+                <div class="log-entry">
+                    <span class="log-time">23:08</span> <strong>IdeaGenerator</strong> → Сгенерировано 3 идеи (top: MediCode AI)
+                </div>
+                <div class="log-entry">
+                    <span class="log-time">23:10</span> <strong>RussianMarketAnalyst</strong> → Анализ рынка РФ: $300M
+                </div>
+                <div class="log-entry">
+                    <span class="log-time">23:15</span> <strong>FundingScout</strong> → Найдено 5 инвесторов, 3 акселератора
+                </div>
+                <div class="log-entry">
+                    <span class="log-time">23:18</span> <strong>FinancialModeler</strong> → Модель: $2M seed, $8M ARR year 5
+                </div>
+                <div class="log-entry">
+                    <span class="log-time">23:20</span> <strong>PitchBuilder</strong> → HTML pitch создан
+                </div>
+                <div class="log-entry">
+                    <span class="log-time">23:22</span> <strong>TechSpecWriter</strong> → ТЗ на 5000 слов готово
+                </div>
+                <div class="log-entry">
+                    <span class="log-time">23:25</span> <strong>All agents</strong> → ✅ Пайплайн завершён
+                </div>
+            </div>
+        </div>
+
+        <!-- Metrics -->
+        <div class="card" id="metrics">
+            <h2>📊 Метрики</h2>
+            <div class="section-title">Образование</div>
+            <div class="metric"><span class="metric-value" id="edu-bootcamps">1</span><br>Буткемпы</div>
+            <div class="metric"><span class="metric-value" id="edu-competitions">2</span><br>Соревнования</div>
+            <div class="metric"><span class="metric-value" id="edu-matches">1</span><br>Матчи</div>
+            <div class="section-title">Карьера</div>
+            <div class="metric"><span class="metric-value" id="career-jobs">3</span><br>Вакансии</div>
+            <div class="metric"><span class="metric-value" id="career-matches">3</span><br>Матчи</div>
+            <div class="section-title">Бизнес</div>
+            <div class="metric"><span class="metric-value" id="biz-trends">2</span><br>Тренды</div>
+            <div class="metric"><span class="metric-value" id="biz-deals">3</span><br>Сделки</div>
+            <div class="metric"><span class="metric-value" id="biz-ideas">2</span><br>Идеи</div>
+        </div>
+
+        <!-- Business Pipeline -->
+        <div class="card" id="pipeline">
+            <h2>🚀 Бизнес-пайплайн</h2>
+            <div class="section-title">Активный: TeamMemory AI</div>
+            <div class="pipeline-flow">
+                <span class="pipeline-step">💡 Идея</span>
+                <span>→</span>
+                <span class="pipeline-step">🏢 Компания</span>
+                <span>→</span>
+                <span class="pipeline-step">📊 Стратегия</span>
+                <span>→</span>
+                <span class="pipeline-step">🌍 Рынок РФ</span>
+                <span>→</span>
+                <span class="pipeline-step">💰 Инвестиции</span>
+                <span>→</span>
+                <span class="pipeline-step">📈 Финансы</span>
+                <span>→</span>
+                <span class="pipeline-step">🎤 Питч</span>
+                <span>→</span>
+                <span class="pipeline-step">📝 ТЗ</span>
+            </div>
+            <div style="margin-top: 15px; padding: 10px; background: #e8f5e9; border-radius: 8px;">
+                <strong>Статус:</strong> ✅ Все артефакты созданы<br>
+                <strong>Инвестиции:</strong> $1M Seed recommended<br>
+                <strong>LTV/CAC:</strong> 10.8x
+            </div>
+        </div>
+
+        <!-- CV Profile -->
+        <div class="card" id="profile">
+            <h2>👤 Профиль</h2>
+            <div style="background: #f5f5f5; padding: 15px; border-radius: 8px; font-size: 13px;">
+                <strong>Артём Сиднев</strong><br>
+                Software Engineer (Backend) @ T-Bank<br>
+                Опыт: 3 года<br><br>
+                <strong>Скиллы:</strong> Java, Kotlin, Go, Python, Spring Boot, PostgreSQL, ClickHouse, Kafka, AI agents, RAG<br><br>
+                <strong>Достижения:</strong> $600K+ бизнес-эффект, 5x ускорение, 48% сокращение контекста
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>AI Office Dashboard | OpenClaw Research System | 17 агентов активны</p>
+    </div>
+
+    <script>
+        document.getElementById('current-date').textContent = new Date().toLocaleDateString('ru-RU');
+
+        function showAgentLog(agentName) {
+            const log = document.getElementById('agent-communication-log');
+            const time = new Date().toLocaleTimeString('ru-RU', {hour: '2-digit', minute: '2-digit'});
+            log.innerHTML = `<div class="log-entry"><span class="log-time">${time}</span> <strong>${agentName}</strong> → Кликнули для просмотра деталей</div>` + log.innerHTML;
+        }
+
+        // Auto-refresh every 5 minutes
+        setInterval(() => {
+            location.reload();
+        }, 300000);
+    </script>
+</body>
+</html>

@@ -1,0 +1,35 @@
+{
+  "evals": [
+    {
+      "name": "parse_artem_sidnev_cv",
+      "input": {
+        "cv_source": "local",
+        "cv_path": "/home/user/cv/sidnev_en_swe.pdf"
+      },
+      "expected": {
+        "has_profile": true,
+        "name_matches": "Artem Sidnev",
+        "has_experience": true,
+        "experience_count_min": 2,
+        "has_skills": true,
+        "skills_count_min": 10,
+        "has_metrics": true,
+        "metrics_count_min": 1
+      }
+    },
+    {
+      "name": "parse_russian_cv",
+      "input": {
+        "cv_source": "local",
+        "cv_path": "/home/user/cv/artem_sidnev_cv.pdf"
+      },
+      "expected": {
+        "has_profile": true,
+        "name_matches": "Artem Sidnev",
+        "has_experience": true,
+        "has_skills": true,
+        "has_education": true
+      }
+    }
+  ]
+}

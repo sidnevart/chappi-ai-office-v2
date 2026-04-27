@@ -1,0 +1,32 @@
+{
+  "evals": [
+    {
+      "name": "find_eeml_school",
+      "input": {
+        "query": "EEML summer school AI engineering Europe",
+        "filters": {"type": "summer_school", "field": "AI", "location": "Europe"},
+        "depth": "quick"
+      },
+      "expected": {
+        "has_results": true,
+        "programs_count_min": 1,
+        "has_eeml": true,
+        "relevance_score_min": 0.8
+      }
+    },
+    {
+      "name": "find_ai_bootcamps",
+      "input": {
+        "query": "AI engineering bootcamp 2026",
+        "filters": {"type": "bootcamp", "field": "AI"},
+        "depth": "standard"
+      },
+      "expected": {
+        "has_results": true,
+        "programs_count_min": 3,
+        "has_deadlines": true,
+        "has_requirements": true
+      }
+    }
+  ]
+}

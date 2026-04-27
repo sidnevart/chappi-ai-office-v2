@@ -1,0 +1,35 @@
+{
+  "evals": [
+    {
+      "name": "quick_ycombinator_search",
+      "input": {
+        "query": "YCombinator summer 2026 batch deadline",
+        "depth": "quick"
+      },
+      "expected": {
+        "has_results": true,
+        "results_count_min": 3,
+        "has_synthesis": true,
+        "key_points_count_min": 2,
+        "time_seconds_max": 120
+      }
+    },
+    {
+      "name": "deep_ai_market",
+      "input": {
+        "query": "Physical AI market size investments 2026",
+        "depth": "deep",
+        "sources": ["web", "news"],
+        "filters": {"date_range": "last_year", "language": "en"}
+      },
+      "expected": {
+        "has_results": true,
+        "results_count_min": 10,
+        "has_synthesis": true,
+        "has_gaps": true,
+        "next_queries_count_min": 3,
+        "time_seconds_max": 600
+      }
+    }
+  ]
+}

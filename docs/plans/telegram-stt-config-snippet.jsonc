@@ -1,0 +1,45 @@
+{
+  "tools": {
+    "profile": "coding",
+    "web": {
+      "search": {
+        "provider": "searxng",
+        "enabled": true
+      }
+    },
+    "media": {
+      "audio": {
+        "enabled": true,
+        "scope": {
+          "default": "deny",
+          "rules": [
+            {
+              "action": "allow",
+              "match": {
+                "channel": "telegram"
+              }
+            }
+          ]
+        },
+        "attachments": {
+          "mode": "first",
+          "maxAttachments": 1,
+          "prefer": "first"
+        },
+        "language": "ru",
+        "timeoutSeconds": 45,
+        "maxBytes": 15728640,
+        "echoTranscript": false,
+        "models": [
+          {
+            "type": "provider",
+            "provider": "openai",
+            "model": "gpt-4o-transcribe",
+            "language": "ru",
+            "timeoutSeconds": 45
+          }
+        ]
+      }
+    }
+  }
+}

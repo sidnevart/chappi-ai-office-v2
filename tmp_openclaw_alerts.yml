@@ -1,0 +1,47 @@
+groups:
+  - name: openclaw-health
+    rules:
+      - alert: OpenClawGatewayProbeFailed
+        expr: openclaw_gateway_probe_ok == 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "OpenClaw gateway probe failed"
+          description: "Gateway probe is not reporting reachable/ok for more than 2 minutes."
+
+      - alert: OpenClawMemoryEmbeddingsUnavailable
+        expr: openclaw_memory_embeddings_ready{agent="main"} == 0
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "OpenClaw memory embeddings unavailable"
+          description: "Main agent memory embeddings are not ready for more than 5 minutes."
+
+      - alert: OpenClawDuplicateGatewaySupervisor
+        expr: openclaw_gateway_duplicate_supervisor_recent == 1
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Duplicate OpenClaw gateway supervisor detected"
+          description: "Gateway journal saw EADDRINUSE/duplicate-supervisor symptoms in the last 10 minutes."
+
+      - alert: OpenClawGatewayRateLimited
+        expr: openclaw_gateway_rate_limit_recent == 1
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          summary: "OpenClaw upstream model rate limit detected"
+          description: "Gateway journal saw recent upstream rate-limit errors."
+
+      - alert: OpenClawExporterFailing
+        expr: openclaw_exporter_success == 0
+        for: 3m
+        labels:
+          severity: warning
+        annotations:
+          summary: "OpenClaw exporter failing"
+          description: "The OpenClaw monitoring exporter is not collecting a clean metric set."
