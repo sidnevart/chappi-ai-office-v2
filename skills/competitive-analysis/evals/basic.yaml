@@ -1,0 +1,46 @@
+# Eval Cases for Competitive Analysis
+
+eval_id: competitive-analysis-basic
+skill: competitive-analysis
+description: "Basic functionality tests for competitive analysis"
+version: "1.0"
+
+cases:
+  - id: analyze-competitor
+    name: "Analyze competitor strategy"
+    input:
+      company: "OpenAI"
+      weakness: "No Telegram bot"
+    expected:
+      - json_output: true
+      - has_fields: ["strategies", "target_competitor"]
+      - strategies_count: ">=2"
+    timeout: 30
+
+  - id: strategy-types
+    name: "Generate multiple strategy types"
+    input:
+      company: "Notion"
+      weakness: "Manual data entry"
+    expected:
+      - has_fields: ["strategies"]
+      - contains: "differentiation"
+    timeout: 30
+
+  - id: save-state
+    name: "Save strategy to state"
+    input:
+      company: "Otter.ai"
+      weakness: "No Russian language"
+    expected:
+      - file_exists: "/mnt/files/research-state/business/strategies/otter-ai.json"
+    timeout: 30
+
+  - id: measurable-strategy
+    name: "Strategy has metrics"
+    input:
+      company: "Fireflies"
+      weakness: "No action items"
+    expected:
+      - has_fields: ["investment_required", "timeline"]
+    timeout: 30

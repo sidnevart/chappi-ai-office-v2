@@ -1,0 +1,44 @@
+# Eval Cases for Weekly Matcher
+
+eval_id: weekly-matcher-basic
+skill: weekly-matcher
+description: "Basic functionality tests for weekly matching"
+version: "1.0"
+
+cases:
+  - id: match-all
+    name: "Match CV with all opportunities"
+    input:
+      cv_profile: "AI Developer"
+    expected:
+      - json_output: true
+      - has_fields: ["matches", "scan_date"]
+      - matches_count: ">=1"
+    timeout: 30
+
+  - id: calculate-score
+    name: "Calculate match score"
+    input:
+      cv_skills: ["Python", "AI"]
+      opportunity: "AI Engineer"
+    expected:
+      - has_fields: ["score"]
+      - score_range: [0.0, 1.0]
+    timeout: 30
+
+  - id: save-state
+    name: "Save matches to state"
+    input:
+      cv_profile: "Backend"
+    expected:
+      - file_exists: "/mnt/files/research-state/edu/matched_opportunities.json"
+    timeout: 30
+
+  - id: rank-matches
+    name: "Rank by relevance"
+    input:
+      cv_profile: "Fullstack"
+    expected:
+      - has_fields: ["matches"]
+      - matches_sorted: true
+    timeout: 30

@@ -1,0 +1,44 @@
+# Eval Cases for Russian Market Analysis
+
+eval_id: russian-market-analysis-basic
+skill: russian-market-analysis
+description: "Basic functionality tests for Russian market analysis"
+version: "1.0"
+
+cases:
+  - id: analyze-russian-market
+    name: "Analyze Russian market for idea"
+    input:
+      idea: "AI team memory"
+    expected:
+      - json_output: true
+      - has_fields: ["market_size_usd", "regulations", "competitors"]
+      - market_size_range: [10000000, 500000000]
+    timeout: 30
+
+  - id: check-regulations
+    name: "Check 152-FZ compliance"
+    input:
+      idea: "Healthcare AI"
+    expected:
+      - has_fields: ["regulations"]
+      - contains: "152-FZ"
+    timeout: 30
+
+  - id: find-local-competitors
+    name: "Find local competitors"
+    input:
+      idea: "AI assistant"
+    expected:
+      - has_fields: ["competitors"]
+      - competitors_count: ">=2"
+    timeout: 30
+
+  - id: localization-requirements
+    name: "Identify localization needs"
+    input:
+      idea: "Team collaboration"
+    expected:
+      - has_fields: ["localization_requirements"]
+      - contains: "Russian"
+    timeout: 30

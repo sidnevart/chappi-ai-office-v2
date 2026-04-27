@@ -1,0 +1,43 @@
+# Eval Cases for Tech Spec Writer
+
+eval_id: tech-spec-writer-basic
+skill: tech-spec-writer
+description: "Basic functionality tests for technical specification writing"
+version: "1.0"
+
+cases:
+  - id: write-spec
+    name: "Write technical specification"
+    input:
+      idea: "AI team memory"
+    expected:
+      - file_exists: "/mnt/files/research-state/tech-specs/team-memory-ai.md"
+      - file_contains: "Architecture"
+    timeout: 30
+
+  - id: include-api
+    name: "Spec includes API design"
+    input:
+      idea: "Team collaboration"
+    expected:
+      - file_contains: "POST"
+      - file_contains: "API"
+    timeout: 30
+
+  - id: include-security
+    name: "Spec includes security section"
+    input:
+      idea: "Healthcare data"
+    expected:
+      - file_contains: "Auth"
+      - file_contains: "encrypt"
+    timeout: 30
+
+  - id: include-mvp
+    name: "Spec includes MVP scope"
+    input:
+      idea: "AI product"
+    expected:
+      - file_contains: "MVP"
+      - file_contains: "Phase"
+    timeout: 30

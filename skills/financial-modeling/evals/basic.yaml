@@ -1,0 +1,49 @@
+# Eval Cases for Financial Modeling
+
+eval_id: financial-modeling-basic
+skill: financial-modeling
+description: "Basic functionality tests for financial modeling"
+version: "1.0"
+
+cases:
+  - id: build-projections
+    name: "Build 5-year projections"
+    input:
+      idea: "AI team memory"
+      customers_year_1: 50
+      arpu: 100
+    expected:
+      - json_output: true
+      - has_fields: ["projections", "unit_economics"]
+      - projections_count: "==5"
+    timeout: 30
+
+  - id: calculate-unit-economics
+    name: "Calculate unit economics"
+    input:
+      idea: "SaaS product"
+      cac: 200
+      ltv: 2000
+    expected:
+      - has_fields: ["unit_economics"]
+      - has_field: "ltv_cac_ratio"
+      - ltv_cac_ratio_range: [5.0, 20.0]
+    timeout: 30
+
+  - id: funding-requirements
+    name: "Estimate funding needs"
+    input:
+      idea: "AI platform"
+      team_size: 10
+    expected:
+      - has_fields: ["funding_requirements"]
+      - contains: "seed"
+    timeout: 30
+
+  - id: save-state
+    name: "Save model to state"
+    input:
+      idea: "Test idea"
+    expected:
+      - file_exists: "/mnt/files/research-state/business/financial_models/test-idea.json"
+    timeout: 30

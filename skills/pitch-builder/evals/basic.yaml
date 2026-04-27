@@ -1,0 +1,45 @@
+# Eval Cases for Pitch Builder
+
+eval_id: pitch-builder-basic
+skill: pitch-builder
+description: "Basic functionality tests for pitch deck generation"
+version: "1.0"
+
+cases:
+  - id: generate-pitch
+    name: "Generate HTML pitch deck"
+    input:
+      idea: "AI team memory"
+    expected:
+      - file_exists: "/mnt/files/research-state/business/pitches/team-memory-ai.html"
+      - file_contains: "TeamMemory"
+    timeout: 30
+
+  - id: pitch-structure
+    name: "Pitch has 8 slides"
+    input:
+      idea: "Healthcare AI"
+    expected:
+      - file_contains: "Problem"
+      - file_contains: "Solution"
+      - file_contains: "Market"
+      - file_contains: "Ask"
+    timeout: 30
+
+  - id: metrics-included
+    name: "Pitch includes key metrics"
+    input:
+      idea: "DevTools"
+    expected:
+      - file_contains: "LTV/CAC"
+      - file_contains: "\$"
+    timeout: 30
+
+  - id: professional-design
+    name: "Has professional styling"
+    input:
+      idea: "Test"
+    expected:
+      - file_contains: "style"
+      - file_contains: "metric"
+    timeout: 30

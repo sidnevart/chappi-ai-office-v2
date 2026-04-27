@@ -1,0 +1,44 @@
+# Eval Cases for Edu Grant Scout
+
+eval_id: edu-grant-scout-basic
+skill: edu-grant-scout
+description: "Basic functionality tests for grant search"
+version: "1.0"
+
+cases:
+  - id: search-grants
+    name: "Search for grants"
+    input:
+      topic: "AI Research"
+      eligibility: "PhD"
+    expected:
+      - json_output: true
+      - has_fields: ["grants", "scan_date"]
+      - grants_count: ">=1"
+    timeout: 30
+
+  - id: check-amounts
+    name: "Check grant amounts"
+    input:
+      topic: "Machine Learning"
+    expected:
+      - has_fields: ["grants"]
+      - contains: "amount"
+    timeout: 30
+
+  - id: save-state
+    name: "Save grants to state"
+    input:
+      topic: "Data Science"
+    expected:
+      - file_exists: "/mnt/files/research-state/edu/grants.json"
+    timeout: 30
+
+  - id: filter-by-country
+    name: "Filter by country"
+    input:
+      topic: "AI"
+      country: "Russia"
+    expected:
+      - has_fields: ["grants"]
+    timeout: 30

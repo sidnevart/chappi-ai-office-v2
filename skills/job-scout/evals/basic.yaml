@@ -1,0 +1,45 @@
+# Eval Cases for Job Scout
+
+eval_id: job-scout-basic
+skill: job-scout
+description: "Basic functionality tests for job search"
+version: "1.0"
+
+cases:
+  - id: search-jobs
+    name: "Search for relevant jobs"
+    input:
+      role: "AI Developer"
+      location: "London"
+    expected:
+      - json_output: true
+      - has_fields: ["jobs", "scan_date"]
+      - jobs_count: ">=1"
+    timeout: 30
+
+  - id: filter-by-salary
+    name: "Filter by salary range"
+    input:
+      role: "Backend"
+      min_salary: 50000
+    expected:
+      - has_fields: ["jobs"]
+      - contains: "salary"
+    timeout: 30
+
+  - id: save-state
+    name: "Save jobs to state"
+    input:
+      role: "DevOps"
+    expected:
+      - file_exists: "/mnt/files/research-state/career/jobs.json"
+    timeout: 30
+
+  - id: handle-no-results
+    name: "Handle no results"
+    input:
+      role: "xyznonexistent"
+    expected:
+      - has_fields: ["jobs"]
+      - jobs_count: "==0"
+    timeout: 30

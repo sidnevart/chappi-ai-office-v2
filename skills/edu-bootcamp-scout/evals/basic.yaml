@@ -1,0 +1,45 @@
+# Eval Cases for Edu Bootcamp Scout
+
+eval_id: edu-bootcamp-scout-basic
+skill: edu-bootcamp-scout
+description: "Basic functionality tests for bootcamp search"
+version: "1.0"
+
+cases:
+  - id: search-bootcamps
+    name: "Search for bootcamps"
+    input:
+      topic: "Machine Learning"
+      location: "Europe"
+    expected:
+      - json_output: true
+      - has_fields: ["programs", "scan_date"]
+      - programs_count: ">=1"
+    timeout: 30
+
+  - id: check-deadlines
+    name: "Check application deadlines"
+    input:
+      topic: "AI"
+      deadline_after: "2026-05-01"
+    expected:
+      - has_fields: ["programs"]
+      - contains: "deadline"
+    timeout: 30
+
+  - id: save-state
+    name: "Save programs to state"
+    input:
+      topic: "Data Science"
+    expected:
+      - file_exists: "/mnt/files/research-state/edu/bootcamps.json"
+    timeout: 30
+
+  - id: filter-by-cost
+    name: "Filter by cost"
+    input:
+      topic: "Programming"
+      max_cost: 1000
+    expected:
+      - has_fields: ["programs"]
+    timeout: 30

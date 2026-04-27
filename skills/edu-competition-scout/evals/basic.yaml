@@ -1,0 +1,44 @@
+# Eval Cases for Edu Competition Scout
+
+eval_id: edu-competition-scout-basic
+skill: edu-competition-scout
+description: "Basic functionality tests for competition search"
+version: "1.0"
+
+cases:
+  - id: search-competitions
+    name: "Search for competitions"
+    input:
+      topic: "AI"
+      type: "hackathon"
+    expected:
+      - json_output: true
+      - has_fields: ["competitions", "scan_date"]
+      - competitions_count: ">=1"
+    timeout: 30
+
+  - id: check-prizes
+    name: "Check prize information"
+    input:
+      topic: "Data Science"
+    expected:
+      - has_fields: ["competitions"]
+      - contains: "prize"
+    timeout: 30
+
+  - id: save-state
+    name: "Save competitions to state"
+    input:
+      topic: "Programming"
+    expected:
+      - file_exists: "/mnt/files/research-state/edu/competitions.json"
+    timeout: 30
+
+  - id: filter-by-deadline
+    name: "Filter by deadline"
+    input:
+      topic: "AI"
+      deadline_after: "2026-05-01"
+    expected:
+      - has_fields: ["competitions"]
+    timeout: 30

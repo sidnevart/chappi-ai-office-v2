@@ -1,0 +1,46 @@
+# Eval Cases for Idea Generator
+
+eval_id: idea-generator-basic
+skill: idea-generator
+description: "Basic functionality tests for idea generation"
+version: "1.0"
+
+cases:
+  - id: generate-from-trends
+    name: "Generate idea from trends"
+    input:
+      trigger: "OpenAI weakness: no Telegram integration"
+      trend: "AI team collaboration"
+    expected:
+      - contains: "idea"
+      - json_output: true
+      - has_fields: ["name", "description", "score"]
+      - score_range: [0.0, 10.0]
+    timeout: 30
+
+  - id: score-idea
+    name: "Score generated idea"
+    input:
+      trigger: "Healthcare AI"
+    expected:
+      - has_fields: ["score", "market_size", "feasibility"]
+      - score_range: [0.0, 10.0]
+    timeout: 30
+
+  - id: save-state
+    name: "Save to state file"
+    input:
+      trigger: "AI coding assistant"
+    expected:
+      - file_exists: "/mnt/files/research-state/business/ideas.json"
+      - file_contains: "analyzed_at"
+    timeout: 30
+
+  - id: require-differentiation
+    name: "Idea has differentiation"
+    input:
+      trigger: "AI meeting notes"
+    expected:
+      - has_fields: ["differentiation"]
+      - field_not_empty: "differentiation"
+    timeout: 30
