@@ -3,24 +3,26 @@ name: competitive-analysis
 description: Use when analyzing competitive strategy with evidence-based differentiation and proof
 ---
 
-# Competitive Analysis (Evidence-Based)
+# Competitive Analysis
 
 ## Overview
 
-Analyzes competition and produces **HTML evidence document** with:
+Analyzes competition and produces **HTML evidence report** with:
 - Competitor feature matrices with proof
 - Differentiation strategies with justification
 - Market gaps with evidence
 - Pricing comparisons with sources
 - Risk analysis for each strategy
 
-## Output Formats
+## Output
 
-1. **HTML Report** (`/mnt/files/research-state/reports/html/strategies/*.html`) — PRIMARY
-2. **S3 URL** — public access
-3. **Telegram** — notification with link
+1. **HTML Report** (`reports/html/strategies/[idea].html`) — PRIMARY
+2. **S3 Upload** → public URL
+3. **Telegram** → link to HTML
 
-## Evidence Requirements
+No JSON for humans.
+
+## Evidence Rules
 
 Every strategy MUST have:
 - **Competitor weakness proof** (screenshot, review, data)
@@ -29,7 +31,35 @@ Every strategy MUST have:
 - **Investment calculation** (cost vs impact)
 - **Risk assessment** (what could go wrong)
 
-## HTML Structure
+## Workflow
+
+### 1. Identify Market Gaps
+
+Search for evidence:
+```
+Query 1: "[competitor] missing features" site:reddit.com
+Query 2: "[competitor] vs [competitor]" comparison
+Query 3: "best alternative to [competitor]"
+Query 4: User reviews on G2/Capterra
+```
+
+### 2. Verify Gaps
+
+For each gap:
+1. Check competitor's official roadmap
+2. Check user complaints (Reddit, Twitter)
+3. Check if it's a technical limitation
+4. Calculate cost to replicate
+
+### 3. Strategy Justification
+
+For each strategy:
+- Why will this work? (with evidence)
+- Why hasn't competitor done this? (with proof)
+- What's the moat? (defensibility analysis)
+- What if competitor copies? (response plan)
+
+### 4. Generate HTML Evidence Report
 
 ```html
 <h1>📊 Competitive Strategy Analysis</h1>
@@ -47,7 +77,6 @@ Every strategy MUST have:
 
 <div class="strategy">
   <h2>🎯 Strategy: Multi-Source Integration</h2>
-  <p><strong>Description:</strong> Combine meetings + chats + files</p>
   
   <div class="why">
     <h3>Why This Strategy Works</h3>
@@ -71,7 +100,7 @@ Source: Internal estimation based on market rates
     <h3>Risk: Competitor Response</h3>
     <p><strong>Likelihood:</strong> Medium (50%)</p>
     <p><strong>Evidence:</strong> Notion acquired Cron in 2022 for calendar integration (Source: <a href="...">TechCrunch</a>)</p>
-    <p><strong>Mitigation:</strong> Focus on Russian market first (152-FЗ compliance)</p>
+    <p><strong>Mitigation:</strong> Focus on Russian market first (152-ФЗ compliance)</p>
   </div>
 </div>
 
@@ -83,44 +112,14 @@ Source: Internal estimation based on market rates
     <tr><td>Telegram integration</td><td>✅</td><td>❌</td><td>❌</td><td>❌</td><td><a href="...">Product docs</a></td></tr>
   </table>
 </div>
+
+<div class="sources">
+  <h2>📚 Sources</h2>
+  <ol>
+    <li><a href="...">[Title]</a> — [What it proves]</li>
+  </ol>
+</div>
 ```
-
-## Workflow
-
-### Step 1: Identify Market Gaps
-
-Search for evidence:
-```
-Query 1: "[competitor] missing features" site:reddit.com
-Query 2: "[competitor] vs [competitor]" comparison
-Query 3: "best alternative to [competitor]"
-Query 4: User reviews on G2/Capterra
-```
-
-### Step 2: Verify Gaps
-
-For each gap:
-1. Check competitor's official roadmap
-2. Check user complaints (Reddit, Twitter)
-3. Check if it's a technical limitation
-4. Calculate cost to replicate
-
-### Step 3: Strategy Justification
-
-For each strategy:
-- Why will this work? (with evidence)
-- Why hasn't competitor done this? (with proof)
-- What's the moat? (defensibility analysis)
-- What if competitor copies? (response plan)
-
-### Step 4: Generate Evidence Document
-
-HTML with:
-- Market gap evidence
-- Strategy justification with proofs
-- Investment calculation
-- Risk analysis with mitigation
-- Feature comparison matrix
 
 ## Best Practices
 
@@ -131,16 +130,3 @@ HTML with:
 - ❌ No assumed weaknesses
 - ❌ No strategies without ROI
 - ❌ No risks without plans
-
-## Commands
-
-```bash
-# Analyze with evidence
-python3 skills/competitive-analysis/analyze.py --with-evidence
-
-# Verify gaps
-python3 skills/competitive-analysis/verify-gaps.py
-
-# Generate HTML
-python3 skills/html-builder/build.py --input=strategy-evidence.json --template=evidence-based
-```

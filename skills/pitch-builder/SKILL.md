@@ -3,7 +3,7 @@ name: pitch-builder
 description: Use when creating investor pitch decks with evidence-based claims and proofs
 ---
 
-# Pitch Builder (Evidence-Based)
+# Pitch Builder
 
 ## Overview
 
@@ -14,14 +14,14 @@ Generates investor pitch decks as **HTML** (primary) with:
 - Competitive analysis with proof
 - Risk mitigation with data
 
-## Output Formats
+## Output
 
-1. **HTML** (`/mnt/files/research-state/business/pitches/*.html`) — PRIMARY
+1. **HTML** (`business/pitches/[idea].html`) — PRIMARY
 2. **PDF** — converted from HTML for printing
-3. **S3 URL** — public access
+3. **S3 Upload** → public URL
 4. **Telegram** — notification with link
 
-## Evidence Requirements
+## Evidence Rules
 
 Every slide MUST have:
 - **Speaker notes** with evidence URLs
@@ -29,62 +29,9 @@ Every slide MUST have:
 - **Calculation methods** shown
 - **Counter-arguments** addressed
 
-## HTML Structure
-
-```html
-<!DOCTYPE html>
-<html>
-<head>
-  <style>
-    .slide { min-height: 100vh; padding: 60px; }
-    h1 { font-size: 48px; color: #1a237e; }
-    .metric { display: inline-block; padding: 15px; background: linear-gradient(135deg, #667eea, #764ba2); color: white; border-radius: 8px; }
-    .evidence { font-size: 14px; color: #666; margin-top: 20px; }
-    .source { color: #667eea; }
-  </style>
-</head>
-<body>
-  <!-- Slide 1: Title -->
-  <div class="slide">
-    <h1>TeamMemory AI</h1>
-    <p>AI-память команды</p>
-    <div class="metric">$150M</div>
-    <div class="evidence">
-      Market size calculation: 500K teams × $300/year = $150M
-      Source: Rosstat, Habr survey
-    </div>
-  </div>
-  
-  <!-- Slide 2: Problem -->
-  <div class="slide">
-    <h1>Проблема</h1>
-    <ul>
-      <li>PM тратит 2-3 часа/день на статусы</li>
-      <li>85% команд СНГ используют Telegram</li>
-    </ul>
-    <div class="evidence">
-      Source 1: TASS survey (https://tass.ru/...)
-      Source 2: Habr article (https://habr.com/...)
-      Method: Survey of 1000 PMs
-    </div>
-  </div>
-  
-  <!-- Slide 3: Solution -->
-  <div class="slide">
-    <h1>Решение</h1>
-    <p>Multi-source AI memory</p>
-    <div class="evidence">
-      Patent pending: USPTO #...
-      Source: Patent filing (https://uspto.gov/...)
-    </div>
-  </div>
-</body>
-</html>
-```
-
 ## Workflow
 
-### Step 1: Evidence Collection
+### 1. Evidence Collection
 
 For each pitch claim:
 1. Find source
@@ -92,7 +39,7 @@ For each pitch claim:
 3. Check date
 4. Document method
 
-### Step 2: Self-Challenge
+### 2. Self-Challenge
 
 For each slide:
 - "What would investor ask?"
@@ -100,7 +47,7 @@ For each slide:
 - "What if this number is wrong?"
 - "Why us and not them?"
 
-### Step 3: Generate Pitch
+### 3. Generate Pitch
 
 HTML with:
 - Professional styling
@@ -108,12 +55,9 @@ HTML with:
 - Source citations
 - Counter-arguments addressed
 
-### Step 4: Convert to PDF
+### 4. Convert to PDF
 
-```python
-from reportlab.lib.pagesizes import A4
-# Convert HTML to PDF
-```
+Use ReportLab with DejaVu fonts for Cyrillic.
 
 ## Best Practices
 
@@ -124,16 +68,3 @@ from reportlab.lib.pagesizes import A4
 - ❌ No unsupported claims
 - ❌ No "we believe" statements
 - ❌ No numbers without calculation
-
-## Commands
-
-```bash
-# Build pitch with evidence
-python3 skills/pitch-builder/build.py --idea=team-memory-ai --with-evidence
-
-# Convert to PDF
-python3 skills/html-to-pdf/convert.py --input=pitches/team-memory-ai.html
-
-# Upload
-python3 skills/s3-uploader/upload.py --file=pitches/team-memory-ai.html
-```

@@ -3,24 +3,26 @@ name: russian-market-analysis
 description: Use when analyzing Russian/CIS market entry with regulatory evidence and compliance proofs
 ---
 
-# Russian Market Analysis (Evidence-Based)
+# Russian Market Analysis
 
 ## Overview
 
-Analyzes Russian market and produces **HTML evidence document** with:
+Analyzes Russian market and produces **HTML evidence report** with:
 - Regulatory requirements with official sources
 - Competitor analysis with local data
 - Compliance checklists with citations
 - Market size calculations with methodology
 - Risk assessment with mitigation
 
-## Output Formats
+## Output
 
-1. **HTML Report** (`/mnt/files/research-state/reports/html/russian-market-*.html`) — PRIMARY
-2. **S3 URL** — public access
-3. **Telegram** — notification with link
+1. **HTML Report** (`reports/html/russian-market-[idea].html`) — PRIMARY
+2. **S3 Upload** → public URL
+3. **Telegram** → link to HTML
 
-## Evidence Requirements
+No JSON for humans.
+
+## Evidence Rules
 
 Every regulation claim MUST have:
 - **Official source** (law text, government site)
@@ -29,7 +31,35 @@ Every regulation claim MUST have:
 - **Penalty for non-compliance**
 - **Compliance cost estimate**
 
-## HTML Structure
+## Workflow
+
+### 1. Regulatory Research
+
+Check official sources:
+1. **Consultant.ru** — all Russian laws
+2. **RKN.gov.ru** — data protection regulator
+3. **Government decrees** — official requirements
+4. **Tax code** — relevant articles
+
+### 2. Market Size Calculation
+
+Bottom-up calculation:
+```
+Total workers in Russia: 72M (Source: Rosstat)
+Knowledge workers: 15M (Source: Habr survey)
+Teams of 5-50: 500K (Source: calculation)
+Target penetration (Year 1): 0.5% = 2,500 teams
+ARPU: $8/month = $96/year
+Revenue: 2,500 × $96 = $240K (Year 1)
+```
+
+### 3. Self-Challenge
+
+- "Is 152-ФЗ really enforced?" → Check RKN fines list
+- "Do teams really need this?" → Survey data
+- "Can we comply affordably?" → Yandex Cloud pricing
+
+### 4. Generate HTML Evidence Report
 
 ```html
 <h1>🇷🇺 Russian Market Analysis</h1>
@@ -88,44 +118,14 @@ Confidence: Medium (based on comparable SaaS adoption)
   <p><strong>A:</strong> $48M SOM is comparable to early-stage SaaS markets. Zoom entered with $50M TAM.</p>
   <p><strong>Evidence:</strong> Zoom IPO prospectus showed $43M initial market (Source: <a href="...">SEC filing</a>)</p>
 </div>
+
+<div class="sources">
+  <h2>📚 Sources</h2>
+  <ol>
+    <li><a href="...">[Title]</a> — [What it proves]</li>
+  </ol>
+</div>
 ```
-
-## Workflow
-
-### Step 1: Regulatory Research
-
-Check official sources:
-1. **Consultant.ru** — all Russian laws
-2. **RKN.gov.ru** — data protection regulator
-3. **Government decrees** — official requirements
-4. **Tax code** — relevant articles
-
-### Step 2: Market Size Calculation
-
-Bottom-up calculation:
-```
-Total workers in Russia: 72M (Source: Rosstat)
-Knowledge workers: 15M (Source: Habr survey)
-Teams of 5-50: 500K (Source: calculation)
-Target penetration (Year 1): 0.5% = 2,500 teams
-ARPU: $8/month = $96/year
-Revenue: 2,500 × $96 = $240K (Year 1)
-```
-
-### Step 3: Self-Challenge
-
-- "Is 152-ФЗ really enforced?" → Check RKN fines list
-- "Do teams really need this?" → Survey data
-- "Can we comply affordably?" → Yandex Cloud pricing
-
-### Step 4: Generate Evidence Document
-
-HTML with:
-- Regulations with law citations
-- Market size with calculation
-- Competitors with local data
-- Self-challenge with proofs
-- Compliance checklist
 
 ## Best Practices
 
@@ -136,16 +136,3 @@ HTML with:
 - ❌ No hearsay about regulations
 - ❌ No market size without calculation
 - ❌ No competitors without verification
-
-## Commands
-
-```bash
-# Analyze with evidence
-python3 skills/russian-market-analysis/analyze.py --with-evidence
-
-# Verify regulations
-python3 skills/russian-market-analysis/verify-laws.py
-
-# Generate HTML
-python3 skills/html-builder/build.py --input=russia-evidence.json --template=evidence-based
-```

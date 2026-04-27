@@ -1,26 +1,28 @@
 ---
 name: deal-flow-tracker
-description: Use when tracking startup funding and investment deals with verified data
+description: Use when tracking startup funding and investment deals with verified data and evidence
 ---
 
-# Deal Flow Tracker (Evidence-Based)
+# Deal Flow Tracker
 
 ## Overview
 
-Tracks startup funding and produces **HTML evidence document** with:
+Tracks startup funding rounds and produces **HTML evidence report** with:
 - Verified deal data from multiple sources
 - Cross-referenced amounts
-- Investor attribution
-- Sector analysis
+- Investor attribution with proof
+- Sector analysis with data
 - Market impact assessment
 
-## Output Formats
+## Output
 
-1. **HTML Report** (`/mnt/files/research-state/reports/html/deals-*.html`) — PRIMARY
-2. **S3 URL** — public access
-3. **Telegram** — notification with link
+1. **HTML Report** (`reports/html/deals-YYYY-MM-DD.html`) — PRIMARY
+2. **S3 Upload** → public URL
+3. **Telegram** → link to HTML
 
-## Evidence Requirements
+No JSON for humans.
+
+## Evidence Rules
 
 Every deal MUST have:
 - **2+ independent sources** (Crunchbase + TechCrunch + company blog)
@@ -29,7 +31,33 @@ Every deal MUST have:
 - **Sector classification**
 - **Date confirmation**
 
-## HTML Structure
+## Workflow
+
+### 1. Multi-Source Search
+
+Search:
+- Crunchbase (primary)
+- TechCrunch
+- PitchBook (if available)
+- Company press releases
+- Investor announcements
+
+### 2. Cross-Verification
+
+For each deal:
+1. Check 2+ sources for amount
+2. Verify lead investor
+3. Verify round type
+4. Check date consistency
+
+### 3. Impact Analysis
+
+For each deal:
+- What sector? (with evidence)
+- What trend does this validate?
+- What does this mean for our idea?
+
+### 4. Generate HTML Evidence Report
 
 ```html
 <h1>💰 Deal Flow Report</h1>
@@ -67,41 +95,14 @@ Every deal MUST have:
     <p><strong>Evidence:</strong> Similar deals in Q1 2026...</p>
   </div>
 </div>
+
+<div class="sources">
+  <h2>📚 Sources</h2>
+  <ol>
+    <li><a href="...">[Title]</a> — [What it proves]</li>
+  </ol>
+</div>
 ```
-
-## Workflow
-
-### Step 1: Multi-Source Search
-
-Search:
-- Crunchbase (primary)
-- TechCrunch
-- PitchBook (if available)
-- Company press releases
-- Investor announcements
-
-### Step 2: Cross-Verification
-
-For each deal:
-1. Check 2+ sources for amount
-2. Verify lead investor
-3. Verify round type
-4. Check date consistency
-
-### Step 3: Impact Analysis
-
-For each deal:
-- What sector? (with evidence)
-- What trend does this validate?
-- What does this mean for our idea?
-
-### Step 4: Generate Evidence Document
-
-HTML with:
-- Deal cards with verification
-- Investor details with sources
-- Market impact analysis
-- Trend validation
 
 ## Best Practices
 
@@ -112,16 +113,3 @@ HTML with:
 - ❌ No single-source deals
 - ❌ No unverified amounts
 - ❌ No deals without context
-
-## Commands
-
-```bash
-# Track with evidence
-python3 skills/deal-flow-tracker/track.py --with-evidence --min-sources=2
-
-# Verify deals
-python3 skills/deal-flow-tracker/verify.py
-
-# Generate HTML
-python3 skills/html-builder/build.py --input=deals-evidence.json --template=evidence-based
-```

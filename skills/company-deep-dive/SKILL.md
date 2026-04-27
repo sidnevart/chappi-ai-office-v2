@@ -3,26 +3,26 @@ name: company-deep-dive
 description: Use when analyzing companies with deep evidence, competitor comparison, and source citations
 ---
 
-# Company Deep Dive (Evidence-Based)
+# Company Deep Dive
 
 ## Overview
 
-Analyzes companies and produces **HTML evidence document** with:
+Analyzes companies and produces **HTML evidence report** with:
 - Competitor comparison matrices with sources
 - Product analysis with screenshots/evidence
 - Weakness identification with proof
 - Market position with data
 - Full URL citations for every claim
 
-## Output Formats
+## Output
 
-1. **HTML Report** (`/mnt/files/research-state/reports/html/companies/*.html`) — PRIMARY
-2. **S3 URL** — public access
-3. **Telegram** — notification with link
+1. **HTML Report** (`reports/html/companies/[company].html`) — PRIMARY
+2. **S3 Upload** → public URL
+3. **Telegram** → link to HTML
 
-**NO JSON for humans.** Internal JSON only for pipeline.
+No JSON for humans.
 
-## Evidence Requirements
+## Evidence Rules
 
 Every claim MUST have:
 - **Source URL**: Where the information came from
@@ -30,7 +30,38 @@ Every claim MUST have:
 - **Confidence**: High/Medium/Low
 - **Date**: When the data was collected
 
-## HTML Structure
+## Workflow
+
+### 1. Multi-Source Research
+
+For each company:
+1. **Official website** — products, pricing
+2. **Crunchbase** — funding, revenue
+3. **G2/Capterra** — user reviews, features
+4. **LinkedIn** — team size, hiring
+5. **News** — recent developments
+6. **Social media** — user sentiment
+
+### 2. Cross-Verification
+
+Every fact must be confirmed by 2+ sources:
+```
+Claim: "Otter.ai has 8.3M users"
+Source 1: Crunchbase (https://...) — 8M users
+Source 2: TechCrunch article (https://...) — 8.3M users
+Source 3: Company blog (https://...) — "over 8M"
+Confidence: High (3 sources agree)
+```
+
+### 3. Self-Challenge
+
+Every weakness must be challenged:
+- "Is this really a weakness or just not their focus?"
+- "Could they add this feature quickly?"
+- "What's the cost for them to fix this?"
+- "Why haven't they fixed it yet?"
+
+### 4. Generate HTML Evidence Report
 
 ```html
 <h1>🏢 Company Analysis: [Name]</h1>
@@ -83,47 +114,6 @@ Every claim MUST have:
 </div>
 ```
 
-## Workflow
-
-### Step 1: Multi-Source Research
-
-For each company:
-1. **Official website** — products, pricing
-2. **Crunchbase** — funding, revenue
-3. **G2/Capterra** — user reviews, features
-4. **LinkedIn** — team size, hiring
-5. **News** — recent developments
-6. **Social media** — user sentiment
-
-### Step 2: Cross-Verification
-
-Every fact must be confirmed by 2+ sources:
-```
-Claim: "Otter.ai has 8.3M users"
-Source 1: Crunchbase (https://...) — 8M users
-Source 2: TechCrunch article (https://...) — 8.3M users
-Source 3: Company blog (https://...) — "over 8M"
-Confidence: High (3 sources agree)
-```
-
-### Step 3: Self-Challenge
-
-Every weakness must be challenged:
-- "Is this really a weakness or just not their focus?"
-- "Could they add this feature quickly?"
-- "What's the cost for them to fix this?"
-- "Why haven't they fixed it yet?"
-
-### Step 4: Generate Evidence Document
-
-HTML with:
-- Executive summary with verified numbers
-- Product table with pricing/sources
-- Competitor matrix with feature comparison
-- Weaknesses with evidence blocks
-- Market position with data
-- Sources section with all URLs
-
 ## Best Practices
 
 - ✅ Every number has URL source
@@ -133,16 +123,3 @@ HTML with:
 - ❌ No assumptions without evidence
 - ❌ No "I think" statements
 - ❌ No outdated data (check dates)
-
-## Commands
-
-```bash
-# Analyze with full evidence
-python3 skills/company-deep-dive/analyze.py --company=OpenAI --with-evidence
-
-# Verify sources
-python3 skills/company-deep-dive/verify.py --company=OpenAI
-
-# Generate HTML
-python3 skills/html-builder/build.py --input=company-evidence.json --template=evidence-based
-```
