@@ -1,105 +1,123 @@
 ---
 name: s3-uploader
-description: Use when uploading files to S3-compatible storage and generating public URLs for reports, pitches, and artifacts
+description: Use when uploading files to S3-compatible storage and generating public URLs
 ---
 
 # S3 Uploader
 
 ## Overview
 
-Uploads files to S3-compatible storage (MinIO, AWS S3, Yandex Cloud) and returns public URLs. Used for publishing research artifacts.
+Uploads files to MinIO S3 and returns public URLs. Used by other skills for sharing artifacts.
 
 ## When to Use
 
-- After generating HTML reports, pitches, or tech specs
-- When user asks for "share this" or "public link"
-- Pipeline final step: upload artifacts → get URLs
+- After generating HTML reports
+- After creating Excel models
+- After writing Markdown specs
+- When user asks for "share" or "public link"
 
 **When NOT to use:**
 - Local file operations → use bash/write tools
-- HTML generation → use html-builder or pitch-builder
-- PDF conversion → use html-to-pdf
+- Before generating content → generate first, then upload
 
-## Core Pattern
-
-**Input:** Local file path
-**Process:** Read config → Upload file → Generate URL → Update index
-**Output:** JSON with URL, key, size
-
-## Workflow
-
-### 1. Configuration
+## Configuration
 
 ```yaml
 # ~/.openclaw/skills/s3-uploader/config.yaml
 s3:
-  endpoint: "https://s3.yandexcloud.net"
-  region: "ru-central1"
-  bucket: "chappi-ai-office"
-  access_key: "${S3_ACCESS_KEY}"
-  secret_key: "${S3_SECRET_KEY}"
+  endpoint: "http://127.0.0.1:9000"
+  region: "us-east-1"
+  bucket: "ai-office"
+  access_key: "minio"
+  secret_key: "minio123"
 ```
 
-### 2. Upload
+## Workflow
+
+### 1. Upload File
 
 ```python
 import boto3
+from botocore.config import Config
 
-s3 = boto3.client('s3', 
-    endpoint_url='https://s3.yandexcloud.net',
-    aws_access_key_id='...',
-    aws_secret_access_key='...'
+s3 = boto3.client('s3',
+    endpoint_url='http://127.0.0.1:9000',
+    aws_access_key_id='minio',
+    aws_secret_access_key='minio123',
+    config=Config(signature_version='s3v4'),
+    region_name='us-east-1'
 )
 
-s3.upload_file(
-    '/mnt/files/research-state/business/pitches/team-memory-ai.html',
-    'chappi-ai-office',
-    'pitches/team-memory-ai.html'
+# Upload with correct content type
+s3.put_object(
+    Bucket='ai-office',
+    Key='reports/report.html',
+    Body=open('/path/to/report.html', 'rb'),
+    ContentType='text/html'
 )
 
-url = f"https://chappi-ai-office.s3.yandexcloud.net/pitches/team-memory-ai.html"
+# Generate URL
+url = f"http://80.74.25.43:9000/ai-office/reports/report.html"
 ```
 
-### 3. Update Index
+### 2. Content Types
 
-```json
-{
-  "artifacts": [
-    {
-      "name": "team-memory-ai-pitch.html",
-      "s3_url": "https://...",
-      "local_path": "/mnt/files/...",
-      "type": "pitch",
-      "project": "team-memory-ai",
-      "created": "2026-04-28T00:00:00Z"
-    }
-  ]
-}
+| File | Content-Type |
+|------|-------------|
+| HTML | text/html |
+| JSON | application/json |
+| PDF | application/pdf |
+| Excel | application/vnd.openxmlformats-officedocument.spreadsheetml.sheet |
+| Markdown | text/markdown |
+| Images | image/png, image/jpeg |
+
+### 3. Batch Upload
+
+```python
+files = [
+    ('reports/report.html', 'text/html'),
+    ('reports/model.xlsx', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'),
+    ('tech-specs/spec.md', 'text/markdown'),
+]
+
+for local_path, content_type in files:
+    s3.put_object(
+        Bucket='ai-office',
+        Key=local_path,
+        Body=open(f'/mnt/files/research-state/{local_path}', 'rb'),
+        ContentType=content_type
+    )
 ```
 
-## Output Format
+## Output
 
 ```json
 {
   "uploaded": true,
-  "url": "https://chappi-ai-office.s3.yandexcloud.net/pitches/team-memory-ai.html",
-  "key": "pitches/team-memory-ai.html",
+  "url": "http://80.74.25.43:9000/ai-office/reports/report.html",
+  "key": "reports/report.html",
   "size": 4575,
   "content_type": "text/html"
 }
 ```
 
-## Quick Reference
+## Best Practices
 
-| Action | Method |
-|--------|--------|
-| Upload file | boto3 upload_file |
-| Generate URL | f-string with bucket + key |
-| List artifacts | Read index JSON |
+- ✅ Always set correct Content-Type
+- ✅ Use consistent key structure: `{type}/{project}-{date}.{ext}`
+- ✅ Verify upload succeeded (check response)
+- ❌ Don't upload without content type
+- ❌ Don't use inconsistent naming
 
-## Common Mistakes
+## Commands
 
-- **Wrong endpoint:** Check region-specific endpoints
-- **Missing permissions:** Verify bucket policy
-- **No public access:** Enable public-read ACL
-- **Not updating index:** Always record uploaded artifacts
+```bash
+# Upload single file
+python3 skills/s3-uploader/upload.py --file=report.html --key=reports/report.html
+
+# Batch upload
+python3 skills/s3-uploader/upload.py --batch=upload-list.json
+
+# Verify
+python3 skills/s3-uploader/verify.py --key=reports/report.html
+```
