@@ -2,52 +2,53 @@
 
 eval_id: company-deep-dive-basic
 skill: company-deep-dive
-description: "Basic functionality tests for company analysis"
-version: "1.0"
+description: "Evidence-based functionality tests"
+version: "2.0"
 
 cases:
-  - id: analyze-company
-    name: "Analyze known company"
+  - id: evidence-required
+    name: "Every claim has source URL"
     input:
-      company: "OpenAI"
+      task: "generate_report"
     expected:
-      - contains: "OpenAI"
-      - json_output: true
-      - has_fields: ["company", "products", "weaknesses", "competitors"]
+      - contains: "Source:"
+      - contains: "http"
+      - has_fields: ["evidence"]
     timeout: 30
 
-  - id: find-products
-    name: "Identifies products"
+  - id: self-challenge
+    name: "Self-challenge section exists"
     input:
-      company: "Notion"
+      task: "generate_report"
     expected:
-      - has_fields: ["products"]
-      - products_count: ">=2"
+      - contains: "Self-Challenge"
+      - contains: "Q:"
+      - contains: "A:"
     timeout: 30
 
-  - id: find-competitors
-    name: "Identifies competitors"
+  - id: html-output
+    name: "Generates HTML (not JSON) for humans"
     input:
-      company: "Otter.ai"
+      task: "generate_report"
     expected:
-      - has_fields: ["competitors"]
-      - competitors_count: ">=3"
+      - file_contains: "reports/html/company-deep-dive"
+      - file_contains: "<!DOCTYPE html>"
     timeout: 30
 
-  - id: save-state
-    name: "Saves to state file"
+  - id: confidence-levels
+    name: "Confidence levels specified"
     input:
-      company: "Anthropic"
+      task: "generate_report"
     expected:
-      - file_exists: "/mnt/files/research-state/business/companies/anthropic.json"
+      - contains: "Confidence:"
+      - matches_regex: "High|Medium|Low"
     timeout: 30
 
-  - id: handle-unknown
-    name: "Handles unknown company"
+  - id: calculation-method
+    name: "Calculations show method"
     input:
-      company: "xyznonexistent12345"
+      task: "generate_report"
     expected:
-      - json_output: true
-      - has_fields: ["company"]
-      - products_count: "==0"
+      - contains: "Method:"
+      - contains: "Calculation"
     timeout: 30

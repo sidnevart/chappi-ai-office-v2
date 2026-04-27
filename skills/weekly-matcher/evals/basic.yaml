@@ -2,43 +2,53 @@
 
 eval_id: weekly-matcher-basic
 skill: weekly-matcher
-description: "Basic functionality tests for weekly matching"
-version: "1.0"
+description: "Evidence-based functionality tests"
+version: "2.0"
 
 cases:
-  - id: match-all
-    name: "Match CV with all opportunities"
+  - id: evidence-required
+    name: "Every claim has source URL"
     input:
-      cv_profile: "AI Developer"
+      task: "generate_report"
     expected:
-      - json_output: true
-      - has_fields: ["matches", "scan_date"]
-      - matches_count: ">=1"
+      - contains: "Source:"
+      - contains: "http"
+      - has_fields: ["evidence"]
     timeout: 30
 
-  - id: calculate-score
-    name: "Calculate match score"
+  - id: self-challenge
+    name: "Self-challenge section exists"
     input:
-      cv_skills: ["Python", "AI"]
-      opportunity: "AI Engineer"
+      task: "generate_report"
     expected:
-      - has_fields: ["score"]
-      - score_range: [0.0, 1.0]
+      - contains: "Self-Challenge"
+      - contains: "Q:"
+      - contains: "A:"
     timeout: 30
 
-  - id: save-state
-    name: "Save matches to state"
+  - id: html-output
+    name: "Generates HTML (not JSON) for humans"
     input:
-      cv_profile: "Backend"
+      task: "generate_report"
     expected:
-      - file_exists: "/mnt/files/research-state/edu/matched_opportunities.json"
+      - file_contains: "reports/html/weekly-matcher"
+      - file_contains: "<!DOCTYPE html>"
     timeout: 30
 
-  - id: rank-matches
-    name: "Rank by relevance"
+  - id: confidence-levels
+    name: "Confidence levels specified"
     input:
-      cv_profile: "Fullstack"
+      task: "generate_report"
     expected:
-      - has_fields: ["matches"]
-      - matches_sorted: true
+      - contains: "Confidence:"
+      - matches_regex: "High|Medium|Low"
+    timeout: 30
+
+  - id: calculation-method
+    name: "Calculations show method"
+    input:
+      task: "generate_report"
+    expected:
+      - contains: "Method:"
+      - contains: "Calculation"
     timeout: 30

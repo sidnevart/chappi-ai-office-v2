@@ -2,43 +2,53 @@
 
 eval_id: edu-competition-scout-basic
 skill: edu-competition-scout
-description: "Basic functionality tests for competition search"
-version: "1.0"
+description: "Evidence-based functionality tests"
+version: "2.0"
 
 cases:
-  - id: search-competitions
-    name: "Search for competitions"
+  - id: evidence-required
+    name: "Every claim has source URL"
     input:
-      topic: "AI"
-      type: "hackathon"
+      task: "generate_report"
     expected:
-      - json_output: true
-      - has_fields: ["competitions", "scan_date"]
-      - competitions_count: ">=1"
+      - contains: "Source:"
+      - contains: "http"
+      - has_fields: ["evidence"]
     timeout: 30
 
-  - id: check-prizes
-    name: "Check prize information"
+  - id: self-challenge
+    name: "Self-challenge section exists"
     input:
-      topic: "Data Science"
+      task: "generate_report"
     expected:
-      - has_fields: ["competitions"]
-      - contains: "prize"
+      - contains: "Self-Challenge"
+      - contains: "Q:"
+      - contains: "A:"
     timeout: 30
 
-  - id: save-state
-    name: "Save competitions to state"
+  - id: html-output
+    name: "Generates HTML (not JSON) for humans"
     input:
-      topic: "Programming"
+      task: "generate_report"
     expected:
-      - file_exists: "/mnt/files/research-state/edu/competitions.json"
+      - file_contains: "reports/html/edu-competition-scout"
+      - file_contains: "<!DOCTYPE html>"
     timeout: 30
 
-  - id: filter-by-deadline
-    name: "Filter by deadline"
+  - id: confidence-levels
+    name: "Confidence levels specified"
     input:
-      topic: "AI"
-      deadline_after: "2026-05-01"
+      task: "generate_report"
     expected:
-      - has_fields: ["competitions"]
+      - contains: "Confidence:"
+      - matches_regex: "High|Medium|Low"
+    timeout: 30
+
+  - id: calculation-method
+    name: "Calculations show method"
+    input:
+      task: "generate_report"
+    expected:
+      - contains: "Method:"
+      - contains: "Calculation"
     timeout: 30

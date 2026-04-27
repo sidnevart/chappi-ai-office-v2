@@ -2,46 +2,53 @@
 
 eval_id: funding-scout-basic
 skill: funding-scout
-description: "Basic functionality tests for funding search"
-version: "1.0"
+description: "Evidence-based functionality tests"
+version: "2.0"
 
 cases:
-  - id: find-investors
-    name: "Find investors for idea"
+  - id: evidence-required
+    name: "Every claim has source URL"
     input:
-      idea: "AI team memory"
-      stage: "Seed"
+      task: "generate_report"
     expected:
-      - json_output: true
-      - has_fields: ["investors", "accelerators", "grants"]
-      - investors_count: ">=3"
+      - contains: "Source:"
+      - contains: "http"
+      - has_fields: ["evidence"]
     timeout: 30
 
-  - id: match-by-stage
-    name: "Match investors by stage"
+  - id: self-challenge
+    name: "Self-challenge section exists"
     input:
-      idea: "Healthcare AI"
-      stage: "Series A"
+      task: "generate_report"
     expected:
-      - has_fields: ["recommended_stage", "recommended_amount"]
+      - contains: "Self-Challenge"
+      - contains: "Q:"
+      - contains: "A:"
     timeout: 30
 
-  - id: find-accelerators
-    name: "Find relevant accelerators"
+  - id: html-output
+    name: "Generates HTML (not JSON) for humans"
     input:
-      idea: "DevTools"
-      stage: "Pre-seed"
+      task: "generate_report"
     expected:
-      - has_fields: ["accelerators"]
-      - contains: "Y Combinator"
+      - file_contains: "reports/html/funding-scout"
+      - file_contains: "<!DOCTYPE html>"
     timeout: 30
 
-  - id: find-grants
-    name: "Find grants"
+  - id: confidence-levels
+    name: "Confidence levels specified"
     input:
-      idea: "Russian AI"
-      geography: "Russia"
+      task: "generate_report"
     expected:
-      - has_fields: ["grants"]
-      - contains: "Сколково"
+      - contains: "Confidence:"
+      - matches_regex: "High|Medium|Low"
+    timeout: 30
+
+  - id: calculation-method
+    name: "Calculations show method"
+    input:
+      task: "generate_report"
+    expected:
+      - contains: "Method:"
+      - contains: "Calculation"
     timeout: 30

@@ -2,42 +2,53 @@
 
 eval_id: tech-spec-writer-basic
 skill: tech-spec-writer
-description: "Basic functionality tests for technical specification writing"
-version: "1.0"
+description: "Evidence-based functionality tests"
+version: "2.0"
 
 cases:
-  - id: write-spec
-    name: "Write technical specification"
+  - id: evidence-required
+    name: "Every claim has source URL"
     input:
-      idea: "AI team memory"
+      task: "generate_report"
     expected:
-      - file_exists: "/mnt/files/research-state/tech-specs/team-memory-ai.md"
-      - file_contains: "Architecture"
+      - contains: "Source:"
+      - contains: "http"
+      - has_fields: ["evidence"]
     timeout: 30
 
-  - id: include-api
-    name: "Spec includes API design"
+  - id: self-challenge
+    name: "Self-challenge section exists"
     input:
-      idea: "Team collaboration"
+      task: "generate_report"
     expected:
-      - file_contains: "POST"
-      - file_contains: "API"
+      - contains: "Self-Challenge"
+      - contains: "Q:"
+      - contains: "A:"
     timeout: 30
 
-  - id: include-security
-    name: "Spec includes security section"
+  - id: html-output
+    name: "Generates HTML (not JSON) for humans"
     input:
-      idea: "Healthcare data"
+      task: "generate_report"
     expected:
-      - file_contains: "Auth"
-      - file_contains: "encrypt"
+      - file_contains: "reports/html/tech-spec-writer"
+      - file_contains: "<!DOCTYPE html>"
     timeout: 30
 
-  - id: include-mvp
-    name: "Spec includes MVP scope"
+  - id: confidence-levels
+    name: "Confidence levels specified"
     input:
-      idea: "AI product"
+      task: "generate_report"
     expected:
-      - file_contains: "MVP"
-      - file_contains: "Phase"
+      - contains: "Confidence:"
+      - matches_regex: "High|Medium|Low"
+    timeout: 30
+
+  - id: calculation-method
+    name: "Calculations show method"
+    input:
+      task: "generate_report"
+    expected:
+      - contains: "Method:"
+      - contains: "Calculation"
     timeout: 30

@@ -2,44 +2,53 @@
 
 eval_id: edu-bootcamp-scout-basic
 skill: edu-bootcamp-scout
-description: "Basic functionality tests for bootcamp search"
-version: "1.0"
+description: "Evidence-based functionality tests"
+version: "2.0"
 
 cases:
-  - id: search-bootcamps
-    name: "Search for bootcamps"
+  - id: evidence-required
+    name: "Every claim has source URL"
     input:
-      topic: "Machine Learning"
-      location: "Europe"
+      task: "generate_report"
     expected:
-      - json_output: true
-      - has_fields: ["programs", "scan_date"]
-      - programs_count: ">=1"
+      - contains: "Source:"
+      - contains: "http"
+      - has_fields: ["evidence"]
     timeout: 30
 
-  - id: check-deadlines
-    name: "Check application deadlines"
+  - id: self-challenge
+    name: "Self-challenge section exists"
     input:
-      topic: "AI"
-      deadline_after: "2026-05-01"
+      task: "generate_report"
     expected:
-      - has_fields: ["programs"]
-      - contains: "deadline"
+      - contains: "Self-Challenge"
+      - contains: "Q:"
+      - contains: "A:"
     timeout: 30
 
-  - id: save-state
-    name: "Save programs to state"
+  - id: html-output
+    name: "Generates HTML (not JSON) for humans"
     input:
-      topic: "Data Science"
+      task: "generate_report"
     expected:
-      - file_exists: "/mnt/files/research-state/edu/bootcamps.json"
+      - file_contains: "reports/html/edu-bootcamp-scout"
+      - file_contains: "<!DOCTYPE html>"
     timeout: 30
 
-  - id: filter-by-cost
-    name: "Filter by cost"
+  - id: confidence-levels
+    name: "Confidence levels specified"
     input:
-      topic: "Programming"
-      max_cost: 1000
+      task: "generate_report"
     expected:
-      - has_fields: ["programs"]
+      - contains: "Confidence:"
+      - matches_regex: "High|Medium|Low"
+    timeout: 30
+
+  - id: calculation-method
+    name: "Calculations show method"
+    input:
+      task: "generate_report"
+    expected:
+      - contains: "Method:"
+      - contains: "Calculation"
     timeout: 30

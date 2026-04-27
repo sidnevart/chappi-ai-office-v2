@@ -2,43 +2,53 @@
 
 eval_id: russian-market-analysis-basic
 skill: russian-market-analysis
-description: "Basic functionality tests for Russian market analysis"
-version: "1.0"
+description: "Evidence-based functionality tests"
+version: "2.0"
 
 cases:
-  - id: analyze-russian-market
-    name: "Analyze Russian market for idea"
+  - id: evidence-required
+    name: "Every claim has source URL"
     input:
-      idea: "AI team memory"
+      task: "generate_report"
     expected:
-      - json_output: true
-      - has_fields: ["market_size_usd", "regulations", "competitors"]
-      - market_size_range: [10000000, 500000000]
+      - contains: "Source:"
+      - contains: "http"
+      - has_fields: ["evidence"]
     timeout: 30
 
-  - id: check-regulations
-    name: "Check 152-FZ compliance"
+  - id: self-challenge
+    name: "Self-challenge section exists"
     input:
-      idea: "Healthcare AI"
+      task: "generate_report"
     expected:
-      - has_fields: ["regulations"]
-      - contains: "152-FZ"
+      - contains: "Self-Challenge"
+      - contains: "Q:"
+      - contains: "A:"
     timeout: 30
 
-  - id: find-local-competitors
-    name: "Find local competitors"
+  - id: html-output
+    name: "Generates HTML (not JSON) for humans"
     input:
-      idea: "AI assistant"
+      task: "generate_report"
     expected:
-      - has_fields: ["competitors"]
-      - competitors_count: ">=2"
+      - file_contains: "reports/html/russian-market-analysis"
+      - file_contains: "<!DOCTYPE html>"
     timeout: 30
 
-  - id: localization-requirements
-    name: "Identify localization needs"
+  - id: confidence-levels
+    name: "Confidence levels specified"
     input:
-      idea: "Team collaboration"
+      task: "generate_report"
     expected:
-      - has_fields: ["localization_requirements"]
-      - contains: "Russian"
+      - contains: "Confidence:"
+      - matches_regex: "High|Medium|Low"
+    timeout: 30
+
+  - id: calculation-method
+    name: "Calculations show method"
+    input:
+      task: "generate_report"
+    expected:
+      - contains: "Method:"
+      - contains: "Calculation"
     timeout: 30

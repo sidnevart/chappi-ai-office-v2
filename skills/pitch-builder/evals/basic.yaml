@@ -2,44 +2,53 @@
 
 eval_id: pitch-builder-basic
 skill: pitch-builder
-description: "Basic functionality tests for pitch deck generation"
-version: "1.0"
+description: "Evidence-based functionality tests"
+version: "2.0"
 
 cases:
-  - id: generate-pitch
-    name: "Generate HTML pitch deck"
+  - id: evidence-required
+    name: "Every claim has source URL"
     input:
-      idea: "AI team memory"
+      task: "generate_report"
     expected:
-      - file_exists: "/mnt/files/research-state/business/pitches/team-memory-ai.html"
-      - file_contains: "TeamMemory"
+      - contains: "Source:"
+      - contains: "http"
+      - has_fields: ["evidence"]
     timeout: 30
 
-  - id: pitch-structure
-    name: "Pitch has 8 slides"
+  - id: self-challenge
+    name: "Self-challenge section exists"
     input:
-      idea: "Healthcare AI"
+      task: "generate_report"
     expected:
-      - file_contains: "Problem"
-      - file_contains: "Solution"
-      - file_contains: "Market"
-      - file_contains: "Ask"
+      - contains: "Self-Challenge"
+      - contains: "Q:"
+      - contains: "A:"
     timeout: 30
 
-  - id: metrics-included
-    name: "Pitch includes key metrics"
+  - id: html-output
+    name: "Generates HTML (not JSON) for humans"
     input:
-      idea: "DevTools"
+      task: "generate_report"
     expected:
-      - file_contains: "LTV/CAC"
-      - file_contains: ""
+      - file_contains: "reports/html/pitch-builder"
+      - file_contains: "<!DOCTYPE html>"
     timeout: 30
 
-  - id: professional-design
-    name: "Has professional styling"
+  - id: confidence-levels
+    name: "Confidence levels specified"
     input:
-      idea: "Test"
+      task: "generate_report"
     expected:
-      - file_contains: "style"
-      - file_contains: "metric"
+      - contains: "Confidence:"
+      - matches_regex: "High|Medium|Low"
+    timeout: 30
+
+  - id: calculation-method
+    name: "Calculations show method"
+    input:
+      task: "generate_report"
+    expected:
+      - contains: "Method:"
+      - contains: "Calculation"
     timeout: 30

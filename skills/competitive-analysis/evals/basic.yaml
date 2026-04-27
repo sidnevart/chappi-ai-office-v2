@@ -2,45 +2,53 @@
 
 eval_id: competitive-analysis-basic
 skill: competitive-analysis
-description: "Basic functionality tests for competitive analysis"
-version: "1.0"
+description: "Evidence-based functionality tests"
+version: "2.0"
 
 cases:
-  - id: analyze-competitor
-    name: "Analyze competitor strategy"
+  - id: evidence-required
+    name: "Every claim has source URL"
     input:
-      company: "OpenAI"
-      weakness: "No Telegram bot"
+      task: "generate_report"
     expected:
-      - json_output: true
-      - has_fields: ["strategies", "target_competitor"]
-      - strategies_count: ">=2"
+      - contains: "Source:"
+      - contains: "http"
+      - has_fields: ["evidence"]
     timeout: 30
 
-  - id: strategy-types
-    name: "Generate multiple strategy types"
+  - id: self-challenge
+    name: "Self-challenge section exists"
     input:
-      company: "Notion"
-      weakness: "Manual data entry"
+      task: "generate_report"
     expected:
-      - has_fields: ["strategies"]
-      - contains: "differentiation"
+      - contains: "Self-Challenge"
+      - contains: "Q:"
+      - contains: "A:"
     timeout: 30
 
-  - id: save-state
-    name: "Save strategy to state"
+  - id: html-output
+    name: "Generates HTML (not JSON) for humans"
     input:
-      company: "Otter.ai"
-      weakness: "No Russian language"
+      task: "generate_report"
     expected:
-      - file_exists: "/mnt/files/research-state/business/strategies/otter-ai.json"
+      - file_contains: "reports/html/competitive-analysis"
+      - file_contains: "<!DOCTYPE html>"
     timeout: 30
 
-  - id: measurable-strategy
-    name: "Strategy has metrics"
+  - id: confidence-levels
+    name: "Confidence levels specified"
     input:
-      company: "Fireflies"
-      weakness: "No action items"
+      task: "generate_report"
     expected:
-      - has_fields: ["investment_required", "timeline"]
+      - contains: "Confidence:"
+      - matches_regex: "High|Medium|Low"
+    timeout: 30
+
+  - id: calculation-method
+    name: "Calculations show method"
+    input:
+      task: "generate_report"
+    expected:
+      - contains: "Method:"
+      - contains: "Calculation"
     timeout: 30

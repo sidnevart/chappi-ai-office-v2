@@ -2,44 +2,53 @@
 
 eval_id: job-scout-basic
 skill: job-scout
-description: "Basic functionality tests for job search"
-version: "1.0"
+description: "Evidence-based functionality tests"
+version: "2.0"
 
 cases:
-  - id: search-jobs
-    name: "Search for relevant jobs"
+  - id: evidence-required
+    name: "Every claim has source URL"
     input:
-      role: "AI Developer"
-      location: "London"
+      task: "generate_report"
     expected:
-      - json_output: true
-      - has_fields: ["jobs", "scan_date"]
-      - jobs_count: ">=1"
+      - contains: "Source:"
+      - contains: "http"
+      - has_fields: ["evidence"]
     timeout: 30
 
-  - id: filter-by-salary
-    name: "Filter by salary range"
+  - id: self-challenge
+    name: "Self-challenge section exists"
     input:
-      role: "Backend"
-      min_salary: 50000
+      task: "generate_report"
     expected:
-      - has_fields: ["jobs"]
-      - contains: "salary"
+      - contains: "Self-Challenge"
+      - contains: "Q:"
+      - contains: "A:"
     timeout: 30
 
-  - id: save-state
-    name: "Save jobs to state"
+  - id: html-output
+    name: "Generates HTML (not JSON) for humans"
     input:
-      role: "DevOps"
+      task: "generate_report"
     expected:
-      - file_exists: "/mnt/files/research-state/career/jobs.json"
+      - file_contains: "reports/html/job-scout"
+      - file_contains: "<!DOCTYPE html>"
     timeout: 30
 
-  - id: handle-no-results
-    name: "Handle no results"
+  - id: confidence-levels
+    name: "Confidence levels specified"
     input:
-      role: "xyznonexistent"
+      task: "generate_report"
     expected:
-      - has_fields: ["jobs"]
-      - jobs_count: "==0"
+      - contains: "Confidence:"
+      - matches_regex: "High|Medium|Low"
+    timeout: 30
+
+  - id: calculation-method
+    name: "Calculations show method"
+    input:
+      task: "generate_report"
+    expected:
+      - contains: "Method:"
+      - contains: "Calculation"
     timeout: 30

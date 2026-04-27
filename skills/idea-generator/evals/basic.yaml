@@ -2,45 +2,53 @@
 
 eval_id: idea-generator-basic
 skill: idea-generator
-description: "Basic functionality tests for idea generation"
-version: "1.0"
+description: "Evidence-based functionality tests"
+version: "2.0"
 
 cases:
-  - id: generate-from-trends
-    name: "Generate idea from trends"
+  - id: evidence-required
+    name: "Every claim has source URL"
     input:
-      trigger: "OpenAI weakness: no Telegram integration"
-      trend: "AI team collaboration"
+      task: "generate_report"
     expected:
-      - contains: "idea"
-      - json_output: true
-      - has_fields: ["name", "description", "score"]
-      - score_range: [0.0, 10.0]
+      - contains: "Source:"
+      - contains: "http"
+      - has_fields: ["evidence"]
     timeout: 30
 
-  - id: score-idea
-    name: "Score generated idea"
+  - id: self-challenge
+    name: "Self-challenge section exists"
     input:
-      trigger: "Healthcare AI"
+      task: "generate_report"
     expected:
-      - has_fields: ["score", "market_size", "feasibility"]
-      - score_range: [0.0, 10.0]
+      - contains: "Self-Challenge"
+      - contains: "Q:"
+      - contains: "A:"
     timeout: 30
 
-  - id: save-state
-    name: "Save to state file"
+  - id: html-output
+    name: "Generates HTML (not JSON) for humans"
     input:
-      trigger: "AI coding assistant"
+      task: "generate_report"
     expected:
-      - file_exists: "/mnt/files/research-state/business/ideas.json"
-      - file_contains: "analyzed_at"
+      - file_contains: "reports/html/idea-generator"
+      - file_contains: "<!DOCTYPE html>"
     timeout: 30
 
-  - id: require-differentiation
-    name: "Idea has differentiation"
+  - id: confidence-levels
+    name: "Confidence levels specified"
     input:
-      trigger: "AI meeting notes"
+      task: "generate_report"
     expected:
-      - has_fields: ["differentiation"]
-      - field_not_empty: "differentiation"
+      - contains: "Confidence:"
+      - matches_regex: "High|Medium|Low"
+    timeout: 30
+
+  - id: calculation-method
+    name: "Calculations show method"
+    input:
+      task: "generate_report"
+    expected:
+      - contains: "Method:"
+      - contains: "Calculation"
     timeout: 30

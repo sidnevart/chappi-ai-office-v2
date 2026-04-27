@@ -2,54 +2,53 @@
 
 eval_id: trend-monitor-basic
 skill: trend-monitor
-description: "Basic functionality tests for trend monitoring"
-version: "1.0"
+description: "Evidence-based functionality tests"
+version: "2.0"
 
 cases:
-  - id: detect-ai-trend
-    name: "Detect AI trend from web search"
+  - id: evidence-required
+    name: "Every claim has source URL"
     input:
-      query: "AI trends 2026"
+      task: "generate_report"
     expected:
-      - contains: "AI"
-      - json_output: true
-      - has_fields: ["trends", "scan_date"]
+      - contains: "Source:"
+      - contains: "http"
+      - has_fields: ["evidence"]
     timeout: 30
 
-  - id: structure-output
-    name: "Output has correct structure"
+  - id: self-challenge
+    name: "Self-challenge section exists"
     input:
-      query: "Physical AI"
+      task: "generate_report"
     expected:
-      - has_fields: ["trend", "description", "sources", "confidence"]
-      - sources_count: ">=2"
-      - confidence_range: [0.5, 1.0]
+      - contains: "Self-Challenge"
+      - contains: "Q:"
+      - contains: "A:"
     timeout: 30
 
-  - id: save-state
-    name: "Saves results to state file"
+  - id: html-output
+    name: "Generates HTML (not JSON) for humans"
     input:
-      query: "Bioengineering trends"
+      task: "generate_report"
     expected:
-      - file_exists: "/mnt/files/research-state/business/trends.json"
-      - file_contains: "scan_date"
+      - file_contains: "reports/html/trend-monitor"
+      - file_contains: "<!DOCTYPE html>"
     timeout: 30
 
-  - id: handle-empty
-    name: "Handles no results gracefully"
+  - id: confidence-levels
+    name: "Confidence levels specified"
     input:
-      query: "xyznonexistent12345"
+      task: "generate_report"
     expected:
-      - json_output: true
-      - has_fields: ["trends"]
-      - trends_count: "==0"
+      - contains: "Confidence:"
+      - matches_regex: "High|Medium|Low"
     timeout: 30
 
-  - id: confidence-scoring
-    name: "Assigns confidence scores"
+  - id: calculation-method
+    name: "Calculations show method"
     input:
-      query: "Quantum computing"
+      task: "generate_report"
     expected:
-      - has_fields: ["confidence"]
-      - confidence_range: [0.0, 1.0]
+      - contains: "Method:"
+      - contains: "Calculation"
     timeout: 30

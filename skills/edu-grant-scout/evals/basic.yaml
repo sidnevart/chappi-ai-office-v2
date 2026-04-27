@@ -2,43 +2,53 @@
 
 eval_id: edu-grant-scout-basic
 skill: edu-grant-scout
-description: "Basic functionality tests for grant search"
-version: "1.0"
+description: "Evidence-based functionality tests"
+version: "2.0"
 
 cases:
-  - id: search-grants
-    name: "Search for grants"
+  - id: evidence-required
+    name: "Every claim has source URL"
     input:
-      topic: "AI Research"
-      eligibility: "PhD"
+      task: "generate_report"
     expected:
-      - json_output: true
-      - has_fields: ["grants", "scan_date"]
-      - grants_count: ">=1"
+      - contains: "Source:"
+      - contains: "http"
+      - has_fields: ["evidence"]
     timeout: 30
 
-  - id: check-amounts
-    name: "Check grant amounts"
+  - id: self-challenge
+    name: "Self-challenge section exists"
     input:
-      topic: "Machine Learning"
+      task: "generate_report"
     expected:
-      - has_fields: ["grants"]
-      - contains: "amount"
+      - contains: "Self-Challenge"
+      - contains: "Q:"
+      - contains: "A:"
     timeout: 30
 
-  - id: save-state
-    name: "Save grants to state"
+  - id: html-output
+    name: "Generates HTML (not JSON) for humans"
     input:
-      topic: "Data Science"
+      task: "generate_report"
     expected:
-      - file_exists: "/mnt/files/research-state/edu/grants.json"
+      - file_contains: "reports/html/edu-grant-scout"
+      - file_contains: "<!DOCTYPE html>"
     timeout: 30
 
-  - id: filter-by-country
-    name: "Filter by country"
+  - id: confidence-levels
+    name: "Confidence levels specified"
     input:
-      topic: "AI"
-      country: "Russia"
+      task: "generate_report"
     expected:
-      - has_fields: ["grants"]
+      - contains: "Confidence:"
+      - matches_regex: "High|Medium|Low"
+    timeout: 30
+
+  - id: calculation-method
+    name: "Calculations show method"
+    input:
+      task: "generate_report"
+    expected:
+      - contains: "Method:"
+      - contains: "Calculation"
     timeout: 30

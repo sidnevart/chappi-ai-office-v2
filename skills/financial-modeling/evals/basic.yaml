@@ -2,48 +2,53 @@
 
 eval_id: financial-modeling-basic
 skill: financial-modeling
-description: "Basic functionality tests for financial modeling"
-version: "1.0"
+description: "Evidence-based functionality tests"
+version: "2.0"
 
 cases:
-  - id: build-projections
-    name: "Build 5-year projections"
+  - id: evidence-required
+    name: "Every claim has source URL"
     input:
-      idea: "AI team memory"
-      customers_year_1: 50
-      arpu: 100
+      task: "generate_report"
     expected:
-      - json_output: true
-      - has_fields: ["projections", "unit_economics"]
-      - projections_count: "==5"
+      - contains: "Source:"
+      - contains: "http"
+      - has_fields: ["evidence"]
     timeout: 30
 
-  - id: calculate-unit-economics
-    name: "Calculate unit economics"
+  - id: self-challenge
+    name: "Self-challenge section exists"
     input:
-      idea: "SaaS product"
-      cac: 200
-      ltv: 2000
+      task: "generate_report"
     expected:
-      - has_fields: ["unit_economics"]
-      - has_field: "ltv_cac_ratio"
-      - ltv_cac_ratio_range: [5.0, 20.0]
+      - contains: "Self-Challenge"
+      - contains: "Q:"
+      - contains: "A:"
     timeout: 30
 
-  - id: funding-requirements
-    name: "Estimate funding needs"
+  - id: html-output
+    name: "Generates HTML (not JSON) for humans"
     input:
-      idea: "AI platform"
-      team_size: 10
+      task: "generate_report"
     expected:
-      - has_fields: ["funding_requirements"]
-      - contains: "seed"
+      - file_contains: "reports/html/financial-modeling"
+      - file_contains: "<!DOCTYPE html>"
     timeout: 30
 
-  - id: save-state
-    name: "Save model to state"
+  - id: confidence-levels
+    name: "Confidence levels specified"
     input:
-      idea: "Test idea"
+      task: "generate_report"
     expected:
-      - file_exists: "/mnt/files/research-state/business/financial_models/test-idea.json"
+      - contains: "Confidence:"
+      - matches_regex: "High|Medium|Low"
+    timeout: 30
+
+  - id: calculation-method
+    name: "Calculations show method"
+    input:
+      task: "generate_report"
+    expected:
+      - contains: "Method:"
+      - contains: "Calculation"
     timeout: 30

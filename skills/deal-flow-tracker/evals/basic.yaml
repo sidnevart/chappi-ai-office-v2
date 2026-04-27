@@ -2,45 +2,53 @@
 
 eval_id: deal-flow-tracker-basic
 skill: deal-flow-tracker
-description: "Basic functionality tests for deal flow tracking"
-version: "1.0"
+description: "Evidence-based functionality tests"
+version: "2.0"
 
 cases:
-  - id: detect-deal
-    name: "Detect funding round"
+  - id: evidence-required
+    name: "Every claim has source URL"
     input:
-      sector: "AI"
-      days: 7
+      task: "generate_report"
     expected:
-      - contains: "Series"
-      - json_output: true
-      - has_fields: ["deals", "scan_date"]
+      - contains: "Source:"
+      - contains: "http"
+      - has_fields: ["evidence"]
     timeout: 30
 
-  - id: verify-structure
-    name: "Deal has required fields"
+  - id: self-challenge
+    name: "Self-challenge section exists"
     input:
-      sector: "Fintech"
+      task: "generate_report"
     expected:
-      - has_fields: ["company", "round", "amount", "lead_investor"]
-      - amount_format: "starts_with_$"
+      - contains: "Self-Challenge"
+      - contains: "Q:"
+      - contains: "A:"
     timeout: 30
 
-  - id: save-state
-    name: "Saves to state file"
+  - id: html-output
+    name: "Generates HTML (not JSON) for humans"
     input:
-      sector: "HealthTech"
+      task: "generate_report"
     expected:
-      - file_exists: "/mnt/files/research-state/business/deals.json"
-      - file_contains: "total_value"
+      - file_contains: "reports/html/deal-flow-tracker"
+      - file_contains: "<!DOCTYPE html>"
     timeout: 30
 
-  - id: handle-no-deals
-    name: "Handles no deals gracefully"
+  - id: confidence-levels
+    name: "Confidence levels specified"
     input:
-      sector: "xyznonexistent"
+      task: "generate_report"
     expected:
-      - json_output: true
-      - has_fields: ["deals"]
-      - deals_count: "==0"
+      - contains: "Confidence:"
+      - matches_regex: "High|Medium|Low"
+    timeout: 30
+
+  - id: calculation-method
+    name: "Calculations show method"
+    input:
+      task: "generate_report"
+    expected:
+      - contains: "Method:"
+      - contains: "Calculation"
     timeout: 30
