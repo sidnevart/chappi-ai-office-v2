@@ -1,0 +1,46 @@
+# Eval Cases for Deal Flow Tracker
+
+eval_id: deal-flow-tracker-basic
+skill: deal-flow-tracker
+description: "Basic functionality tests for deal flow tracking"
+version: "1.0"
+
+cases:
+  - id: detect-deal
+    name: "Detect funding round"
+    input:
+      sector: "AI"
+      days: 7
+    expected:
+      - contains: "Series"
+      - json_output: true
+      - has_fields: ["deals", "scan_date"]
+    timeout: 30
+
+  - id: verify-structure
+    name: "Deal has required fields"
+    input:
+      sector: "Fintech"
+    expected:
+      - has_fields: ["company", "round", "amount", "lead_investor"]
+      - amount_format: "starts_with_$"
+    timeout: 30
+
+  - id: save-state
+    name: "Saves to state file"
+    input:
+      sector: "HealthTech"
+    expected:
+      - file_exists: "/mnt/files/research-state/business/deals.json"
+      - file_contains: "total_value"
+    timeout: 30
+
+  - id: handle-no-deals
+    name: "Handles no deals gracefully"
+    input:
+      sector: "xyznonexistent"
+    expected:
+      - json_output: true
+      - has_fields: ["deals"]
+      - deals_count: "==0"
+    timeout: 30

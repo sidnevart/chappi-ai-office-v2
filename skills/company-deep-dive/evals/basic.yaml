@@ -1,0 +1,53 @@
+# Eval Cases for Company Deep Dive
+
+eval_id: company-deep-dive-basic
+skill: company-deep-dive
+description: "Basic functionality tests for company analysis"
+version: "1.0"
+
+cases:
+  - id: analyze-company
+    name: "Analyze known company"
+    input:
+      company: "OpenAI"
+    expected:
+      - contains: "OpenAI"
+      - json_output: true
+      - has_fields: ["company", "products", "weaknesses", "competitors"]
+    timeout: 30
+
+  - id: find-products
+    name: "Identifies products"
+    input:
+      company: "Notion"
+    expected:
+      - has_fields: ["products"]
+      - products_count: ">=2"
+    timeout: 30
+
+  - id: find-competitors
+    name: "Identifies competitors"
+    input:
+      company: "Otter.ai"
+    expected:
+      - has_fields: ["competitors"]
+      - competitors_count: ">=3"
+    timeout: 30
+
+  - id: save-state
+    name: "Saves to state file"
+    input:
+      company: "Anthropic"
+    expected:
+      - file_exists: "/mnt/files/research-state/business/companies/anthropic.json"
+    timeout: 30
+
+  - id: handle-unknown
+    name: "Handles unknown company"
+    input:
+      company: "xyznonexistent12345"
+    expected:
+      - json_output: true
+      - has_fields: ["company"]
+      - products_count: "==0"
+    timeout: 30

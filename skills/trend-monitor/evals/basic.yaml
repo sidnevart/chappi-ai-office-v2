@@ -1,0 +1,55 @@
+# Eval Cases for Trend Monitor
+
+eval_id: trend-monitor-basic
+skill: trend-monitor
+description: "Basic functionality tests for trend monitoring"
+version: "1.0"
+
+cases:
+  - id: detect-ai-trend
+    name: "Detect AI trend from web search"
+    input:
+      query: "AI trends 2026"
+    expected:
+      - contains: "AI"
+      - json_output: true
+      - has_fields: ["trends", "scan_date"]
+    timeout: 30
+
+  - id: structure-output
+    name: "Output has correct structure"
+    input:
+      query: "Physical AI"
+    expected:
+      - has_fields: ["trend", "description", "sources", "confidence"]
+      - sources_count: ">=2"
+      - confidence_range: [0.5, 1.0]
+    timeout: 30
+
+  - id: save-state
+    name: "Saves results to state file"
+    input:
+      query: "Bioengineering trends"
+    expected:
+      - file_exists: "/mnt/files/research-state/business/trends.json"
+      - file_contains: "scan_date"
+    timeout: 30
+
+  - id: handle-empty
+    name: "Handles no results gracefully"
+    input:
+      query: "xyznonexistent12345"
+    expected:
+      - json_output: true
+      - has_fields: ["trends"]
+      - trends_count: "==0"
+    timeout: 30
+
+  - id: confidence-scoring
+    name: "Assigns confidence scores"
+    input:
+      query: "Quantum computing"
+    expected:
+      - has_fields: ["confidence"]
+      - confidence_range: [0.0, 1.0]
+    timeout: 30

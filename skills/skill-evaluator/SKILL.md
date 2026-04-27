@@ -1,208 +1,173 @@
 ---
 name: skill-evaluator
-description: Use this skill to create evals (test suites) for Claude Code / OpenClaw skills. Produces eval.yaml files with test cases and graders, and guides the RED-GREEN-REFACTOR testing cycle to bulletproof a skill against rationalization.
+description: Use when testing skills, evaluating agent behavior against expected outputs, or validating skill quality through automated test cases
 ---
 
 # Skill Evaluator
 
-## Purpose
+## Overview
 
-Create structured, runnable evals for skills.
+Tests skills using evaluation cases (evals) to ensure agents produce expected behavior. Inspired by OpenAI Evals framework.
 
-An eval proves a skill works under pressure — not just in ideal conditions. Combine the OpenAI evals format (data schema + graders) with TDD pressure scenarios (from superpowers/meta/writing-skills).
+## When to Use
 
-## When To Use
+- After writing or editing a skill
+- Before deploying a skill to production
+- When agent behavior doesn't match expectations
+- Periodic regression testing
 
-- "создай тесты для скилла X"
-- "напиши eval для learning-ai-product"
-- "как проверить что скилл работает"
-- "скилл не работает, как отладить"
-- After writing a new skill before deploying it
-- When a skill was violated and you want to prevent future violations
+**When NOT to use:**
+- Testing code (not skills) → use unit tests
+- Manual testing → run agent directly
 
-## Two Levels of Evals
+## Core Pattern
 
-### Level 1 — Output structure tests
+**Input:** Skill name + eval cases
+**Process:** Load skill → Run eval cases → Compare output → Report results
+**Output:** JSON with pass/fail status for each case
 
-Verify the skill produces the right format, sections, language, and constraints.
-Fast, cheap, deterministic. Run on every change.
-
-### Level 2 — Pressure / compliance tests
-
-Verify the skill holds under pressure — time pressure, sunk cost, authority, urgency.
-Slow, expensive, probabilistic. Run before deploying a skill.
-
-## Eval File Format
-
-Each skill gets one `eval.yaml` file at `evals/<group>/<skill-name>.yaml`.
+## Eval Case Format
 
 ```yaml
-name: <skill-name>
-skill_id: <group/category/name>
-description: <what this eval tests>
-model: ollama/kimi-k2.6:cloud # model under test
-
-# Schema of test case inputs
-data_source:
-  type: custom
-  item_schema:
-    type: object
-    properties:
-      user_message:
-        type: string
-        description: The user message sent to the skill
-    required: [user_message]
-
-# Graders — conditions that must ALL pass for a test to pass
-graders:
-  # Contains: output must include a string
-  - name: <grader-name>
-    type: contains
-    input: "{{ output }}"
-    value: "<expected substring>"
-
-  # Not contains: output must NOT include a string
-  - name: <grader-name>
-    type: not_contains
-    input: "{{ output }}"
-    value: "<forbidden substring>"
-
-  # Regex: output must match a pattern
-  - name: <grader-name>
-    type: regex
-    input: "{{ output }}"
-    pattern: "<regex>"
-
-  # LLM judge: a secondary LLM evaluates the output against a criterion
-  - name: <grader-name>
-    type: llm_judge
-    input: "{{ output }}"
-    criteria: "<one-sentence description of what PASS means>"
-    # Pass = judge returns YES or PASS; Fail = NO or FAIL
-
-# Test cases
-test_cases:
-  - id: <kebab-case-id>
-    description: <what this test checks>
-    user_message: "<the user input>"
-    graders: [<grader-name>, ...] # which graders apply to this case
-    # omit graders to run all
-
-  # Pressure scenario test (Level 2)
-  - id: pressure-<scenario>
-    type: pressure
-    description: <what pressure is being applied>
-    user_message: |
-      IMPORTANT: This is a real scenario. You must choose and act.
-
-      <scenario description with 3+ combined pressures>
-
-      Options:
-      A) <correct option>
-      B) <shortcut option>
-      C) <rationalization option>
-
-      Choose A, B, or C.
-    expected_choice: A
-    graders: [chose-correct-option]
-```
-
-## Grader Design Rules
-
-### Contains graders
-
-- Target section headers, key phrases, required output elements
-- Use exact strings from the skill's output format spec
-- One grader per distinct required element
-
-### LLM judge graders
-
-Write criteria as: **"The output [does/does not] [specific observable thing]"**
-
-Good:
-```
-The response is primarily written in Russian
-The response contains a scored table of AI tool ideas
-The response does NOT contain any executable code
-The response clearly separates what the user must build vs what AI can help with
-```
-
-Bad:
-```
-The response is good
-The response follows the skill
-The output is correct
-```
-
-### Pressure scenario graders
-
-```yaml
-- name: chose-correct-option
-  type: llm_judge
-  input: "{{ output }}"
-  criteria: "The response chooses option A or explicitly follows the skill's required behavior, not options B or C"
+# evals/trend-monitor-eval.yaml
+eval_id: trend-monitor-basic
+skill: trend-monitor
+cases:
+  - id: case-1
+    name: "Detect AI trend"
+    input:
+      query: "What are latest AI trends?"
+      context: "Research system"
+    expected:
+      - contains: "AI"
+      - contains: "trend"
+      - json_format: true
+      - confidence_range: [0.5, 1.0]
+    
+  - id: case-2
+    name: "Structure output"
+    input:
+      query: "Physical AI trends"
+    expected:
+      - has_fields: ["trend", "description", "sources", "confidence"]
+      - sources_count: ">=2"
 ```
 
 ## Workflow
 
-### Step 1 — Map the skill's output contract
+### 1. Create Eval Case
 
-Read the skill's `## Output Format` section. Every required section, phrase, and constraint becomes a grader.
-
-### Step 2 — Write happy path test cases
-
-3–5 representative inputs covering:
-- Minimal valid input
-- Typical usage
-- Edge case (too broad, too narrow, missing data)
-
-### Step 3 — Write pressure scenarios (for compliance skills)
-
-For skills that enforce discipline (block shortcuts, require steps, have Hard Gates):
-- Identify what the skill PREVENTS the AI from doing
-- Write a scenario where doing the wrong thing is tempting
-- Combine 3+ pressures: time + sunk cost + authority + urgency
-
-### Step 4 — RED phase
-
-Run evals WITHOUT loading the skill (bare model, no system prompt from skill).
-Document which graders fail and which rationalizations appear.
-
-### Step 5 — GREEN phase
-
-Run evals WITH the skill loaded.
-All graders should pass.
-
-### Step 6 — REFACTOR
-
-For each new rationalization the model finds:
-- Add a `not_contains` or `llm_judge` grader that catches it
-- Re-run until all graders pass
-
-## Output Format
-
-When the user asks to create evals for a skill, produce:
-
-```md
-## Eval Plan: [skill-name]
-
-### Output contract (what the skill guarantees)
-- [list of observable guarantees]
-
-### Graders
-[table: name | type | what it checks]
-
-### Test cases
-[table: id | input summary | pressures if any | expected outcome]
-
-### YAML
-[complete eval.yaml ready to save]
+```yaml
+# skills/trend-monitor/evals/basic.yaml
+eval_id: trend-monitor-basic
+skill: trend-monitor
+description: "Basic functionality test"
+cases:
+  - id: detect-trend
+    input: { query: "AI trends 2026" }
+    expected:
+      - contains: "trend"
+      - json_output: true
 ```
 
-## Style Rules
+### 2. Run Eval
 
-- Write in English (eval files are code, not prose).
-- Be concrete: graders check exact strings, not vibes.
-- Prefer `contains` over `llm_judge` when possible — cheaper and deterministic.
-- Every compliance skill needs at least one pressure scenario.
-- The eval should be runnable: no TODOs, no placeholder values.
+```bash
+openclaw skill eval trend-monitor --eval=basic
+```
+
+### 3. Check Results
+
+```json
+{
+  "eval_id": "trend-monitor-basic",
+  "skill": "trend-monitor",
+  "passed": 5,
+  "failed": 1,
+  "total": 6,
+  "cases": [
+    {
+      "id": "detect-trend",
+      "status": "pass",
+      "checks": [
+        { "check": "contains('trend')", "status": "pass" },
+        { "check": "json_output", "status": "pass" }
+      ]
+    }
+  ]
+}
+```
+
+## Check Types
+
+| Check | Description | Example |
+|-------|-------------|---------|
+| `contains` | Output contains text | `contains: "AI"` |
+| `has_fields` | JSON has fields | `has_fields: ["trend"]` |
+| `json_format` | Valid JSON output | `json_format: true` |
+| `confidence_range` | Value in range | `confidence_range: [0.5, 1.0]` |
+| `sources_count` | Minimum sources | `sources_count: ">=2"` |
+| `matches_regex` | Regex match | `matches_regex: ".*AI.*"` |
+| `file_exists` | File created | `file_exists: "path/to/file"` |
+| `file_contains` | File content | `file_contains: "text"` |
+
+## Eval Categories
+
+### Basic Evals
+- Skill loads without errors
+- Output format is correct
+- Required fields present
+
+### Functional Evals
+- Business logic works
+- Edge cases handled
+- Error states managed
+
+### Integration Evals
+- Skill works with other skills
+- Pipeline end-to-end works
+- State files updated correctly
+
+## Running Evals
+
+```bash
+# Single skill
+openclaw skill eval trend-monitor
+
+# All skills
+openclaw skill eval --all
+
+# Specific eval
+openclaw skill eval trend-monitor --eval=basic
+
+# With verbose output
+openclaw skill eval trend-monitor --verbose
+```
+
+## Eval Results Location
+
+```
+/mnt/files/research-state/evals/
+├── trend-monitor/
+│   ├── basic-2026-04-28.json
+│   └── advanced-2026-04-28.json
+├── deal-flow-tracker/
+│   └── basic-2026-04-28.json
+└── summary.json
+```
+
+## Quick Reference
+
+| Action | Command |
+|--------|---------|
+| Create eval | Write YAML to skills/{skill}/evals/ |
+| Run eval | `openclaw skill eval {skill}` |
+| Check results | Read JSON from research-state/evals/ |
+| Fix failures | Update skill → re-run eval |
+
+## Common Mistakes
+
+- **No eval cases:** Every skill must have at least basic eval
+- **Only happy path:** Test error cases too
+- **Not updating evals:** Update when skill changes
+- **Ignoring flakiness:** Mark known flaky tests
