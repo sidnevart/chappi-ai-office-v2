@@ -1,138 +1,218 @@
+---
+name: html-to-pdf
+description: Use when generating professional PDF reports from HTML or markdown content, especially for business reports, pitch decks, and technical specifications with Cyrillic support
+---
+
 # HTML-to-PDF
 
-## Purpose
+## Overview
 
-Генерирует профессиональные PDF из HTML шаблонов. Используется для создания отчётов, pitch decks, business plans в формате PDF.
+Generates detailed, professional PDF documents from HTML content with full Unicode/Cyrillic support. Uses ReportLab for reliable rendering without browser dependencies.
 
 ## When to Use
 
-- Конвертация HTML отчётов в PDF
-- Создание pitch decks для инвесторов
-- Генерация business plan PDF
-- Формирование printable reports
+- Creating investor pitch decks
+- Generating business analysis reports
+- Exporting technical specifications
+- Creating printable research summaries
 
-## Dependencies
+**When NOT to use:**
+- Simple text export → use plain text
+- Spreadsheet data → use excel-builder
+- Web content → use html-builder
+
+## Requirements
 
 ```bash
-pip install playwright
-playwright install chromium
+pip install reportlab --break-system-packages
+# OR
+pip install reportlab
 ```
+
+## PDF Structure
+
+A complete business report PDF should be **10+ pages** with:
+
+1. **Cover page** — Title, subtitle, date, key metrics (3-5 metrics cards)
+2. **Executive Summary** — 1-2 paragraphs, key findings
+3. **Market Analysis** — Tables with data, charts placeholders
+4. **Competitive Landscape** — Competitor comparison table
+5. **Product/Strategy** — Detailed breakdown
+6. **Financial Model** — 5-year projections table
+7. **Go-to-Market** — Strategy, channels, timeline
+8. **Team & Ask** — Funding requirements
+9. **Appendix** — Sources, methodology
 
 ## Workflow
 
-1. **Получить HTML:**
-   - Загрузить HTML файл
-   - Или сгенерировать HTML из markdown
+### 1. Gather Content
 
-2. **Применить стили:**
-   - Добавить CSS для print media
-   - Настроить header/footer
-   - Добавить page breaks
-
-3. **Конвертировать:**
-   - Использовать playwright для рендеринга
-   - Установить формат A4/Letter
-   - Добавить margins
-   - Экспортировать в PDF
-
-4. **Опубликовать:**
-   - Сохранить PDF в state
-   - Загрузить в S3
-   - Вернуть URL
-
-## HTML Template Structure
-
-```html
-<!DOCTYPE html>
-<html>
-<head>
-  <style>
-    @page { size: A4; margin: 20mm; }
-    @page :first { margin-top: 0; }
-    body { font-family: 'Segoe UI', sans-serif; line-height: 1.6; }
-    h1 { page-break-before: always; }
-    h1:first-of-type { page-break-before: auto; }
-    table { page-break-inside: avoid; width: 100%; border-collapse: collapse; }
-    .no-break { page-break-inside: avoid; }
-    .cover { height: 100vh; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #667eea, #764ba2); color: white; }
-    .metric { display: inline-block; padding: 15px 25px; background: linear-gradient(135deg, #667eea, #764ba2); color: white; border-radius: 8px; margin: 5px; text-align: center; }
-    .metric-value { font-size: 28px; font-weight: bold; }
-    .section { margin: 30px 0; }
-    .highlight { background: #e8f5e9; padding: 15px; border-radius: 8px; }
-  </style>
-</head>
-<body>
-  <div class="cover">
-    <h1>TeamMemory AI</h1>
-    <p>AI-память команды</p>
-  </div>
-  
-  <div class="section">
-    <h2>Executive Summary</h2>
-    <div class="metric">
-      <span class="metric-value">$150M</span><br>Рынок СНГ
-    </div>
-    <div class="metric">
-      <span class="metric-value">10.8x</span><br>LTV/CAC
-    </div>
-  </div>
-  
-  <div class="section">
-    <h2>Market Analysis</h2>
-    <table border="1">
-      <tr><th>Сегмент</th><th>Размер</th><th>Рост</th></tr>
-      <tr><td>Knowledge Management</td><td>$26.4B</td><td>47% CAGR</td></tr>
-    </table>
-  </div>
-</body>
-</html>
+Read all research artifacts:
+```
+research-state/business/ideas/{project}.json
+research-state/business/companies/*.json
+research-state/business/strategies/{project}.json
+research-state/business/financial_models/{project}.json
 ```
 
-## Conversion Command
+### 2. Generate Rich HTML
+
+Create detailed HTML with:
+- All sections (8-10 slides/pages worth of content)
+- Tables, metrics, bullet points
+- Professional styling
+
+### 3. Convert to PDF
+
+Use ReportLab with Unicode fonts:
 
 ```python
-from playwright.sync_api import sync_playwright
+from reportlab.lib.pagesizes import A4
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib.units import mm
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, PageBreak
+from reportlab.lib.colors import HexColor, white, black
+from reportlab.lib.enums import TA_CENTER, TA_LEFT, TA_JUSTIFY
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
 
-with sync_playwright() as p:
-    browser = p.chromium.launch()
-    page = browser.new_page()
-    page.set_content(html_content)
-    page.pdf(
-        path="output.pdf",
-        format="A4",
-        margin={"top": "20mm", "right": "20mm", "bottom": "20mm", "left": "20mm"},
-        print_background=True,
-        display_header_footer=True,
-        header_template='<div style="font-size:9px; margin-left:20mm; width:100%;">TeamMemory AI | Confidential</div>',
-        footer_template='<div style="font-size:9px; margin-left:20mm; width:100%;"><span class="pageNumber"></span> / <span class="totalPages"></span></div>'
-    )
-    browser.close()
+# Register Cyrillic font
+pdfmetrics.registerFont(TTFont('DejaVuSans', '/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf'))
+pdfmetrics.registerFont(TTFont('DejaVuSans-Bold', '/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf'))
+
+# Create document
+doc = SimpleDocTemplate(
+    "output.pdf",
+    pagesize=A4,
+    rightMargin=20*mm, leftMargin=20*mm,
+    topMargin=20*mm, bottomMargin=20*mm
+)
+
+# Custom styles with Cyrillic support
+title_style = ParagraphStyle(
+    'CustomTitle',
+    fontName='DejaVuSans-Bold',
+    fontSize=32,
+    textColor=HexColor('#1a237e'),
+    spaceAfter=30,
+    alignment=TA_CENTER
+)
+
+heading_style = ParagraphStyle(
+    'CustomHeading',
+    fontName='DejaVuSans-Bold',
+    fontSize=18,
+    textColor=HexColor('#3949ab'),
+    spaceAfter=12,
+    spaceBefore=12
+)
+
+body_style = ParagraphStyle(
+    'CustomBody',
+    fontName='DejaVuSans',
+    fontSize=11,
+    leading=14,
+    spaceAfter=8,
+    alignment=TA_JUSTIFY
+)
 ```
 
-## Report Types
+### 4. Content Sections
 
-| Type | Template | CSS | Output |
-|------|----------|-----|--------|
-| Business Report | Professional | Minimal | A4 PDF |
-| Pitch Deck | Investor-grade | Gradient cover | A4 landscape |
-| Tech Spec | Engineering | Monospace code | A4 |
-| Financial Model | Spreadsheet-like | Tables | A4 |
+Each section should be substantial:
 
-## Best Practices
+**Cover (1 page):**
+- Large title
+- Subtitle
+- 3-5 metric cards in a table
+- Date, version
 
-- **Шрифты:** Использовать веб-безопасные (Segoe UI, Arial, Georgia)
-- **Цвета:** Не использовать слишком яркие (печать)
-- **Изображения:** Inline base64 или внешние URL
-- **Page breaks:** Использовать `page-break-before/after/inside`
-- **Header/Footer:** Добавлять номера страниц, дату, логотип
-- **Accessibility:** Добавлять alt text, семантические теги
+**Executive Summary (1-2 pages):**
+- 2-3 paragraphs of text
+- Key findings bullet list
+- Recommendation
 
-## Output Location
+**Market Analysis (2-3 pages):**
+- Market size table
+- Growth trends
+- Segment breakdown
+- TAM/SAM/SOM
 
+**Competition (1-2 pages):**
+- Competitor comparison table (4-6 competitors)
+- Feature matrix
+- Differentiation analysis
+
+**Financials (1-2 pages):**
+- 5-year projections table
+- Unit economics
+- Funding requirements
+
+**Strategy (1-2 pages):**
+- Go-to-market plan
+- Timeline with milestones
+- Risk analysis
+
+## Output Requirements
+
+- **Minimum pages:** 10
+- **Font:** Must support Cyrillic (DejaVu, Liberation, Noto)
+- **Tables:** All data in formatted tables
+- **Colors:** Professional palette (no bright colors)
+- **Page numbers:** Footer with page numbers
+- **Header:** Document title in header
+
+## Example
+
+```python
+story = []
+
+# Page 1: Cover
+story.append(Paragraph("TeamMemory AI", title_style))
+story.append(Paragraph("AI-память команды: ничего не теряется", subtitle_style))
+story.append(Spacer(1, 30))
+
+metrics = [
+    ['Метрика', 'Значение'],
+    ['Рынок СНГ', '$150M'],
+    ['LTV/CAC', '10.8x'],
+    ['Payback', '3 мес.'],
+    ['Seed', '$1M']
+]
+table = Table(metrics, colWidths=[80*mm, 80*mm])
+table.setStyle(TableStyle([
+    ('BACKGROUND', (0,0), (-1,0), HexColor('#667eea')),
+    ('TEXTCOLOR', (0,0), (-1,0), white),
+    ('FONTNAME', (0,0), (-1,0), 'DejaVuSans-Bold'),
+    ('ALIGN', (0,0), (-1,-1), 'CENTER'),
+    ('GRID', (0,0), (-1,-1), 1, HexColor('#ddd')),
+]))
+story.append(table)
+story.append(PageBreak())
+
+# Page 2-3: Executive Summary
+story.append(Paragraph("Executive Summary", heading_style))
+story.append(Paragraph("Detailed analysis here...", body_style))
+story.append(Spacer(1, 15))
+story.append(Paragraph("Key Findings:", heading_style))
+findings = [
+    "• Finding 1 with details...",
+    "• Finding 2 with details...",
+    "• Finding 3 with details..."
+]
+for f in findings:
+    story.append(Paragraph(f, body_style))
+
+# Continue for 10+ pages...
+
+doc.build(story)
 ```
-/mnt/files/research-state/reports/pdf/
-├── team-memory-ai-report.pdf
-├── team-memory-ai-pitch.pdf
-├── vertical-ai-healthcare-tech-spec.pdf
-└── ...
-```
+
+## Common Mistakes
+
+- **Missing Cyrillic:** Always register Unicode fonts
+- **Too short:** Minimum 10 pages for business report
+- **No tables:** All structured data in tables
+- **Missing sections:** Must have all 8 sections
+- **No page breaks:** Use PageBreak() between sections
+- **Wrong font:** Default Helvetica doesn't support Cyrillic
