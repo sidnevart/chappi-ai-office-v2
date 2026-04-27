@@ -1,75 +1,99 @@
 ---
 name: russian-market-analysis
-description: |
-  Analyze Russian market for products and ideas.
-  Use when: (1) User asks about Russian market, (2) Market entry planning,
-  (3) Localization strategy, (4) Competitive analysis in Russia.
-
-  Input: Product / Idea
-  Output: Market report with Russian specifics
-  Hashtags: #business #россия #рынок #локализация
+description: Use when analyzing market entry strategy for Russia or CIS, regulatory compliance, or localization requirements for tech products
 ---
 
-# RussianMarketAnalysis Skill
+# Russian Market Analysis
+
+## Overview
+
+Analyzes Russian/CIS market entry: size, regulations, competitors, localization. Structured for 152-FZ compliance.
+
+## When to Use
+
+- User mentions "Russia", "CIS", "Россия"
+- Pipeline: idea → market analysis → regulatory check
+- Compliance review for data residency
+
+**When NOT to use:**
+- Global market → use trend-monitor
+- Funding → use funding-scout
+- General strategy → use competitive-analysis
+
+## Core Pattern
+
+**Input:** Business idea JSON
+**Process:** Research market → Check regulations → Map competitors → Assess viability
+**Output:** JSON with market data, compliance checklist
 
 ## Workflow
 
-1. **Market research**: Russian market size, growth
-2. **Competition**: Local players, international presence
-3. **Regulations**: Legal requirements, compliance
-4. **Localization**: Cultural adaptation
-5. **Pricing**: Local pricing strategy
-6. **Distribution**: Channels, partners
+### 1. Market Size
 
-## Analysis Framework
+Research:
+- TAM/SAM/SOM
+- Growth rate
+- Key segments
 
-| Dimension | Analysis |
-|-----------|----------|
-| Market Size | TAM in Russia |
-| Growth | YoY growth rate |
-| Competition | Local vs international |
-| Regulations | Laws, restrictions |
-| Culture | Localization needs |
-| Pricing | Local pricing |
-| Channels | Distribution |
+### 2. Regulations
+
+```json
+{
+  "regulation": "152-FZ",
+  "requirement": "Data residency",
+  "compliance_method": "Yandex Cloud / Self-hosted",
+  "cost": "$...",
+  "timeline": "..."
+}
+```
+
+### 3. Competitors
+
+| Company | Strength | Weakness | Local Presence |
+|---------|----------|----------|----------------|
+| ... | ... | ... | ... |
+
+### 4. Localization
+
+- Language: Russian
+- Payments: Rubles, SBP
+- Support: Russian-speaking
+- Infrastructure: Yandex Cloud, Selectel
+
+### 5. Report
+
+```
+/mnt/files/research-state/business/russian_market/{idea-slug}.json
+```
 
 ## Output Format
 
 ```json
 {
-  "product": "AI Assistant",
-  "market": {
-    "size": "$500M TAM",
-    "growth": "25% YoY",
-    "key_players": ["Sber", "Yandex", "Tinkoff"]
-  },
-  "competition": {
-    "local": ["Sber Salut", "Yandex Alice"],
-    "international": ["OpenAI (limited)"],
-    "market_share": {
-      "Sber": "40%",
-      "Yandex": "35%"
-    }
-  },
-  "regulations": {
-    "data_localization": "Required",
-    "ai_ethics": "Draft law",
-    "content_moderation": "Strict"
-  },
-  "localization": {
-    "language": "Russian required",
-    "culture": "Formal tone preferred",
-    "payments": "SberPay, Mir"
-  },
-  "recommendations": [
-    "Partner with local bank",
-    "Ensure data localization",
-    "Adapt to formal tone"
-  ]
+  "idea": "...",
+  "market_size_usd": 0,
+  "growth_rate": "35%",
+  "regulations": [...],
+  "compliance_required": true,
+  "competitors": [...],
+  "localization_requirements": [...],
+  "entry_barriers": [...],
+  "recommended_approach": "..."
 }
 ```
 
-## Memory Storage
+## Quick Reference
 
-- entity_type: "market_analysis"
-- tags: "business,russia,{product}"
+| Topic | Search Query |
+|-------|-------------|
+| Market size | "{sector} market Russia 2026" |
+| Regulations | "152-FZ compliance {product}" |
+| Competitors | "{product} Russia alternatives" |
+| Infrastructure | "Yandex Cloud vs AWS Russia" |
+
+## Common Mistakes
+
+- **Ignoring sanctions:** Check current restrictions
+- **Wrong TAM:** Russia ≠ CIS (different markets)
+- **Missing payment methods:** SBP, Mir cards required
+- **No local support:** Russian-speaking support critical

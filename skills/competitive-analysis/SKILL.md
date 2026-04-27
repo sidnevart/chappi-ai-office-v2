@@ -1,70 +1,86 @@
 ---
 name: competitive-analysis
-description: |
-  Analyze competitors, positioning, and differentiation.
-  Use when: (1) User asks about competition, (2) Need market positioning,
-  (3) Building competitive strategy, (4) Preparing pitch.
-
-  Input: Company / Idea / Market
-  Output: Competitive landscape report
-  Hashtags: #business #конкуренты #анализ #рынок
+description: Use when building competitive strategy, analyzing differentiation, or creating go-to-market positioning against existing market players
 ---
 
-# CompetitiveAnalysis Skill
+# Competitive Analysis
+
+## Overview
+
+Produces competitive strategies: differentiation, pricing, partnerships. Analyzes how to win against specific competitors.
+
+## When to Use
+
+- Company analysis completed (input)
+- User asks "how to compete with X"
+- Go-to-market planning
+
+**When NOT to use:**
+- Market size → use trend-monitor
+- Product ideas → use idea-generator
+- Pricing alone → use financial-modeling
+
+## Core Pattern
+
+**Input:** Company analysis JSON
+**Process:** Identify gaps → Generate strategies → Score → Select best
+**Output:** JSON with strategies, recommendations
 
 ## Workflow
 
-1. **Market mapping**: Identify competitors
-2. **Feature comparison**: Product capabilities
-3. **Positioning analysis**: Market positioning
-4. **Differentiation**: Unique advantages
-5. **Strategy**: Recommendations
+### 1. Read Company Analysis
 
-## Analysis Framework
+```
+/mnt/files/research-state/business/companies/{company}.json
+```
 
-| Dimension | Analysis |
-|-----------|----------|
-| Features | What each competitor offers |
-| Pricing | Cost structure |
-| Target | Customer segments |
-| Strengths | What they do well |
-| Weaknesses | Gaps and vulnerabilities |
-| Market share | Position in market |
+### 2. Identify Gaps
 
-## Output Format
+For each weakness found:
+- Is it addressable?
+- What's the cost?
+- What's the impact?
+
+### 3. Generate Strategies
 
 ```json
 {
-  "market": "AI Coding Assistants",
-  "competitors": [
-    {
-      "name": "GitHub Copilot",
-      "strengths": ["Microsoft integration", "Large user base"],
-      "weaknesses": ["Limited languages", "Expensive"],
-      "market_share": "60%",
-      "pricing": "$10/mo"
-    },
-    {
-      "name": "Cursor",
-      "strengths": ["Fast", "Good UX"],
-      "weaknesses": ["New player", "Limited integrations"],
-      "market_share": "5%",
-      "pricing": "$20/mo"
-    }
-  ],
-  "positioning": {
-    "our_strength": "Better accuracy, cheaper",
-    "market_gap": "Enterprise features",
-    "strategy": "Focus on enterprise segment"
-  },
-  "recommendations": [
-    "Build enterprise security features",
-    "Partner with IDE vendors"
-  ]
+  "name": "...",
+  "description": "...",
+  "type": "differentiation|pricing|partnership|vertical",
+  "target_competitor": "...",
+  "investment_required": "$...",
+  "timeline": "...",
+  "expected_impact": "..."
 }
 ```
 
-## Memory Storage
+### 4. Report
 
-- entity_type: "competitive_analysis"
-- tags: "business,competition,{market}"
+```
+/mnt/files/research-state/business/strategies/{company}.json
+```
+
+## Strategy Types
+
+| Type | When to Use | Example |
+|------|-------------|---------|
+| Differentiation | Unique feature | Better UX, new capability |
+| Pricing | Cost advantage | Freemium, lower CAC |
+| Partnership | Ecosystem play | Integrations, channels |
+| Vertical | Niche focus | Industry-specific |
+
+## Quick Reference
+
+| Step | Method |
+|------|--------|
+| Read analysis | Read company JSON |
+| Find gaps | Weaknesses → opportunities |
+| Score strategy | Investment vs impact |
+
+## Common Mistakes
+
+- **Generic strategies:** Must be specific to competitor
+- **Ignoring resources:** Match strategy to available capital
+- **No timeline:** Always specify execution timeline
+- **Not measurable:** Define success metrics

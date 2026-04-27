@@ -1,96 +1,97 @@
 ---
-name: deal_flow_tracker
-description: |
-  Track funding deals, investments, and startup rounds. 
-  Use when: (1) Daily cron at 09:00 to find new deals, (2) User asks "what deals today", 
-  (3) Need to update knowledge base with deal flow data, (4) Generate business digest for Telegram.
-  
-  Agent: DealFlowTracker
-  Schedule: 0 9 * * * (daily 09:00 MSK)
-  Output: HTML digest + Telegram message + knowledge base update
-  Hashtags: #business #deals #инвестиции #AI #стартап
+name: deal-flow-tracker
+description: Use when tracking startup funding, acquisitions, or investment deals in the technology sector, or when building a deal pipeline for analysis
 ---
 
-# DealFlowTracker Skill
+# Deal Flow Tracker
+
+## Overview
+
+Tracks and records startup funding rounds, acquisitions, and major investment deals. Produces structured deal flow reports with company details, amounts, and investors.
+
+## When to Use
+
+- User asks about "recent investments", "who raised funding"
+- Weekly deal monitoring (scheduled agent)
+- Building pipeline for company analysis or competitive research
+
+**When NOT to use:**
+- Specific company financials → use company-deep-dive
+- Market trends → use trend-monitor
+- Investment thesis → use funding-scout
+
+## Core Pattern
+
+**Input:** None (web search) or specific sector
+**Process:** Search → Verify → Structure → Report
+**Output:** JSON with deals, amounts, investors
 
 ## Workflow
 
-1. **web_search**: Find recent funding rounds (seed, series A/B/C, mega rounds)
-2. **deep_research**: Analyze each deal (company, amount, investors, sector)
-3. **Store in memory**: Save to MEM0 with category "business_deals"
-4. **Generate digest**: HTML + Telegram format
-5. **Send to Telegram**: Via TELEGRAM_SEND_MESSAGE to @chappi_ai_office_digest
+### 1. Search
 
-## Search Queries
+```
+Query: "startup funding 2026" OR "Series A AI" OR "acquisition tech"
+Sources: Crunchbase, PitchBook, TechCrunch
+Time range: last 7-14 days
+```
 
-- "startup funding round {date} seed series A"
-- "venture capital investment {date}"
-- "Y Combinator batch companies funding"
-- "AI startup funding {date}"
-- "mega round billion funding {date}"
+### 2. Verify
+
+Cross-reference 2+ sources for each deal:
+- Company name
+- Round type (Seed, Series A, etc.)
+- Amount
+- Lead investor
+
+### 3. Structure
+
+```json
+{
+  "company": "...",
+  "round": "Series A",
+  "amount": "$10M",
+  "valuation": "$50M",
+  "lead_investor": "...",
+  "co_investors": [...],
+  "sector": "AI",
+  "date": "2026-04-28",
+  "source_url": "...",
+  "verified": true
+}
+```
+
+### 4. Report
+
+Save to state:
+```
+/mnt/files/research-state/business/deals.json
+```
 
 ## Output Format
 
 ```json
 {
-  "deals": [
-    {
-      "company": "CompanyName",
-      "amount": "$10M",
-      "round": "Series A",
-      "field": "AI/ML",
-      "location": "San Francisco",
-      "date": "2026-04-27",
-      "source": "TechCrunch",
-      "url": "https://..."
-    }
-  ],
-  "summary": {
-    "total_count": 5,
-    "total_amount": "$500M+",
-    "ai_percentage": 80
-  }
+  "scan_date": "2026-04-28",
+  "source": "DealFlowTracker",
+  "deals": [...],
+  "new_count": 0,
+  "total_count": 0,
+  "total_value": "$0M"
 }
 ```
 
-## Telegram Message Template
+## Quick Reference
 
-```
-🎯 [#AI_OFFICE_DIGEST] | #business #deals
+| Action | Method |
+|--------|--------|
+| Search deals | web_search "Series A AI 2026" |
+| Verify amount | Cross-check 2+ sources |
+| Categorize | By sector, round type, geography |
 
-📅 {date}
-🤖 Агент: DealFlowTracker
+## Common Mistakes
 
-━━━━━━━━━━━━━━━━━━━━━━
-
-📊 Обзор:
-• Сделок: {total_count}
-• Общая сумма: {total_amount}
-• AI-related: {ai_percentage}%
-
-🔥 Топ сделки:
-
-{deal_list}
-
-━━━━━━━━━━━━━━━━━━━━━━
-
-#business #deals #инвестиции #AI #стартап #openclaw
-```
-
-## Memory Storage
-
-Store each deal in MEM0:
-- user_id: "ai_office"
-- categories: ["business", "deals", "funding"]
-- metadata: {date, company, amount, sector}
-
-## Cron Configuration
-
-```json
-{
-  "name": "business_deal_flow_tracker",
-  "schedule": "0 9 * * *",
-  "timezone": "Europe/Moscow",
-  "agent": "DealFlowTracker"
-}
-```
+- **Reporting unverified deals:** Always 2+ sources
+- **Wrong amounts:** Be precise ("$5-10M" if unclear)
+- **Missing lead investor:** Always identify lead
+- **Not tracking pre-money:** Record valuation if available

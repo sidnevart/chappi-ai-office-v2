@@ -1,59 +1,89 @@
 ---
 name: company-deep-dive
-description: |
-  Deep analysis of companies: products, subsidiaries, weaknesses, opportunities.
-  Use when: (1) User asks "analyze CompanyX", (2) Need competitive intelligence,
-  (3) Preparing for investment or partnership, (4) Building competitive strategy.
-  
-  Agent: CompanyAnalyst
-  Trigger: User request or cron (top from DealFlow)
-  Output: JSON profile + HTML report + Telegram summary
-  Hashtags: #business #анализ #компания #конкуренты
+description: Use when analyzing a specific company, product portfolio, or competitive position in any industry, especially for investment or competitive strategy research
 ---
 
-# CompanyDeepDive Skill
+# Company Deep Dive
+
+## Overview
+
+Produces comprehensive analysis of companies: products, weaknesses, competitors, and market position. Structured for decision-making.
+
+## When to Use
+
+- User names a company for analysis
+- Competitive research pipeline
+- Due diligence preparation
+
+**When NOT to use:**
+- Market trends → use trend-monitor
+- Funding data → use deal-flow-tracker
+
+## Core Pattern
+
+**Input:** Company name
+**Process:** Search → Analyze → Compare → Report
+**Output:** JSON with products, weaknesses, competitors
 
 ## Workflow
 
-1. **web_search**: Find company info (website, Crunchbase, news)
-2. **browser_automation**: Scrape detailed data if needed
-3. **deep_research**: Analyze products, team, funding, market position
-4. **Store in memory**: Save to local-vector-db as "company"
-5. **Generate report**: JSON profile + HTML report
+### 1. Products
 
-## Analysis Framework
-
-| Area | What to analyze |
-|------|----------------|
-| Products | Main products, features, pricing |
-| Team | Founders, key hires, culture |
-| Funding | Investors, rounds, valuation |
-| Market | TAM, SAM, SOM, growth |
-| Weaknesses | Gaps, vulnerabilities |
-| Opportunities | Expansion, partnerships |
-
-## Output Format
-
+Identify all products/services:
 ```json
 {
-  "company": "CompanyX",
-  "profile": {
-    "founded": "2022",
-    "location": "San Francisco",
-    "employees": "50-200",
-    "funding": "$50M Series B",
-    "valuation": "$200M"
-  },
-  "products": [
-    {"name": "Product A", "category": "SaaS", "pricing": "$99/mo"}
-  ],
-  "competitors": ["Competitor1", "Competitor2"],
-  "weaknesses": ["Limited market", "High churn"],
-  "opportunities": ["Enterprise segment", "International"]
+  "name": "...",
+  "category": "...",
+  "description": "...",
+  "market_share": "..."
 }
 ```
 
-## Memory Storage
+### 2. Weaknesses
 
-- entity_type: "company"
-- tags: "business,companies,deep-dive"
+Find gaps vs competitors:
+- Missing features
+- Geographic limitations
+- Pricing issues
+- Technical debt
+
+### 3. Competitors
+
+Map competitive landscape:
+| Company | Overlap | Differentiation |
+|---------|---------|-----------------|
+| ... | ... | ... |
+
+### 4. Report
+
+```json
+{
+  "company": "...",
+  "products": [...],
+  "weaknesses": [...],
+  "competitors": [...],
+  "market_position": "...",
+  "analyzed_at": "2026-04-28"
+}
+```
+
+## Output Location
+
+```
+/mnt/files/research-state/business/companies/{company-slug}.json
+```
+
+## Quick Reference
+
+| Step | Method |
+|------|--------|
+| Find products | web_search "{company} products" |
+| Find weaknesses | web_search "{company} vs {competitor}" |
+| Find competitors | web_search "alternatives to {company}" |
+
+## Common Mistakes
+
+- **Missing products:** Check company's website, Crunchbase, G2
+- **Ignoring geography:** Note regional limitations
+- **Old data:** Check publication dates
+- **No competitors:** Always identify at least 3

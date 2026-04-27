@@ -1,68 +1,89 @@
 ---
 name: idea-generator
-description: |
-  Generate and validate business ideas based on trends and problems.
-  Use when: (1) User asks for ideas, (2) Need innovation,
-  (3) Brainstorming session, (4) Startup ideation.
-
-  Input: Problem / Trend / Market gap
-  Output: List of ideas with validation scores
-  Hashtags: #business #идеи #стартап #инновации
+description: Use when generating business ideas from trends, competitive weaknesses, or market gaps, especially for startup ideation or innovation research
 ---
 
-# IdeaGenerator Skill
+# Idea Generator
+
+## Overview
+
+Generates business ideas by analyzing market trends and competitive weaknesses. Scores ideas by market size, feasibility, and differentiation.
+
+## When to Use
+
+- User asks for "business ideas" or "startup ideas"
+- Pipeline trigger: trends + weaknesses → ideas
+- Innovation workshops
+
+**When NOT to use:**
+- Market analysis → use trend-monitor
+- Competitive strategy → use competitive-analysis
+- Financial modeling → use financial-modeling
+
+## Core Pattern
+
+**Input:** Trends + Company weaknesses
+**Process:** Analyze gaps → Generate ideas → Score → Rank
+**Output:** JSON with scored ideas
 
 ## Workflow
 
-1. **Trend analysis**: Identify emerging trends
-2. **Problem identification**: Find pain points
-3. **Idea generation**: Brainstorm solutions
-4. **Validation**: Score each idea
-5. **Deep dive**: Top ideas analysis
+### 1. Analyze Gaps
 
-## Validation Criteria
+Read from state:
+```
+/mnt/files/research-state/business/trends.json
+/mnt/files/research-state/business/companies/*.json
+```
 
-| Criteria | Weight | Description |
-|----------|--------|-------------|
-| Market size | 25% | TAM/SAM/SOM |
-| Feasibility | 20% | Technical complexity |
-| Competition | 15% | Market saturation |
-| Differentiation | 20% | Unique value |
-| Timing | 10% | Market readiness |
-| Team fit | 10% | Skills alignment |
+### 2. Generate Ideas
 
-## Output Format
+For each trend + weakness pair:
+- What product solves this?
+- Who pays for it?
+- What's the unique angle?
+
+### 3. Score
 
 ```json
 {
-  "trend": "Physical AI",
-  "ideas": [
-    {
-      "name": "Robotic warehouse assistant",
-      "description": "AI-powered robot for warehouse automation",
-      "score": 85,
-      "breakdown": {
-        "market_size": 90,
-        "feasibility": 80,
-        "competition": 70,
-        "differentiation": 85,
-        "timing": 90,
-        "team_fit": 80
-      },
-      "market": "$50B TAM",
-      "competitors": ["Locus Robotics", "6 River Systems"],
-      "differentiation": "Cheaper, more flexible",
-      "next_steps": [
-        "Validate with 3 warehouses",
-        "Build MVP in 3 months"
-      ]
-    }
-  ],
-  "recommendation": "Top idea: [name] with score [score]"
+  "name": "...",
+  "description": "...",
+  "score": 0.0,
+  "market_size": "...",
+  "feasibility": "high|medium|low",
+  "differentiation": "...",
+  "status": "new|analyzed"
 }
 ```
 
-## Memory Storage
+### 4. Report
 
-- entity_type: "idea"
-- tags: "business,ideas,{trend}"
+Save to:
+```
+/mnt/files/research-state/business/ideas.json
+```
+
+## Scoring Criteria
+
+| Factor | Weight | How to Measure |
+|--------|--------|----------------|
+| Market size | 30% | $B, growth rate |
+| Feasibility | 25% | Technical complexity |
+| Differentiation | 25% | Unique angle |
+| Timing | 20% | Trend alignment |
+
+## Quick Reference
+
+| Action | Method |
+|--------|--------|
+| Read trends | Read JSON from research-state |
+| Score idea | Market + feasibility + differentiation |
+| Save | Write to ideas.json |
+
+## Common Mistakes
+
+- **Copycat ideas:** Require differentiation
+- **Ignoring timing:** Check trend maturity
+- **Vague descriptions:** Must be specific enough to build MVP
+- **Not saving sources:** Link to trend/weakness that triggered idea

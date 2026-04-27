@@ -1,72 +1,107 @@
 ---
 name: financial-modeling
-description: |
-  Build financial models: unit economics, projections, Excel files.
-  Use when: (1) User asks for financial model, (2) Pitch deck needs numbers,
-  (3) Business planning, (4) Investor requests.
-
-  Input: Business data + Assumptions
-  Output: Financial model (Excel) + Projections
-  Hashtags: #business #финансы #модель #excel #unit-economics
+description: Use when building financial projections, unit economics, or valuation models for startups and business ideas
 ---
 
-# FinancialModeling Skill
+# Financial Modeling
+
+## Overview
+
+Builds 5-year financial projections, unit economics, and valuation models. Structured for investor presentations.
+
+## When to Use
+
+- User asks for "financial model" or "projections"
+- Pipeline: idea → funding → financial model
+- Preparing for fundraising
+
+**When NOT to use:**
+- Market analysis → use trend-monitor
+- Funding search → use funding-scout
+- Pitch deck → use pitch-builder
+
+## Core Pattern
+
+**Input:** Business idea JSON
+**Process:** Define assumptions → Build model → Calculate metrics → Report
+**Output:** JSON with 5-year projections, unit economics
 
 ## Workflow
 
-1. **Data collection**: Revenue, costs, metrics
-2. **Assumptions**: Growth rates, margins
-3. **Model building**: Revenue model, cost structure
-4. **Projections**: 3-5 year forecast
-5. **Unit economics**: CAC, LTV, payback
-6. **Output**: Excel file + summary
+### 1. Assumptions
 
-## Model Components
+```json
+{
+  "customers_year_1": 50,
+  "arpu_monthly": 100,
+  "cac": 200,
+  "churn_monthly": 0.05,
+  "gross_margin": 0.8,
+  "team_size_year_1": 5,
+  "avg_salary": 80000
+}
+```
 
-| Sheet | Content |
-|-------|---------|
-| Assumptions | Key inputs and drivers |
-| Revenue | Revenue streams, pricing |
-| Costs | COGS, OpEx, team |
-| P&L | Profit & Loss statement |
-| Cash Flow | Operating, investing, financing |
-| Unit Economics | CAC, LTV, churn |
+### 2. Revenue Model
+
+Year 1: Customers × ARPU × 12
+Year 2+: Growth rate applied
+
+### 3. Unit Economics
+
+- LTV = ARPU × Gross Margin / Churn
+- LTV/CAC ratio
+- Payback period
+
+### 4. Projections Table
+
+| Year | Revenue | Customers | EBITDA | Team |
+|------|---------|-----------|--------|------|
+| 1 | $86K | 50 | -30% | 5 |
+| 2 | $432K | 200 | 10% | 10 |
+| 3 | $1.9M | 800 | 25% | 20 |
+| 4 | $5.2M | 2500 | 35% | 40 |
+| 5 | $10.4M | 6000 | 40% | 60 |
+
+### 5. Report
+
+```
+/mnt/files/research-state/business/financial_models/{idea-slug}.json
+```
 
 ## Output Format
 
 ```json
 {
-  "model": {
-    "assumptions": {
-      "growth_rate": "20% MoM",
-      "churn_rate": "5%",
-      "arpu": "$100"
-    },
-    "projections": {
-      "year_1": {
-        "revenue": "$1.2M",
-        "costs": "$800K",
-        "ebitda": "$400K"
-      },
-      "year_3": {
-        "revenue": "$10M",
-        "costs": "$6M",
-        "ebitda": "$4M"
-      }
-    },
-    "unit_economics": {
-      "cac": "$500",
-      "ltv": "$2,000",
-      "ltv_cac_ratio": "4:1",
-      "payback_period": "6 months"
-    }
+  "idea": "...",
+  "assumptions": {...},
+  "projections": [...],
+  "unit_economics": {
+    "ltv": 2160,
+    "cac": 200,
+    "ltv_cac_ratio": 10.8,
+    "payback_months": 3
   },
-  "excel_file": "/path/to/model.xlsx",
-  "summary": "Profitable by month 18"
+  "funding_requirements": {
+    "pre_seed": "$100K",
+    "seed": "$1M",
+    "series_a": "$5M"
+  }
 }
 ```
 
-## Memory Storage
+## Quick Reference
 
-- entity_type: "financial_model"
-- tags: "business,finance,{company}"
+| Metric | Formula |
+|--------|---------|
+| LTV | ARPU × Gross Margin / Monthly Churn |
+| CAC | Marketing + Sales / New Customers |
+| Burn Rate | Monthly expenses |
+| Runway | Cash / Burn Rate |
+
+## Common Mistakes
+
+- **Overly optimistic growth:** Base on comparable companies
+- **Ignoring churn:** Critical for SaaS
+- **Wrong market size:** TAM ≠ addressable market
+- **No sensitivity analysis:** Test best/worst case

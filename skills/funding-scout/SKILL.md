@@ -1,71 +1,102 @@
 ---
 name: funding-scout
-description: |
-  Search for funding: VCs, angels, accelerators, grants.
-  Use when: (1) User asks for investors, (2) Raising round,
-  (3) Need investor list, (4) Fundraising strategy.
-
-  Input: Stage + Sector + Amount
-  Output: Investor list + contacts + strategy
-  Hashtags: #business #инвестиции #фонд #фандинг
+description: Use when searching for investors, accelerators, or grants for a specific startup idea or sector, especially for pre-seed to Series A stages
 ---
 
-# FundingScout Skill
+# Funding Scout
+
+## Overview
+
+Finds investors, accelerators, and grants for startup ideas. Structured by stage, sector, and geography.
+
+## When to Use
+
+- User asks "who can fund this"
+- Pipeline: idea → funding search → financial model
+- Preparing for fundraising
+
+**When NOT to use:**
+- Market analysis → use trend-monitor
+- Financial modeling → use financial-modeling
+- Pitch creation → use pitch-builder
+
+## Core Pattern
+
+**Input:** Business idea JSON
+**Process:** Search investors → Filter by fit → Structure → Report
+**Output:** JSON with investors, accelerators, grants
 
 ## Workflow
 
-1. **Profile analysis**: Stage, sector, amount
-2. **Investor mapping**: VCs, angels, accelerators
-3. **Fit analysis**: Match with investor thesis
-4. **Contact info**: Partners, associates
-5. **Outreach strategy**: Warm intros, cold emails
+### 1. Search Investors
 
-## Investor Types
+By stage:
+- Pre-seed: Angels, friends & family
+- Seed: Micro-VCs, angels
+- Series A: VC firms
+- Growth: Late-stage VC, PE
 
-| Type | Stage | Check Size |
-|------|-------|------------|
-| Angels | Pre-seed | $10K-$100K |
-| Seed VCs | Seed | $100K-$2M |
-| Series A | Series A | $2M-$15M |
-| Growth | Series B+ | $15M+ |
-| Corporate | Any | Strategic |
+### 2. Filter by Fit
+
+```json
+{
+  "investor": "...",
+  "type": "VC|Angel|Accelerator|Grant",
+  "stage": "Pre-seed|Seed|Series A",
+  "sectors": [...],
+  "check_size": "$...",
+  "geography": "...",
+  "relevance_score": 0.0-1.0,
+  "contact_info": "..."
+}
+```
+
+### 3. Accelerators
+
+| Accelerator | Focus | Application Deadline |
+|-------------|-------|---------------------|
+| Y Combinator | General | Rolling |
+| Techstars | Vertical | Quarterly |
+| 500 Startups | General | Rolling |
+
+### 4. Grants
+
+- SBIR/STTR (US)
+- Horizon Europe (EU)
+- Сколково (Russia)
+
+### 5. Report
+
+```
+/mnt/files/research-state/business/funding/{idea-slug}.json
+```
 
 ## Output Format
 
 ```json
 {
-  "profile": {
-    "stage": "Seed",
-    "sector": "AI Infrastructure",
-    "amount": "$2M",
-    "traction": "$50K MRR"
-  },
-  "investors": [
-    {
-      "name": "a16z",
-      "type": "VC",
-      "focus": ["AI", "Infrastructure"],
-      "check_size": "$1M-$5M",
-      "partner": "John Smith",
-      "contact": "john@a16z.com",
-      "fit_score": 95,
-      "recent_deals": ["CompanyX", "CompanyY"]
-    }
-  ],
-  "strategy": {
-    "warm_intros": ["Via portfolio founder"],
-    "pitch_focus": "Infrastructure scalability",
-    "timeline": "Reach out in 2 weeks"
-  },
-  "materials": [
-    "One-pager",
-    "Pitch deck",
-    "Financial model"
-  ]
+  "idea": "...",
+  "recommended_stage": "Seed",
+  "recommended_amount": "$1M",
+  "investors": [...],
+  "accelerators": [...],
+  "grants": [...],
+  "total_opportunities": 0
 }
 ```
 
-## Memory Storage
+## Quick Reference
 
-- entity_type: "investor"
-- tags: "business,funding,{stage},{sector}"
+| Stage | Search Query |
+|-------|-------------|
+| Seed | "seed investors AI 2026" |
+| Series A | "Series A VC {sector}" |
+| Grants | "SBIR {sector}" OR "Horizon Europe {topic}" |
+| Angels | "angel investors {location}" |
+
+## Common Mistakes
+
+- **Wrong stage:** Don't approach Series A VC for pre-seed
+- **Ignoring geography:** Check investor's region focus
+- **Missing warm intros:** Note mutual connections
+- **No follow-up strategy:** Include recommended next steps

@@ -1,73 +1,122 @@
 ---
 name: tech-spec-writer
-description: |
-  Write technical specifications for developers.
-  Use when: (1) User asks for tech spec, (2) Product team needs docs,
-  (3) Outsourcing development, (4) Internal planning.
-
-  Input: Product vision + Requirements
-  Output: Technical specification (Markdown/HTML)
-  Hashtags: #business #техническое_задание #тз #specification
+description: Use when writing technical specifications, architecture documents, or system design docs for software products and features
 ---
 
-# TechSpecWriter Skill
+# Tech Spec Writer
+
+## Overview
+
+Generates comprehensive technical specifications from business requirements. Includes architecture, API design, data models, and security.
+
+## When to Use
+
+- User asks for "technical specification" or "system design"
+- Pipeline: idea → pitch → tech spec
+- Planning MVP or feature development
+
+**When NOT to use:**
+- Business analysis → use idea-generator
+- Pitch deck → use pitch-builder
+- Code implementation → use coding-agent
+
+## Core Pattern
+
+**Input:** Business idea + requirements
+**Process:** Design architecture → Define API → Model data → Plan security → Write spec
+**Output:** Markdown spec document + S3 URL
 
 ## Workflow
 
-1. **Product analysis**: Features, user stories
-2. **Architecture**: System design
-3. **API design**: Endpoints, schemas
-4. **Database**: Schema, models
-5. **Frontend**: Components, flows
-6. **Backend**: Services, logic
-7. **Output**: Markdown/HTML spec
+### 1. Requirements
 
-## Spec Structure
+Read from state:
+```
+research-state/business/ideas/{idea}.json
+research-state/business/pitches/{idea}.json
+```
 
-| Section | Content |
-|---------|---------|
-| Overview | Project description |
-| Goals | Objectives |
-| Architecture | System diagram |
-| API | Endpoints, requests, responses |
-| Database | Schema, migrations |
-| Frontend | Components, state |
-| Backend | Services, business logic |
-| Testing | Test plan |
-| Deployment | CI/CD, infrastructure |
-| Timeline | Milestones |
+### 2. Architecture
 
-## Output Format
+```
+[User] → [Telegram Bot] → [API Gateway] → [Services] → [DB]
+                                    ↓
+                              [Vector DB]
+                                    ↓
+                              [LLM/Ollama]
+```
 
-```json
+### 3. API Design
+
+```http
+POST /api/v1/ingest/message
+Authorization: Bearer {token}
+Content-Type: application/json
+
 {
-  "project": "AI Assistant Platform",
-  "spec": {
-    "overview": "Platform for AI assistants",
-    "architecture": "Microservices",
-    "tech_stack": ["Python", "FastAPI", "PostgreSQL", "React"],
-    "api": {
-      "endpoints": [
-        {
-          "path": "/api/v1/assistants",
-          "method": "GET",
-          "description": "List assistants"
-        }
-      ]
-    },
-    "database": {
-      "tables": ["users", "assistants", "conversations"]
-    },
-    "timeline": [
-      {"week": 1, "task": "Setup infrastructure"},
-      {"week": 2, "task": "Build API"}
-    ]
-  },
-  "file": "/path/to/tech-spec.md"
+  "source": "telegram",
+  "text": "...",
+  "timestamp": "2026-04-28T00:00:00Z"
 }
 ```
 
-## Memory Storage
+### 4. Data Models
 
-- entity_type: "tech_spec"
-- tags: "business,tech-specs,{project}"
+```json
+{
+  "Message": {
+    "id": "uuid",
+    "source": "telegram|meet|file",
+    "content": "text",
+    "embedding": [0.1, 0.2, ...],
+    "metadata": {
+      "sender": "string",
+      "timestamp": "datetime"
+    }
+  }
+}
+```
+
+### 5. Security
+
+- Auth: JWT + OAuth2
+- Data: AES-256 at rest
+- Transport: TLS 1.3
+- Compliance: 152-FZ (Russia)
+
+### 6. Write Spec
+
+```
+/mnt/files/research-state/tech-specs/{idea}.md
+```
+
+## Spec Sections
+
+| Section | Content |
+|---------|---------|
+| Overview | 1-paragraph summary |
+| Architecture | Diagram + description |
+| Data Flow | Step-by-step |
+| API Design | Endpoints, request/response |
+| Data Models | JSON schemas |
+| Tech Stack | Component → Technology |
+| Security | Threat model + mitigations |
+| Scalability | Performance targets |
+| Deployment | Docker/Kubernetes config |
+| MVP Scope | Phase 1-3 features |
+
+## Quick Reference
+
+| Action | Method |
+|--------|--------|
+| Read requirements | Read idea JSON |
+| Design API | RESTful, versioned |
+| Model data | Normalize, add indexes |
+| Plan security | Threat modeling |
+
+## Common Mistakes
+
+- **Over-engineering:** MVP first, scale later
+- **Missing auth:** Always plan authentication
+- **No rate limits:** Essential for public APIs
+- **Ignoring compliance:** Check regional requirements
