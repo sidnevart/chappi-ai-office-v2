@@ -1,105 +1,127 @@
 ---
 name: deal-flow-tracker
-description: Use when tracking startup funding and investment deals
+description: Use when tracking startup funding and investment deals with verified data
 ---
 
-# Deal Flow Tracker
+# Deal Flow Tracker (Evidence-Based)
 
 ## Overview
 
-Tracks startup funding rounds and produces **HTML report** + **JSON** for pipeline.
+Tracks startup funding and produces **HTML evidence document** with:
+- Verified deal data from multiple sources
+- Cross-referenced amounts
+- Investor attribution
+- Sector analysis
+- Market impact assessment
 
 ## Output Formats
 
-1. **JSON** (`/mnt/files/research-state/business/deals.json`) — for pipeline
-2. **HTML** (`/mnt/files/research-state/reports/html/deals-*.html`) — human-readable
-3. **S3 URL** — public access
-4. **Telegram** — notification with link
+1. **HTML Report** (`/mnt/files/research-state/reports/html/deals-*.html`) — PRIMARY
+2. **S3 URL** — public access
+3. **Telegram** — notification with link
 
-## What This Skill Does NOT Produce
+## Evidence Requirements
 
-- ❌ Excel (no financial modeling)
-- ❌ Google Sheets (no calculations)
-- ❌ PDF (HTML is sufficient)
+Every deal MUST have:
+- **2+ independent sources** (Crunchbase + TechCrunch + company blog)
+- **Amount verification** (not just "reported")
+- **Investor attribution** (lead + co-investors)
+- **Sector classification**
+- **Date confirmation**
+
+## HTML Structure
+
+```html
+<h1>💰 Deal Flow Report</h1>
+
+<div class="summary">
+  <h2>📊 Summary</h2>
+  <p><strong>Period:</strong> [Date] | <strong>Deals found:</strong> 5 | <strong>Total value:</strong> $150M</p>
+</div>
+
+<div class="deal">
+  <h2>🏢 Deal: Company Name</h2>
+  
+  <div class="verification">
+    <h3>✅ Verification</h3>
+    <p><strong>Amount claimed:</strong> $50M Series B</p>
+    <p><strong>Sources:</strong></p>
+    <ul>
+      <li>Crunchbase: $50M (Source: <a href="...">Link</a>)</li>
+      <li>TechCrunch: $50M (Source: <a href="...">Link</a>)</li>
+      <li>Company blog: "$50M Series B" (Source: <a href="...">Link</a>)</li>
+    </ul>
+    <p><strong>Confidence:</strong> High (3 sources agree)</p>
+  </div>
+  
+  <div class="investors">
+    <h3>💼 Investors</h3>
+    <p><strong>Lead:</strong> Andreessen Horowitz (Source: <a href="...">TechCrunch</a>)</p>
+    <p><strong>Co-investors:</strong> Sequoia, Greylock (Source: <a href="...">Crunchbase</a>)</p>
+  </div>
+  
+  <div class="impact">
+    <h3>📈 Market Impact</h3>
+    <p><strong>Sector:</strong> AI Infrastructure</p>
+    <p><strong>Implications:</strong> Validates market demand for...</p>
+    <p><strong>Evidence:</strong> Similar deals in Q1 2026...</p>
+  </div>
+</div>
+```
 
 ## Workflow
 
-### Step 1: Search Deals
+### Step 1: Multi-Source Search
 
-Search for recent funding rounds, acquisitions.
+Search:
+- Crunchbase (primary)
+- TechCrunch
+- PitchBook (if available)
+- Company press releases
+- Investor announcements
 
-### Step 2: Save JSON
+### Step 2: Cross-Verification
 
-```json
-{
-  "scan_date": "2026-04-28",
-  "deals": [
-    {
-      "company": "...",
-      "round": "Series A",
-      "amount": "$10M",
-      "lead_investor": "..."
-    }
-  ]
-}
-```
+For each deal:
+1. Check 2+ sources for amount
+2. Verify lead investor
+3. Verify round type
+4. Check date consistency
 
-### Step 3: Generate HTML Report
+### Step 3: Impact Analysis
 
-```html
-<!DOCTYPE html>
-<html>
-<head><style>
-  body { font-family: Arial; max-width: 900px; margin: 0 auto; padding: 40px; }
-  h1 { color: #1a237e; }
-  table { width: 100%; border-collapse: collapse; }
-  th { background: #667eea; color: white; padding: 12px; }
-  td { padding: 10px; border-bottom: 1px solid #ddd; }
-</style></head>
-<body>
-  <h1>💰 Deal Flow Report</h1>
-  <table>
-    <tr><th>Company</th><th>Round</th><th>Amount</th><th>Lead</th></tr>
-    <!-- rows -->
-  </table>
-</body>
-</html>
-```
+For each deal:
+- What sector? (with evidence)
+- What trend does this validate?
+- What does this mean for our idea?
 
-### Step 4: Upload to S3
+### Step 4: Generate Evidence Document
 
-```python
-s3.put_object(Bucket='ai-office', Key='reports/deals-2026-04-28.html', Body=html, ContentType='text/html')
-```
-
-### Step 5: Send to Telegram
-
-```
-💰 Deal Flow: 3 new deals found
-Total value: $50M
-
-🔗 https://80.74.25.43:9000/ai-office/reports/deals-2026-04-28.html
-```
+HTML with:
+- Deal cards with verification
+- Investor details with sources
+- Market impact analysis
+- Trend validation
 
 ## Best Practices
 
-- ✅ JSON for pipeline
-- ✅ HTML for humans (deal tables)
-- ❌ Don't create Excel (no calculations)
-- ❌ Don't create Google Sheets
+- ✅ 2+ sources per deal
+- ✅ Verify amounts
+- ✅ Verify investors
+- ✅ Analyze impact
+- ❌ No single-source deals
+- ❌ No unverified amounts
+- ❌ No deals without context
 
 ## Commands
 
 ```bash
-# Run agent
-python3 skills/deal-flow-tracker/track.py
+# Track with evidence
+python3 skills/deal-flow-tracker/track.py --with-evidence --min-sources=2
+
+# Verify deals
+python3 skills/deal-flow-tracker/verify.py
 
 # Generate HTML
-python3 skills/html-builder/build.py --input=deals.json --output=deals.html
-
-# Upload
-python3 skills/s3-uploader/upload.py --file=reports/html/deals.html
-
-# Send to Telegram
-python3 skills/telegram-reporter/send.py --message="💰 Deals" --url=$URL
+python3 skills/html-builder/build.py --input=deals-evidence.json --template=evidence-based
 ```

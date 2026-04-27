@@ -1,102 +1,146 @@
 ---
 name: competitive-analysis
-description: Use when analyzing competitive strategy and differentiation
+description: Use when analyzing competitive strategy with evidence-based differentiation and proof
 ---
 
-# Competitive Analysis
+# Competitive Analysis (Evidence-Based)
 
 ## Overview
 
-Analyzes competition and produces **HTML report** + **JSON** for pipeline.
+Analyzes competition and produces **HTML evidence document** with:
+- Competitor feature matrices with proof
+- Differentiation strategies with justification
+- Market gaps with evidence
+- Pricing comparisons with sources
+- Risk analysis for each strategy
 
 ## Output Formats
 
-1. **JSON** (`/mnt/files/research-state/business/strategies/*.json`) — for pipeline
-2. **HTML** (`/mnt/files/research-state/reports/html/strategies/*.html`) — human-readable
-3. **S3 URL** — public access
-4. **Telegram** — notification with link
+1. **HTML Report** (`/mnt/files/research-state/reports/html/strategies/*.html`) — PRIMARY
+2. **S3 URL** — public access
+3. **Telegram** — notification with link
 
-## What This Skill Does NOT Produce
+## Evidence Requirements
 
-- ❌ Excel
-- ❌ Google Sheets
-- ❌ PDF
+Every strategy MUST have:
+- **Competitor weakness proof** (screenshot, review, data)
+- **Market gap evidence** (search data, user complaints)
+- **Differentiation justification** (why this works)
+- **Investment calculation** (cost vs impact)
+- **Risk assessment** (what could go wrong)
+
+## HTML Structure
+
+```html
+<h1>📊 Competitive Strategy Analysis</h1>
+
+<div class="market-gap">
+  <h2>🔍 Market Gap Evidence</h2>
+  <p><strong>Gap:</strong> No multi-source AI memory for Russian teams</p>
+  <p><strong>Evidence:</strong></p>
+  <ul>
+    <li>Search "AI team memory Telegram" — 0 relevant results (Source: <a href="...">Google Search</a>)</li>
+    <li>Reddit r/startups: "Why no good team memory tool?" (Source: <a href="...">Reddit</a>)</li>
+    <li>Survey: 73% of PMs want better context tracking (Source: <a href="...">ProductHunt</a>)</li>
+  </ul>
+</div>
+
+<div class="strategy">
+  <h2>🎯 Strategy: Multi-Source Integration</h2>
+  <p><strong>Description:</strong> Combine meetings + chats + files</p>
+  
+  <div class="why">
+    <h3>Why This Strategy Works</h3>
+    <p><strong>Evidence 1:</strong> Otter.ai users complain about missing chat context (Source: <a href="...">G2 Reviews</a>)</p>
+    <p><strong>Evidence 2:</strong> Notion users want automatic meeting notes (Source: <a href="...">Reddit</a>)</p>
+    <p><strong>Evidence 3:</strong> 85% of teams use 3+ tools for context (Source: <a href="...">Survey</a>)</p>
+  </div>
+  
+  <div class="investment">
+    <h3>Investment Required</h3>
+    <pre>
+Development: $200K (6 months × 3 engineers × $60K/yr)
+Infrastructure: $50K/year (servers, API costs)
+Marketing: $100K (launch campaign)
+Total: $350K first year
+Source: Internal estimation based on market rates
+    </pre>
+  </div>
+  
+  <div class="risk">
+    <h3>Risk: Competitor Response</h3>
+    <p><strong>Likelihood:</strong> Medium (50%)</p>
+    <p><strong>Evidence:</strong> Notion acquired Cron in 2022 for calendar integration (Source: <a href="...">TechCrunch</a>)</p>
+    <p><strong>Mitigation:</strong> Focus on Russian market first (152-FЗ compliance)</p>
+  </div>
+</div>
+
+<div class="feature-matrix">
+  <h2>⚔️ Feature Comparison Matrix</h2>
+  <table>
+    <tr><th>Feature</th><th>Us</th><th>Otter</th><th>Notion</th><th>Fireflies</th><th>Source</th></tr>
+    <tr><td>Meeting transcription</td><td>✅</td><td>✅</td><td>❌</td><td>✅</td><td><a href="...">Product docs</a></td></tr>
+    <tr><td>Telegram integration</td><td>✅</td><td>❌</td><td>❌</td><td>❌</td><td><a href="...">Product docs</a></td></tr>
+  </table>
+</div>
+```
 
 ## Workflow
 
-### Step 1: Analyze Competition
+### Step 1: Identify Market Gaps
 
-Read company analysis → generate strategies.
-
-### Step 2: Save JSON
-
-```json
-{
-  "strategies": [
-    {
-      "name": "Vertical AI",
-      "type": "differentiation",
-      "target": "OpenAI"
-    }
-  ]
-}
+Search for evidence:
+```
+Query 1: "[competitor] missing features" site:reddit.com
+Query 2: "[competitor] vs [competitor]" comparison
+Query 3: "best alternative to [competitor]"
+Query 4: User reviews on G2/Capterra
 ```
 
-### Step 3: Generate HTML Report
+### Step 2: Verify Gaps
 
-```html
-<!DOCTYPE html>
-<html>
-<head><style>
-  body { font-family: Arial; max-width: 900px; margin: 0 auto; padding: 40px; }
-  h1 { color: #1a237e; }
-  table { width: 100%; border-collapse: collapse; }
-  th { background: #667eea; color: white; padding: 12px; }
-  td { padding: 10px; border-bottom: 1px solid #ddd; }
-</style></head>
-<body>
-  <h1>📊 Competitive Strategy</h1>
-  <table>
-    <tr><th>Strategy</th><th>Type</th><th>Target</th></tr>
-    <!-- rows -->
-  </table>
-</body>
-</html>
-```
+For each gap:
+1. Check competitor's official roadmap
+2. Check user complaints (Reddit, Twitter)
+3. Check if it's a technical limitation
+4. Calculate cost to replicate
 
-### Step 4: Upload to S3
+### Step 3: Strategy Justification
 
-```python
-s3.put_object(Bucket='ai-office', Key='reports/strategies/team-memory-ai.html', Body=html, ContentType='text/html')
-```
+For each strategy:
+- Why will this work? (with evidence)
+- Why hasn't competitor done this? (with proof)
+- What's the moat? (defensibility analysis)
+- What if competitor copies? (response plan)
 
-### Step 5: Send to Telegram
+### Step 4: Generate Evidence Document
 
-```
-📊 Competitive Strategy: 4 strategies found
-
-🔗 https://80.74.25.43:9000/ai-office/reports/strategies/team-memory-ai.html
-```
+HTML with:
+- Market gap evidence
+- Strategy justification with proofs
+- Investment calculation
+- Risk analysis with mitigation
+- Feature comparison matrix
 
 ## Best Practices
 
-- ✅ JSON for pipeline
-- ✅ HTML for humans (strategy tables)
-- ❌ Don't create Excel
-- ❌ Don't create Google Sheets
+- ✅ Every gap has user evidence
+- ✅ Every strategy has investment calc
+- ✅ Every risk has mitigation
+- ✅ Feature matrix from official docs
+- ❌ No assumed weaknesses
+- ❌ No strategies without ROI
+- ❌ No risks without plans
 
 ## Commands
 
 ```bash
-# Run agent
-python3 skills/competitive-analysis/analyze.py
+# Analyze with evidence
+python3 skills/competitive-analysis/analyze.py --with-evidence
+
+# Verify gaps
+python3 skills/competitive-analysis/verify-gaps.py
 
 # Generate HTML
-python3 skills/html-builder/build.py --input=strategies.json --output=strategies.html
-
-# Upload
-python3 skills/s3-uploader/upload.py --file=reports/html/strategies.html
-
-# Send to Telegram
-python3 skills/telegram-reporter/send.py --message="📊 Strategy" --url=$URL
+python3 skills/html-builder/build.py --input=strategy-evidence.json --template=evidence-based
 ```

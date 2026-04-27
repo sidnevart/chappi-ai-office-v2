@@ -1,103 +1,107 @@
 ---
 name: edu-competition-scout
-description: Use when searching for competitions and hackathons
+description: Use when searching for competitions and hackathons with verification
 ---
 
-# Edu Competition Scout
+# Edu Competition Scout (Evidence-Based)
 
 ## Overview
 
-Finds competitions and produces **HTML report** + **JSON** for pipeline.
+Finds competitions and produces **HTML evidence document** with:
+- Official verification
+- Prize verification
+- Deadline confirmation
+- Requirements check
+- Reputation analysis
 
 ## Output Formats
 
-1. **JSON** (`/mnt/files/research-state/edu/competitions.json`) — for pipeline
-2. **HTML** (`/mnt/files/research-state/reports/html/competitions-*.html`) — human-readable
-3. **S3 URL** — public access
-4. **Telegram** — notification with link
+1. **HTML Report** (`/mnt/files/research-state/reports/html/competitions-*.html`) — PRIMARY
+2. **S3 URL** — public access
+3. **Telegram** — notification with link
 
-## What This Skill Does NOT Produce
+## Evidence Requirements
 
-- ❌ Excel (no financial data)
-- ❌ Google Sheets
-- ❌ PDF
+Every competition MUST have:
+- **Official source** (website)
+- **Prize verification** (from official rules)
+- **Deadline confirmation** (from official site)
+- **Requirements** (from official rules)
+- **Previous winners** (if available)
+
+## HTML Structure
+
+```html
+<h1>🏆 Competitions & Hackathons</h1>
+
+<div class="competition">
+  <h2>Yandex Cup 2026</h2>
+  
+  <div class="verification">
+    <h3>✅ Verification</h3>
+    <p><strong>Official site:</strong> <a href="https://yandex.ru/cup/...">yandex.ru/cup</a></p>
+    <p><strong>Verified:</strong> Prize pool, dates, requirements</p>
+  </div>
+  
+  <div class="prizes">
+    <h3>💰 Prize Verification</h3>
+    <p><strong>Total pool:</strong> $10,000</p>
+    <p><strong>1st place:</strong> $5,000 (Source: <a href="...">Official rules</a>)</p>
+    <p><strong>2nd place:</strong> $3,000</p>
+    <p><strong>3rd place:</strong> $2,000</p>
+  </div>
+  
+  <div class="previous">
+    <h3>📈 Previous Editions</h3>
+    <p><strong>2025:</strong> 1000+ participants (Source: <a href="...">Yandex blog</a>)</p>
+    <p><strong>Winners:</strong> 5 hired by Yandex</p>
+  </div>
+</div>
+```
 
 ## Workflow
 
-### Step 1: Search Competitions
+### Step 1: Official Source Check
 
-Search for competitions by topic, type.
+For each competition:
+1. Visit official website
+2. Verify prizes, dates, requirements
+3. Check rules document
+4. Verify organizer legitimacy
 
-### Step 2: Save JSON
+### Step 2: Prize Verification
 
-```json
-{
-  "competitions": [
-    {
-      "name": "Yandex Cup 2026",
-      "type": "hackathon",
-      "prize": "$10K"
-    }
-  ]
-}
-```
+For each competition:
+1. Check prize pool from official rules
+2. Verify payment method
+3. Check tax implications
+4. Verify previous payouts
 
-### Step 3: Generate HTML Report
+### Step 3: Generate Evidence Document
 
-```html
-<!DOCTYPE html>
-<html>
-<head><style>
-  body { font-family: Arial; max-width: 900px; margin: 0 auto; padding: 40px; }
-  h1 { color: #1a237e; }
-  table { width: 100%; border-collapse: collapse; }
-  th { background: #667eea; color: white; padding: 12px; }
-  td { padding: 10px; border-bottom: 1px solid #ddd; }
-</style></head>
-<body>
-  <h1>🏆 Competitions</h1>
-  <table>
-    <tr><th>Name</th><th>Type</th><th>Prize</th></tr>
-    <!-- rows -->
-  </table>
-</body>
-</html>
-```
-
-### Step 4: Upload to S3
-
-```python
-s3.put_object(Bucket='ai-office', Key='reports/competitions-2026-04-28.html', Body=html, ContentType='text/html')
-```
-
-### Step 5: Send to Telegram
-
-```
-🏆 Competitions: 2 found
-Yandex Cup, ICSC
-
-🔗 https://80.74.25.43:9000/ai-office/reports/competitions-2026-04-28.html
-```
+HTML with:
+- Competition cards with verification
+- Prize details with sources
+- Previous edition data
+- Application checklist
 
 ## Best Practices
 
-- ✅ JSON for pipeline
-- ✅ HTML for humans (competition tables)
-- ❌ Don't create Excel
-- ❌ Don't create Google Sheets
+- ✅ Verify from official site
+- ✅ Verify prizes
+- ✅ Check previous editions
+- ❌ No competition without official source
+- ❌ No prize without verification
 
 ## Commands
 
 ```bash
-# Run agent
-python3 skills/edu-competition-scout/search.py
+# Search with verification
+python3 skills/edu-competition-scout/search.py --with-verification
+
+# Verify competitions
+python3 skills/edu-competition-scout/verify.py
 
 # Generate HTML
-python3 skills/html-builder/build.py --input=edu/competitions.json --output=competitions.html
-
-# Upload
-python3 skills/s3-uploader/upload.py --file=reports/html/competitions.html
-
-# Send to Telegram
-python3 skills/telegram-reporter/send.py --message="🏆 Competitions" --url=$URL
+python3 skills/html-builder/build.py --input=competitions-evidence.json --template=evidence-based
 ```

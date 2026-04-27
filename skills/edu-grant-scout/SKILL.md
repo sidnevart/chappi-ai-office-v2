@@ -1,103 +1,122 @@
 ---
 name: edu-grant-scout
-description: Use when searching for grants and scholarships
+description: Use when searching for grants and scholarships with verification and deadline tracking
 ---
 
-# Edu Grant Scout
+# Edu Grant Scout (Evidence-Based)
 
 ## Overview
 
-Finds grants and produces **HTML report** + **JSON** for pipeline.
+Finds grants and produces **HTML evidence document** with:
+- Official verification from grant providers
+- Eligibility requirements with proofs
+- Deadline verification
+- Application process documentation
+- Success rate analysis
 
 ## Output Formats
 
-1. **JSON** (`/mnt/files/research-state/edu/grants.json`) — for pipeline
-2. **HTML** (`/mnt/files/research-state/reports/html/grants-*.html`) — human-readable
-3. **S3 URL** — public access
-4. **Telegram** — notification with link
+1. **HTML Report** (`/mnt/files/research-state/reports/html/grants-*.html`) — PRIMARY
+2. **S3 URL** — public access
+3. **Telegram** — notification with link
 
-## What This Skill Does NOT Produce
+## Evidence Requirements
 
-- ❌ Excel (no financial data)
-- ❌ Google Sheets
-- ❌ PDF
+Every grant MUST have:
+- **Official source** (grant website)
+- **Amount verification** (from official announcement)
+- **Deadline confirmation** (from official site)
+- **Eligibility requirements** (from official rules)
+- **Application process** (from official guide)
+- **Success rate** (if available)
+
+## HTML Structure
+
+```html
+<h1>🎓 Grants & Scholarships</h1>
+
+<div class="grant">
+  <h2>Grant: Сколково</h2>
+  
+  <div class="verification">
+    <h3>✅ Verification</h3>
+    <p><strong>Official site:</strong> <a href="https://sk.ru/...">sk.ru</a></p>
+    <p><strong>Verified:</strong> Amount, deadline, requirements</p>
+  </div>
+  
+  <div class="amount">
+    <h3>💰 Amount Verification</h3>
+    <p><strong>Total:</strong> Up to 25M ₽</p>
+    <p><strong>Breakdown:</strong></p>
+    <ul>
+      <li>R&D: 70% (Source: <a href="...">Official rules</a>)</li>
+      <li>Equipment: 20%</li>
+      <li>Travel: 10%</li>
+    </ul>
+  </div>
+  
+  <div class="eligibility">
+    <h3>📋 Eligibility</h3>
+    <p><strong>Required:</strong></p>
+    <ul>
+      <li>Russian legal entity (Source: <a href="...">Law 127-ФЗ</a>)</li>
+      <li>Skolkovo resident status</li>
+      <li>Project duration: 1-3 years</li>
+    </ul>
+  </div>
+  
+  <div class="success-rate">
+    <h3>📈 Success Rate</h3>
+    <p><strong>2025 data:</strong> 15% acceptance (Source: <a href="...">Skolkovo report</a>)</p>
+    <p><strong>Average funding:</strong> 18M ₽</p>
+  </div>
+</div>
+```
 
 ## Workflow
 
-### Step 1: Search Grants
+### Step 1: Official Source Check
 
-Search for grants by topic, eligibility.
+For each grant:
+1. Visit official website
+2. Verify amount, deadline, requirements
+3. Check application process
+4. Verify eligibility
 
-### Step 2: Save JSON
+### Step 2: Success Rate Analysis
 
-```json
-{
-  "grants": [
-    {
-      "name": "Сколково",
-      "amount": "25M ₽",
-      "deadline": "2026-05-01"
-    }
-  ]
-}
-```
+For each grant:
+1. Search for previous winners
+2. Check acceptance rates
+3. Find average funding amounts
+4. Check time to decision
 
-### Step 3: Generate HTML Report
+### Step 3: Generate Evidence Document
 
-```html
-<!DOCTYPE html>
-<html>
-<head><style>
-  body { font-family: Arial; max-width: 900px; margin: 0 auto; padding: 40px; }
-  h1 { color: #1a237e; }
-  table { width: 100%; border-collapse: collapse; }
-  th { background: #667eea; color: white; padding: 12px; }
-  td { padding: 10px; border-bottom: 1px solid #ddd; }
-</style></head>
-<body>
-  <h1>🎓 Grants & Scholarships</h1>
-  <table>
-    <tr><th>Name</th><th>Amount</th><th>Deadline</th></tr>
-    <!-- rows -->
-  </table>
-</body>
-</html>
-```
-
-### Step 4: Upload to S3
-
-```python
-s3.put_object(Bucket='ai-office', Key='reports/grants-2026-04-28.html', Body=html, ContentType='text/html')
-```
-
-### Step 5: Send to Telegram
-
-```
-🎓 Grants: 2 found
-Сколково, NSU
-
-🔗 https://80.74.25.43:9000/ai-office/reports/grants-2026-04-28.html
-```
+HTML with:
+- Grant cards with verification
+- Amount breakdown
+- Eligibility requirements
+- Success rate data
+- Application checklist
 
 ## Best Practices
 
-- ✅ JSON for pipeline
-- ✅ HTML for humans (grant tables)
-- ❌ Don't create Excel
-- ❌ Don't create Google Sheets
+- ✅ Verify from official site
+- ✅ Check success rates
+- ✅ Verify eligibility
+- ❌ No grant without official source
+- ❌ No amount without verification
 
 ## Commands
 
 ```bash
-# Run agent
-python3 skills/edu-grant-scout/search.py
+# Search with verification
+python3 skills/edu-grant-scout/search.py --with-verification
+
+# Verify grants
+python3 skills/edu-grant-scout/verify.py
 
 # Generate HTML
-python3 skills/html-builder/build.py --input=edu/grants.json --output=grants.html
-
-# Upload
-python3 skills/s3-uploader/upload.py --file=reports/html/grants.html
-
-# Send to Telegram
-python3 skills/telegram-reporter/send.py --message="🎓 Grants" --url=$URL
+python3 skills/html-builder/build.py --input=grants-evidence.json --template=evidence-based
 ```

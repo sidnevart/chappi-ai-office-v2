@@ -1,114 +1,143 @@
 ---
 name: tech-spec-writer
-description: Use when writing technical specifications and system architecture documents
+description: Use when writing technical specifications with architecture decisions and security analysis
 ---
 
-# Tech Spec Writer
+# Tech Spec Writer (Evidence-Based)
 
 ## Overview
 
-Writes technical specifications. Output: **Markdown** (primary) + optional HTML for web viewing.
+Writes technical specifications as **Markdown** (primary) with:
+- Architecture decisions with justification
+- Technology choices with comparison
+- Security analysis with threats
+- Performance benchmarks
+- Deployment instructions
 
 ## Output Formats
 
-1. **Markdown** (`/mnt/files/research-state/tech-specs/*.md`) — primary, human-readable
-2. **HTML** (optional) — if web viewing needed
-3. **S3 URL** — for sharing
+1. **Markdown** (`/mnt/files/research-state/tech-specs/*.md`) — PRIMARY
+2. **HTML** (optional) — for web viewing
+3. **S3 URL** — public access
 4. **Telegram** — notification with link
 
-## What This Skill Does NOT Produce
+## Evidence Requirements
 
-- ❌ JSON (tech specs are narrative documents)
-- ❌ Excel (irrelevant for technical documentation)
-- ❌ Google Sheets (irrelevant)
+Every decision MUST have:
+- **Options considered**: At least 2 alternatives
+- **Why chosen**: Specific reasons
+- **Trade-offs**: Pros and cons
+- **Performance data**: Benchmarks if applicable
+- **Security analysis**: Threat model
 
-## Workflow
-
-### Step 1: Write Markdown Spec
+## Markdown Structure
 
 ```markdown
 # Technical Specification: TeamMemory AI
 
-## 1. Overview
-AI-платформа для командной памяти...
+## 1. Architecture Decision: Vector Database
 
-## 2. Architecture
-```mermaid
-[Diagram]
-```
+### Options Considered
+| Option | Pros | Cons | Source |
+|--------|------|------|--------|
+| Qdrant | Rust-based, fast | Newer ecosystem | Benchmark: https://... |
+| Pinecone | Managed, easy | Expensive | Pricing: https://... |
+| Weaviate | GraphQL | Complex | Docs: https://... |
 
-## 3. API Design
-```http
-POST /api/v1/ingest/message
-```
+### Decision: Qdrant
+**Why:** Best performance/price ratio for self-hosted
+**Evidence:** Benchmark shows 2x faster than Weaviate (Source: https://...)
+**Trade-off:** Need to manage infrastructure
 
-## 4. Data Models
-```json
-{
-  "Message": {
-    "id": "uuid",
-    "source": "telegram|meet|file"
-  }
-}
-```
+### Self-Challenge
+**Q:** Why not Pinecone for simplicity?
+**A:** Cost analysis shows $500/month vs $50/month self-hosted (Source: pricing pages)
 
-## 5. Security
-- Auth: JWT + OAuth2
-- Data: AES-256 at rest
-- Transport: TLS 1.3
+## 2. Security: Data Encryption
 
-## 6. Tech Stack
-| Component | Technology |
-|-----------|------------|
-| Backend | Python 3.12 + FastAPI |
-| Vector DB | Qdrant |
-| LLM | Ollama + LangChain |
+### Threat Model
+| Threat | Likelihood | Impact | Mitigation | Source |
+|--------|------------|--------|------------|--------|
+| Data breach | Medium | High | AES-256 | NIST guidelines |
+| Insider threat | Low | High | RBAC | OWASP |
 
-## 7. Deployment
-```yaml
-# docker-compose.yml
-```
-```
-
-### Step 2: Convert to HTML (optional)
-
-```bash
-# Using pandoc or similar
-pandoc spec.md -o spec.html --css=style.css
-```
-
-### Step 3: Upload to S3
-
+### Implementation
 ```python
-import boto3
-s3 = boto3.client('s3', endpoint_url='http://127.0.0.1:9000', ...)
-s3.put_object(Bucket='ai-office', Key='tech-specs/team-memory-ai.md', Body=md_content, ContentType='text/markdown')
+# Encryption at rest
+from cryptography.fernet import Fernet
+key = Fernet.generate_key()
+cipher = Fernet(key)
 ```
 
-### Step 4: Send to Telegram
+## 3. Performance Targets
+
+| Metric | Target | Evidence | Source |
+|--------|--------|----------|--------|
+| Search latency | <200ms | Benchmark | Internal test |
+| Ingestion | 1000 msg/sec | Load test | k6 results |
+
+## 4. Sources
+1. [Qdrant Benchmark](https://...)
+2. [NIST Encryption Guidelines](https://...)
+3. [OWASP Security](https://...)
+```
+
+## Workflow
+
+### Step 1: Research Options
+
+For each technology choice:
+1. List 2+ alternatives
+2. Find benchmarks
+3. Check pricing
+4. Review security
+
+### Step 2: Decision Justification
+
+For each decision:
+- Why this option?
+- Why not alternatives?
+- What's the trade-off?
+- What if we're wrong?
+
+### Step 3: Security Analysis
 
 ```
-📝 Tech Spec: https://80.74.25.43:9000/ai-office/tech-specs/team-memory-ai.md
+Threat: Data breach
+Likelihood: Medium (based on industry stats)
+Impact: High (GDPR fines up to 4% revenue)
+Mitigation: AES-256 + TLS 1.3
+Source: GDPR Article 83
 ```
+
+### Step 4: Generate Spec
+
+Markdown with:
+- Decision records
+- Technology comparison tables
+- Security threat model
+- Performance benchmarks
+- Deployment guide
 
 ## Best Practices
 
-- ✅ Write in Markdown (GitHub-friendly)
-- ✅ Include diagrams (Mermaid)
-- ✅ Code examples for API
-- ✅ Security section mandatory
-- ❌ Don't create JSON version
-- ❌ Don't create Excel
+- ✅ Every decision justified
+- ✅ 2+ alternatives considered
+- ✅ Security threat model
+- ✅ Performance benchmarks
+- ❌ No decisions without justification
+- ❌ No "best practice" without source
+- ❌ No security without threat model
 
 ## Commands
 
 ```bash
-# Write spec
-python3 skills/tech-spec-writer/write.py --idea=team-memory-ai
+# Write spec with evidence
+python3 skills/tech-spec-writer/write.py --idea=team-memory-ai --with-evidence
 
-# Upload to S3
+# Generate HTML
+python3 skills/html-builder/build.py --input=tech-specs/team-memory-ai.md --output=tech-spec.html
+
+# Upload
 python3 skills/s3-uploader/upload.py --file=tech-specs/team-memory-ai.md
-
-# Send to Telegram
-python3 skills/telegram-reporter/send.py --message="📝 Tech Spec" --url=$URL
 ```

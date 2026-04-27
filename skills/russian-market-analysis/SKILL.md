@@ -1,99 +1,151 @@
 ---
 name: russian-market-analysis
-description: Use when analyzing Russian and CIS market entry
+description: Use when analyzing Russian/CIS market entry with regulatory evidence and compliance proofs
 ---
 
-# Russian Market Analysis
+# Russian Market Analysis (Evidence-Based)
 
 ## Overview
 
-Analyzes Russian market and produces **HTML report** + **JSON** for pipeline.
+Analyzes Russian market and produces **HTML evidence document** with:
+- Regulatory requirements with official sources
+- Competitor analysis with local data
+- Compliance checklists with citations
+- Market size calculations with methodology
+- Risk assessment with mitigation
 
 ## Output Formats
 
-1. **JSON** (`/mnt/files/research-state/business/russian_market/*.json`) — for pipeline
-2. **HTML** (`/mnt/files/research-state/reports/html/russian-market-*.html`) — human-readable
-3. **S3 URL** — public access
-4. **Telegram** — notification with link
+1. **HTML Report** (`/mnt/files/research-state/reports/html/russian-market-*.html`) — PRIMARY
+2. **S3 URL** — public access
+3. **Telegram** — notification with link
 
-## What This Skill Does NOT Produce
+## Evidence Requirements
 
-- ❌ Excel
-- ❌ Google Sheets
-- ❌ PDF
+Every regulation claim MUST have:
+- **Official source** (law text, government site)
+- **Article/paragraph number**
+- **Enforcement date**
+- **Penalty for non-compliance**
+- **Compliance cost estimate**
+
+## HTML Structure
+
+```html
+<h1>🇷🇺 Russian Market Analysis</h1>
+
+<div class="regulations">
+  <h2>⚖️ Regulatory Requirements</h2>
+  
+  <div class="regulation">
+    <h3>152-ФЗ: Personal Data Protection</h3>
+    <p><strong>Source:</strong> <a href="http://www.consultant.ru/document/cons_doc_LAW_61801/">Federal Law 152-ФЗ</a> (Russian)</p>
+    <p><strong>Article 18:</strong> Personal data of Russian citizens must be stored in Russia</p>
+    <p><strong>Penalty:</strong> Up to 500K ₽ for first violation, up to 3M ₽ for repeat</p>
+    <p><strong>Evidence:</strong> RKN enforcement cases (Source: <a href="https://rkn.gov.ru/...">RKN</a>)</p>
+    <p><strong>Compliance cost:</strong> $5-10K/year (self-hosted) or $2-5K/year (Yandex Cloud)</p>
+    <p><strong>Method:</strong> Cost estimate from Yandex Cloud pricing (Source: <a href="https://cloud.yandex.com/pricing">Yandex</a>)</p>
+  </div>
+  
+  <div class="regulation">
+    <h3>Localization Requirements</h3>
+    <p><strong>Source:</strong> <a href="...">Government Decree No. 1236</a></p>
+    <p><strong>Requirements:</strong></p>
+    <ul>
+      <li>Russian language interface</li>
+      <li>Russian payment methods (SBP, Mir)</li>
+      <li>Local customer support</li>
+    </ul>
+  </div>
+</div>
+
+<div class="market-size">
+  <h2>📊 Market Size Calculation</h2>
+  <pre>
+TAM = 50M Russian workers × $10/month = $6B/year
+Method: Based on Russia's working population (Source: Rosstat https://rosstat.gov.ru/...)
+
+SAM = 5M knowledge workers × $10/month = $600M/year
+Method: Filtered to office workers (Source: <a href="...">Habr survey</a>)
+
+SOM = 500K teams × $8/month = $48M/year (Year 1)
+Method: Conservative 0.5% penetration
+Confidence: Medium (based on comparable SaaS adoption)
+  </pre>
+</div>
+
+<div class="competitors">
+  <h2>🏢 Local Competitors</h2>
+  <table>
+    <tr><th>Company</th><th>Product</th><th>Strengths</th><th>Weaknesses</th><th>Source</th></tr>
+    <tr><td>Яндекс Трекер</td><td>Task management</td><td>Yandex ecosystem</td><td>No AI features</td><td><a href="...">Yandex</a></td></tr>
+  </table>
+</div>
+
+<div class="self-challenge">
+  <h2>🤔 Self-Challenge</h2>
+  <p><strong>Q:</strong> Is Russian market big enough?</p>
+  <p><strong>A:</strong> $48M SOM is comparable to early-stage SaaS markets. Zoom entered with $50M TAM.</p>
+  <p><strong>Evidence:</strong> Zoom IPO prospectus showed $43M initial market (Source: <a href="...">SEC filing</a>)</p>
+</div>
+```
 
 ## Workflow
 
-### Step 1: Analyze Market
+### Step 1: Regulatory Research
 
-Research regulations, competitors, localization.
+Check official sources:
+1. **Consultant.ru** — all Russian laws
+2. **RKN.gov.ru** — data protection regulator
+3. **Government decrees** — official requirements
+4. **Tax code** — relevant articles
 
-### Step 2: Save JSON
+### Step 2: Market Size Calculation
 
-```json
-{
-  "market_size_usd": 150000000,
-  "regulations": [...],
-  "competitors": [...]
-}
+Bottom-up calculation:
+```
+Total workers in Russia: 72M (Source: Rosstat)
+Knowledge workers: 15M (Source: Habr survey)
+Teams of 5-50: 500K (Source: calculation)
+Target penetration (Year 1): 0.5% = 2,500 teams
+ARPU: $8/month = $96/year
+Revenue: 2,500 × $96 = $240K (Year 1)
 ```
 
-### Step 3: Generate HTML Report
+### Step 3: Self-Challenge
 
-```html
-<!DOCTYPE html>
-<html>
-<head><style>
-  body { font-family: Arial; max-width: 900px; margin: 0 auto; padding: 40px; }
-  h1 { color: #1a237e; }
-  table { width: 100%; border-collapse: collapse; }
-  th { background: #667eea; color: white; padding: 12px; }
-  td { padding: 10px; border-bottom: 1px solid #ddd; }
-</style></head>
-<body>
-  <h1>🇷🇺 Russian Market Analysis</h1>
-  <h2>Regulations</h2>
-  <table>...</table>
-  <h2>Competitors</h2>
-  <table>...</table>
-</body>
-</html>
-```
+- "Is 152-ФЗ really enforced?" → Check RKN fines list
+- "Do teams really need this?" → Survey data
+- "Can we comply affordably?" → Yandex Cloud pricing
 
-### Step 4: Upload to S3
+### Step 4: Generate Evidence Document
 
-```python
-s3.put_object(Bucket='ai-office', Key='reports/russian-market-team-memory-ai.html', Body=html, ContentType='text/html')
-```
-
-### Step 5: Send to Telegram
-
-```
-🇷🇺 Russian Market: $150M
-3 competitors found
-
-🔗 https://80.74.25.43:9000/ai-office/reports/russian-market-team-memory-ai.html
-```
+HTML with:
+- Regulations with law citations
+- Market size with calculation
+- Competitors with local data
+- Self-challenge with proofs
+- Compliance checklist
 
 ## Best Practices
 
-- ✅ JSON for pipeline
-- ✅ HTML for humans (regulation tables)
-- ❌ Don't create Excel
-- ❌ Don't create Google Sheets
+- ✅ Official law sources only
+- ✅ Calculation methods shown
+- ✅ RKN enforcement checked
+- ✅ Local pricing verified
+- ❌ No hearsay about regulations
+- ❌ No market size without calculation
+- ❌ No competitors without verification
 
 ## Commands
 
 ```bash
-# Run agent
-python3 skills/russian-market-analysis/analyze.py
+# Analyze with evidence
+python3 skills/russian-market-analysis/analyze.py --with-evidence
+
+# Verify regulations
+python3 skills/russian-market-analysis/verify-laws.py
 
 # Generate HTML
-python3 skills/html-builder/build.py --input=russian_market/*.json --output=russian-market.html
-
-# Upload
-python3 skills/s3-uploader/upload.py --file=reports/html/russian-market.html
-
-# Send to Telegram
-python3 skills/telegram-reporter/send.py --message="🇷🇺 Market" --url=$URL
+python3 skills/html-builder/build.py --input=russia-evidence.json --template=evidence-based
 ```

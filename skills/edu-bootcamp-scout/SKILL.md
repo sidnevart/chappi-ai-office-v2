@@ -1,103 +1,106 @@
 ---
 name: edu-bootcamp-scout
-description: Use when searching for bootcamps and educational programs
+description: Use when searching for bootcamps and educational programs with verification
 ---
 
-# Edu Bootcamp Scout
+# Edu Bootcamp Scout (Evidence-Based)
 
 ## Overview
 
-Finds bootcamps and produces **HTML report** + **JSON** for pipeline.
+Finds bootcamps and produces **HTML evidence document** with:
+- Program verification from official sources
+- Cost comparison with evidence
+- Deadline verification
+- Reputation analysis
+- Application requirements
 
 ## Output Formats
 
-1. **JSON** (`/mnt/files/research-state/edu/bootcamps.json`) — for pipeline
-2. **HTML** (`/mnt/files/research-state/reports/html/bootcamps-*.html`) — human-readable
-3. **S3 URL** — public access
-4. **Telegram** — notification with link
+1. **HTML Report** (`/mnt/files/research-state/reports/html/bootcamps-*.html`) — PRIMARY
+2. **S3 URL** — public access
+3. **Telegram** — notification with link
 
-## What This Skill Does NOT Produce
+## Evidence Requirements
 
-- ❌ Excel (no financial data)
-- ❌ Google Sheets
-- ❌ PDF
+Every program MUST have:
+- **Official source** (program website)
+- **Cost verification** (from official site)
+- **Deadline verification** (from official site)
+- **Requirements** (from official site)
+- **Reputation** (reviews, outcomes)
+
+## HTML Structure
+
+```html
+<h1>📚 Bootcamp Programs</h1>
+
+<div class="program">
+  <h2>🎓 Program: EEML Summer School</h2>
+  
+  <div class="verification">
+    <h3>✅ Verification</h3>
+    <p><strong>Official site:</strong> <a href="...">eml-school.com</a></p>
+    <p><strong>Verified:</strong> Cost, dates, requirements match official site</p>
+  </div>
+  
+  <div class="cost">
+    <h3>💰 Cost Analysis</h3>
+    <p><strong>Tuition:</strong> $2,000 (Source: <a href="...">Official site</a>)</p>
+    <p><strong>Travel:</strong> ~$500 (Source: Skyscanner estimate)</p>
+    <p><strong>Total:</strong> ~$2,500</p>
+  </div>
+  
+  <div class="outcomes">
+    <h3>📈 Outcomes</h3>
+    <p><strong>Alumni:</strong> 500+ (Source: <a href="...">LinkedIn</a>)</p>
+    <p><strong>Average salary increase:</strong> 30% (Source: <a href="...">Alumni survey</a>)</p>
+  </div>
+</div>
+```
 
 ## Workflow
 
-### Step 1: Search Bootcamps
+### Step 1: Official Source Check
 
-Search for programs by topic, location.
+For each program:
+1. Visit official website
+2. Verify cost, dates, requirements
+3. Check application process
+4. Verify accreditation
 
-### Step 2: Save JSON
+### Step 2: Outcome Verification
 
-```json
-{
-  "programs": [
-    {
-      "name": "EEML Summer School",
-      "topic": "Machine Learning",
-      "location": "Sarajevo"
-    }
-  ]
-}
-```
+For each program:
+1. Check LinkedIn alumni
+2. Search for reviews
+3. Check job placement rates
+4. Verify claims
 
-### Step 3: Generate HTML Report
+### Step 3: Generate Evidence Document
 
-```html
-<!DOCTYPE html>
-<html>
-<head><style>
-  body { font-family: Arial; max-width: 900px; margin: 0 auto; padding: 40px; }
-  h1 { color: #1a237e; }
-  table { width: 100%; border-collapse: collapse; }
-  th { background: #667eea; color: white; padding: 12px; }
-  td { padding: 10px; border-bottom: 1px solid #ddd; }
-</style></head>
-<body>
-  <h1>📚 Bootcamp Programs</h1>
-  <table>
-    <tr><th>Program</th><th>Topic</th><th>Location</th></tr>
-    <!-- rows -->
-  </table>
-</body>
-</html>
-```
-
-### Step 4: Upload to S3
-
-```python
-s3.put_object(Bucket='ai-office', Key='reports/bootcamps-2026-04-28.html', Body=html, ContentType='text/html')
-```
-
-### Step 5: Send to Telegram
-
-```
-📚 Bootcamp Scout: 1 program found
-EEML Summer School
-
-🔗 https://80.74.25.43:9000/ai-office/reports/bootcamps-2026-04-28.html
-```
+HTML with:
+- Program cards with verification
+- Cost breakdown
+- Outcome data with sources
+- Application checklist
 
 ## Best Practices
 
-- ✅ JSON for pipeline
-- ✅ HTML for humans (program tables)
-- ❌ Don't create Excel
-- ❌ Don't create Google Sheets
+- ✅ Verify from official site
+- ✅ Check outcomes with alumni
+- ✅ Verify costs
+- ❌ No program without official source
+- ❌ No cost without verification
 
 ## Commands
 
 ```bash
-# Run agent
-python3 skills/edu-bootcamp-scout/search.py
+# Search with verification
+python3 skills/edu-bootcamp-scout/search.py --with-verification
+
+# Verify programs
+python3 skills/edu-bootcamp-scout/verify.py
 
 # Generate HTML
-python3 skills/html-builder/build.py --input=edu/bootcamps.json --output=bootcamps.html
-
-# Upload
-python3 skills/s3-uploader/upload.py --file=reports/html/bootcamps.html
-
-# Send to Telegram
-python3 skills/telegram-reporter/send.py --message="📚 Bootcamps" --url=$URL
+python3 skills/html-builder/build.py --input=bootcamps-evidence.json --template=evidence-based
 ```

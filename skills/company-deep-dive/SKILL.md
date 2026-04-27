@@ -1,100 +1,148 @@
 ---
 name: company-deep-dive
-description: Use when analyzing companies and competitive landscape
+description: Use when analyzing companies with deep evidence, competitor comparison, and source citations
 ---
 
-# Company Deep Dive
+# Company Deep Dive (Evidence-Based)
 
 ## Overview
 
-Analyzes companies and produces **HTML report** + **JSON** for pipeline.
+Analyzes companies and produces **HTML evidence document** with:
+- Competitor comparison matrices with sources
+- Product analysis with screenshots/evidence
+- Weakness identification with proof
+- Market position with data
+- Full URL citations for every claim
 
 ## Output Formats
 
-1. **JSON** (`/mnt/files/research-state/business/companies/*.json`) — for pipeline
-2. **HTML** (`/mnt/files/research-state/reports/html/companies/*.html`) — human-readable
-3. **S3 URL** — public access
-4. **Telegram** — notification with link
+1. **HTML Report** (`/mnt/files/research-state/reports/html/companies/*.html`) — PRIMARY
+2. **S3 URL** — public access
+3. **Telegram** — notification with link
 
-## What This Skill Does NOT Produce
+**NO JSON for humans.** Internal JSON only for pipeline.
 
-- ❌ Excel (no financial modeling)
-- ❌ Google Sheets
-- ❌ PDF (HTML sufficient)
+## Evidence Requirements
+
+Every claim MUST have:
+- **Source URL**: Where the information came from
+- **Method**: How it was verified
+- **Confidence**: High/Medium/Low
+- **Date**: When the data was collected
+
+## HTML Structure
+
+```html
+<h1>🏢 Company Analysis: [Name]</h1>
+<p><strong>Date:</strong> [Date] | <strong>Analyst:</strong> OpenClaw AI</p>
+
+<div class="executive-summary">
+  <h2>📋 Executive Summary</h2>
+  <p>[2-3 sentence summary with key numbers]</p>
+  <p><strong>Key Metrics:</strong></p>
+  <ul>
+    <li>Revenue: $X (Source: <a href="...">...</a>)</li>
+    <li>Users: Y (Source: <a href="...">...</a>)</li>
+    <li>Valuation: $Z (Source: <a href="...">...</a>)</li>
+  </ul>
+</div>
+
+<div class="product-analysis">
+  <h2>🛠️ Product Analysis</h2>
+  <table>
+    <tr><th>Product</th><th>Category</th><th>Users</th><th>Price</th><th>Source</th></tr>
+    <tr><td>Product 1</td><td>SaaS</td><td>10M</td><td>$15/mo</td><td><a href="...">Crunchbase</a></td></tr>
+  </table>
+  <p><strong>Evidence:</strong> Product screenshots, feature comparison from <a href="...">G2</a></p>
+</div>
+
+<div class="competitor-matrix">
+  <h2>⚔️ Competitor Comparison Matrix</h2>
+  <table>
+    <tr><th>Feature</th><th>This Company</th><th>Competitor A</th><th>Competitor B</th><th>Source</th></tr>
+    <tr><td>Telegram</td><td>❌</td><td>❌</td><td>✅</td><td><a href="...">Product docs</a></td></tr>
+  </table>
+  <p><strong>Method:</strong> Feature comparison based on official product documentation and user reviews</p>
+</div>
+
+<div class="weaknesses">
+  <h2>🔍 Identified Weaknesses</h2>
+  <div class="weakness">
+    <h3>1. No Telegram Integration</h3>
+    <p><strong>Evidence:</strong> Product roadmap shows no Telegram plans (Source: <a href="...">Official blog</a>)</p>
+    <p><strong>Impact:</strong> 85% of CIS teams use Telegram (Source: <a href="...">TASS survey</a>)</p>
+    <p><strong>Why it matters:</strong> [Explanation with numbers]</p>
+  </div>
+</div>
+
+<div class="sources">
+  <h2>📚 Sources</h2>
+  <ol>
+    <li><a href="https://...">[Title]</a> — [What it proves]</li>
+  </ol>
+</div>
+```
 
 ## Workflow
 
-### Step 1: Analyze Company
+### Step 1: Multi-Source Research
 
-Research products, weaknesses, competitors.
+For each company:
+1. **Official website** — products, pricing
+2. **Crunchbase** — funding, revenue
+3. **G2/Capterra** — user reviews, features
+4. **LinkedIn** — team size, hiring
+5. **News** — recent developments
+6. **Social media** — user sentiment
 
-### Step 2: Save JSON
+### Step 2: Cross-Verification
 
-```json
-{
-  "company": "OpenAI",
-  "products": [...],
-  "weaknesses": [...],
-  "competitors": [...]
-}
+Every fact must be confirmed by 2+ sources:
+```
+Claim: "Otter.ai has 8.3M users"
+Source 1: Crunchbase (https://...) — 8M users
+Source 2: TechCrunch article (https://...) — 8.3M users
+Source 3: Company blog (https://...) — "over 8M"
+Confidence: High (3 sources agree)
 ```
 
-### Step 3: Generate HTML Report
+### Step 3: Self-Challenge
 
-```html
-<!DOCTYPE html>
-<html>
-<head><style>
-  body { font-family: Arial; max-width: 900px; margin: 0 auto; padding: 40px; }
-  h1 { color: #1a237e; }
-  table { width: 100%; border-collapse: collapse; }
-  th { background: #667eea; color: white; padding: 12px; }
-  td { padding: 10px; border-bottom: 1px solid #ddd; }
-</style></head>
-<body>
-  <h1>🏢 Company Analysis: OpenAI</h1>
-  <h2>Products</h2>
-  <table>...</table>
-  <h2>Competitors</h2>
-  <table>...</table>
-</body>
-</html>
-```
+Every weakness must be challenged:
+- "Is this really a weakness or just not their focus?"
+- "Could they add this feature quickly?"
+- "What's the cost for them to fix this?"
+- "Why haven't they fixed it yet?"
 
-### Step 4: Upload to S3
+### Step 4: Generate Evidence Document
 
-```python
-s3.put_object(Bucket='ai-office', Key='reports/companies/openai.html', Body=html, ContentType='text/html')
-```
-
-### Step 5: Send to Telegram
-
-```
-🏢 Company Analysis: OpenAI
-3 products, 5 weaknesses found
-
-🔗 https://80.74.25.43:9000/ai-office/reports/companies/openai.html
-```
+HTML with:
+- Executive summary with verified numbers
+- Product table with pricing/sources
+- Competitor matrix with feature comparison
+- Weaknesses with evidence blocks
+- Market position with data
+- Sources section with all URLs
 
 ## Best Practices
 
-- ✅ JSON for pipeline
-- ✅ HTML for humans (comparison tables)
-- ❌ Don't create Excel
-- ❌ Don't create Google Sheets
+- ✅ Every number has URL source
+- ✅ Every feature verified against docs
+- ✅ Every weakness has impact calculation
+- ✅ Self-challenge for every claim
+- ❌ No assumptions without evidence
+- ❌ No "I think" statements
+- ❌ No outdated data (check dates)
 
 ## Commands
 
 ```bash
-# Run agent
-python3 skills/company-deep-dive/analyze.py --company=OpenAI
+# Analyze with full evidence
+python3 skills/company-deep-dive/analyze.py --company=OpenAI --with-evidence
+
+# Verify sources
+python3 skills/company-deep-dive/verify.py --company=OpenAI
 
 # Generate HTML
-python3 skills/html-builder/build.py --input=companies/openai.json --output=companies/openai.html
-
-# Upload
-python3 skills/s3-uploader/upload.py --file=reports/html/companies/openai.html
-
-# Send to Telegram
-python3 skills/telegram-reporter/send.py --message="🏢 Company" --url=$URL
+python3 skills/html-builder/build.py --input=company-evidence.json --template=evidence-based
 ```
