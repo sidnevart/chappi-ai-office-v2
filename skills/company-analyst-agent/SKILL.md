@@ -1,106 +1,109 @@
 ---
 name: company-analyst-agent
-description: Agent skill for CompanyAnalyst. Deep-dive analysis of companies — products, subsidiaries, weaknesses, market position. Uses browser automation for dynamic content.
+description: Agent that orchestrates company analysis pipeline. MUST trigger all downstream agents.
 ---
 
-# CompanyAnalyst Agent
-
-## Purpose
-
-Deep-dive analysis agent that researches companies comprehensively: products, subsidiaries, market position, financials, and weaknesses.
+# Company Analyst Agent
 
 ## Trigger
 
-- User request: "Проанализируй CompanyX"
-- Cron: weekly analysis of top companies from DealFlow
+When user requests company analysis OR when DealFlowTracker finds a deal.
 
-## Input
+## Pipeline (MUST complete all steps)
 
-- Company name
-- Optional: specific focus areas
-
-## Output
-
-Writes to `/mnt/files/research-state/business/companies/{company_slug}.json`
-
-## Process
-
-1. **Web Search**: Find company website, news, Crunchbase, LinkedIn
-2. **Browser Automation**: Scrape dynamic content from company site
-3. **Product Analysis**: Identify product lines, features, pricing
-4. **Subsidiary Mapping**: Find parent companies, acquisitions
-5. **Weakness Analysis**: Identify gaps, vulnerabilities, risks
-6. **Competitive Positioning**: Compare with competitors
-7. **Financial Overview**: Funding, revenue, valuation
-8. **Save Results**: Structured JSON
-
-## Output Format
-
-```json
-{
-  "company_name": "Example Corp",
-  "slug": "example-corp",
-  "analysis_date": "2026-04-27",
-  "source": "CompanyAnalyst",
-  
-  "overview": {
-    "founded": "2015",
-    "headquarters": "San Francisco, CA",
-    "employees": "500+",
-    "website": "https://example.com",
-    "industry": "AI/ML"
-  },
-  
-  "products": [
-    {
-      "name": "AI Platform",
-      "description": "End-to-end ML platform",
-      "pricing": "Enterprise",
-      "strengths": ["Easy to use", "Scalable"],
-      "weaknesses": ["Limited custom models"]
-    }
-  ],
-  
-  "subsidiaries": ["SubCorp A", "SubCorp B"],
-  "acquisitions": [{"company": "StartupX", "date": "2024", "amount": "$50M"}],
-  
-  "weaknesses": [
-    "High pricing",
-    "Limited enterprise features",
-    "Slow support response"
-  ],
-  
-  "competitors": [
-    {"name": "CompetitorA", "strength": "Better pricing"},
-    {"name": "CompetitorB", "strength": "More features"}
-  ],
-  
-  "financials": {
-    "total_funding": "$200M",
-    "valuation": "$1B",
-    "revenue": "$50M (est)",
-    "last_round": "Series C, $100M, 2024"
-  },
-  
-  "opportunities": [
-    "Expand to Europe",
-    "Add industry-specific solutions",
-    "Partner with cloud providers"
-  ],
-  
-  "risks": [
-    "Market saturation",
-    "Regulatory changes",
-    "Talent competition"
-  ]
-}
+```
+CompanyAnalyst → CompetitiveStrategist → IdeaGenerator → RussianMarketAnalyst
+     ↓                ↓                      ↓                ↓
+  [company]      [strategy]           [idea]         [russian_market]
+     ↓                ↓                      ↓                ↓
+     └──────→ FundingScout → FinancialModeler → PitchBuilder → TechSpecWriter
+                 ↓                  ↓                ↓              ↓
+              [funding]        [financial]      [pitch]        [tech_spec]
+                 └────────────────────────────────────────────────┘
+                                          ↓
+                                   TelegramReporter
+                                          ↓
+                                    [notification]
 ```
 
-## Commands
+## Steps
 
-When triggered, run:
-1. Use `web_search` for initial data
-2. Use `web_fetch` for detailed pages
-3. Use browser automation for dynamic sites
-4. Save structured JSON
-5. Trigger downstream agents (CompetitiveStrategist, RussianMarketAnalyst)
+### Step 1: Company Deep Dive
+- Run `company-deep-dive` skill
+- Output: `/mnt/files/research-state/business/companies/[company].json`
+
+### Step 2: Competitive Strategy
+- Run `competitive-analysis` skill with company data
+- Output: `/mnt/files/research-state/business/strategies/[company].json`
+- **CRITICAL**: Must include strategy document with evidence
+
+### Step 3: Idea Generation
+- Run `idea-generator` skill with company + strategy
+- Output: `/mnt/files/research-state/business/ideas/[company].json`
+- **CRITICAL**: Must include full idea with market evidence
+
+### Step 4: Russian Market Analysis
+- Run `russian-market-analysis` skill with idea
+- Output: `/mnt/files/research-state/business/russian_market/[company].json`
+- **CRITICAL**: Must include regulatory requirements
+
+### Step 5: Funding Search
+- Run `funding-scout` skill with idea
+- Output: `/mnt/files/research-state/business/funding/[company].json`
+- **CRITICAL**: Must include investor list with track record
+
+### Step 6: Financial Model
+- Run `financial-modeling` skill with idea
+- Output: `/mnt/files/research-state/business/financial_models/[company].json`
+- **CRITICAL**: Must include unit economics, projections, sensitivity
+- Also generate: Google Sheets with formulas
+
+### Step 7: Pitch Deck
+- Run `pitch-builder` skill with all data
+- Output: `/mnt/files/research-state/business/pitches/[company].html`
+- **CRITICAL**: Must be HTML with metrics, sources, self-challenge
+
+### Step 8: Tech Spec
+- Run `tech-spec-writer` skill with idea
+- Output: `/mnt/files/research-state/tech-specs/[company].md`
+- **CRITICAL**: Must include architecture, security, deployment
+
+### Step 9: Upload to S3
+- Upload ALL artifacts to MinIO:
+  - company.json → S3
+  - strategy.json → S3
+  - idea.json → S3
+  - russian_market.json → S3
+  - funding.json → S3
+  - financial.json → S3
+  - pitch.html → S3
+  - tech_spec.md → S3
+  - evidence_report.html → S3
+
+### Step 10: Send Telegram
+- **ALWAYS** send notification to Telegram
+- Include: links to ALL artifacts
+- Format: Markdown with metrics
+
+## Output Checklist
+
+After pipeline completes, verify:
+- [ ] Company deep dive (JSON + HTML)
+- [ ] Competitive strategy (JSON)
+- [ ] Business idea (JSON + HTML)
+- [ ] Russian market analysis (JSON + HTML)
+- [ ] Funding prospects (JSON)
+- [ ] Financial model (JSON + Google Sheets)
+- [ ] Pitch deck (HTML)
+- [ ] Tech spec (Markdown)
+- [ ] Evidence report (HTML)
+- [ ] All uploaded to S3
+- [ ] Telegram notification sent
+
+## Error Handling
+
+If ANY step fails:
+1. Log error to `/mnt/files/research-state/logs/agent-errors.json`
+2. Continue with remaining steps
+3. Include partial results in Telegram
+4. Do NOT skip Telegram notification
