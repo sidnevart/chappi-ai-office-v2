@@ -1,0 +1,151 @@
+# Evals for edu-bootcamp-scout
+# Tests SKILL.md for required rules/sections
+
+eval_id: edu-bootcamp-scout-requirements
+skill: edu-bootcamp-scout
+description: "Проверяет что скилл содержит все требования"
+version: "3.1"
+
+cases:
+  - id: req-source-url
+    name: "Скилл требует URL источника"
+    input:
+      task: "check_skill_requirements"
+    expected:
+      - contains: "Source:"
+      - contains: "URL"
+      - contains: "источник"
+    timeout: 30
+  - id: req-calculation
+    name: "Скилл требует показывать метод"
+    input:
+      task: "check_skill_requirements"
+    expected:
+      - contains: "Method:"
+      - contains: "Метод:"
+      - contains: "Расчёт:"
+    timeout: 30
+  - id: req-confidence
+    name: "Скилл требует уверенность"
+    input:
+      task: "check_skill_requirements"
+    expected:
+      - contains: "Confidence"
+      - contains: "Уверенность"
+      - contains: "High"
+    timeout: 30
+  - id: req-counter
+    name: "Скилл требует контр-аргументы"
+    input:
+      task: "check_skill_requirements"
+    expected:
+      - contains: "counter"
+      - contains: "Контр"
+      - contains: "Против"
+    timeout: 30
+  - id: req-date
+    name: "Скилл требует даты"
+    input:
+      task: "check_skill_requirements"
+    expected:
+      - contains: "Date"
+      - contains: "Дата"
+    timeout: 30
+  - id: req-html
+    name: "Скилл требует HTML"
+    input:
+      task: "check_skill_requirements"
+    expected:
+      - contains: "HTML"
+      - contains: "html"
+      - contains: "<!DOCTYPE"
+    timeout: 30
+  - id: req-structure
+    name: "Скилл требует структуру"
+    input:
+      task: "check_skill_requirements"
+    expected:
+      - contains: "h1"
+      - contains: "h2"
+      - contains: "table"
+    timeout: 30
+  - id: req-styling
+    name: "Скилл требует оформление"
+    input:
+      task: "check_skill_requirements"
+    expected:
+      - contains: "style"
+      - contains: "CSS"
+      - contains: "class="
+    timeout: 30
+  - id: req-russian
+    name: "Скилл требует русский язык"
+    input:
+      task: "check_skill_requirements"
+    expected:
+      - contains: "Russian"
+      - contains: "русский"
+      - contains: "Русский"
+    timeout: 30
+  - id: req-proper-nouns
+    name: "Скилл разрешает английские имена"
+    input:
+      task: "check_skill_requirements"
+    expected:
+      - contains: "proper nouns"
+      - contains: "собственные"
+      - contains: "LTV"
+    timeout: 30
+  - id: req-sections
+    name: "Скилл требует разделы"
+    input:
+      task: "check_skill_requirements"
+    expected:
+      - contains: "Sources"
+      - contains: "Источники"
+      - contains: "Риски"
+    timeout: 30
+  - id: req-s3
+    name: "Скилл требует S3"
+    input:
+      task: "check_skill_requirements"
+    expected:
+      - contains: "S3"
+      - contains: "upload"
+      - contains: "загруз"
+    timeout: 30
+  - id: req-telegram
+    name: "Скилл требует Telegram"
+    input:
+      task: "check_skill_requirements"
+    expected:
+      - contains: "Telegram"
+      - contains: "телеграм"
+    timeout: 30
+  - id: req-verify
+    name: "Скилл требует верификацию"
+    input:
+      task: "check_skill_requirements"
+    expected:
+      - contains: "verify"
+      - contains: "провер"
+      - contains: "Verify"
+    timeout: 30
+  - id: req-deadline
+    name: "Скилл требует дедлайны"
+    input:
+      task: "check_skill_requirements"
+    expected:
+      - contains: "deadline"
+      - contains: "дедлайн"
+      - contains: "Deadline"
+    timeout: 30
+  - id: req-official
+    name: "Скилл требует официальные источники"
+    input:
+      task: "check_skill_requirements"
+    expected:
+      - contains: "official"
+      - contains: "официальный"
+      - contains: "Official"
+    timeout: 30
