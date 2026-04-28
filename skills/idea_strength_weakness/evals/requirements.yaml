@@ -1,0 +1,66 @@
+# Basic Eval for idea_strength_weakness
+
+eval_id: idea_strength_weakness-basic
+skill: idea_strength_weakness
+description: "Базовые требования к скиллу"
+version: "1.0"
+
+cases:
+  - id: has-description
+    name: "Есть описание"
+    input:
+      task: "check_skill"
+    expected:
+      - contains: "description"
+    timeout: 30
+
+  - id: has-overview
+    name: "Есть overview/overview"
+    input:
+      task: "check_skill"
+    expected:
+      - contains: "Overview"
+      - contains: "## Overview"
+      - contains: "# Overview"
+    timeout: 30
+
+  - id: has-output
+    name: "Есть описание выходных данных"
+    input:
+      task: "check_skill"
+    expected:
+      - contains: "Output"
+      - contains: "## Output"
+      - contains: "output"
+    timeout: 30
+
+  - id: has-workflow
+    name: "Есть workflow/процесс"
+    input:
+      task: "check_skill"
+    expected:
+      - contains: "Workflow"
+      - contains: "## Workflow"
+      - contains: "## Steps"
+      - contains: "## Process"
+    timeout: 30
+
+  - id: has-best-practices
+    name: "Есть best practices/правила"
+    input:
+      task: "check_skill"
+    expected:
+      - contains: "Best Practices"
+      - contains: "## Best Practices"
+      - contains: "Rules"
+      - contains: "## CRITICAL"
+    timeout: 30
+
+  - id: not-empty
+    name: "Скилл не пустой (минимум 500 символов)"
+    input:
+      task: "check_skill"
+    expected:
+      - contains: "description"
+      - contains: "##"
+    timeout: 30
