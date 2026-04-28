@@ -156,3 +156,18 @@ Confidence: Medium (extrapolated from 3 sources)
 
 ✅ **Correct:** "Источник: Grand View Research"
 ❌ **Wrong:** "Source: Grand View Research"
+
+## CRITICAL: Web Search Required
+
+Before generating ANY idea, MUST:
+1. Search web for: market size, competitors, recent funding
+2. Search web for: user complaints about existing solutions
+3. Search web for: regulatory requirements
+4. Cross-reference 2+ sources for every claim
+5. Document URLs in evidence section
+
+Example queries:
+- "[problem] market size 2026"
+- "[competitor] users revenue 2025"
+- "[problem] user complaints reddit"
+- "[industry] funding 2026"

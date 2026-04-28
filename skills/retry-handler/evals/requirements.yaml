@@ -1,0 +1,53 @@
+# Basic Eval for retry-handler
+
+eval_id: retry-handler-basic
+skill: retry-handler
+description: "Базовые требования к скиллу"
+version: "1.0"
+
+cases:
+  - id: has-retry-rules
+    name: "Есть правила retry"
+    input:
+      task: "check_skill"
+    expected:
+      - contains: "retry"
+      - contains: "backoff"
+    timeout: 30
+
+  - id: has-fallback
+    name: "Есть fallback стратегии"
+    input:
+      task: "check_skill"
+    expected:
+      - contains: "fallback"
+      - contains: "Fallback"
+    timeout: 30
+
+  - id: has-error-logging
+    name: "Есть логирование ошибок"
+    input:
+      task: "check_skill"
+    expected:
+      - contains: "log"
+      - contains: "error"
+    timeout: 30
+
+  - id: has-context-preservation
+    name: "Есть сохранение контекста"
+    input:
+      task: "check_skill"
+    expected:
+      - contains: "context"
+      - contains: "preserve"
+      - contains: "сохран"
+    timeout: 30
+
+  - id: has-no-infinite-loop
+    name: "Запрет бесконечных циклов"
+    input:
+      task: "check_skill"
+    expected:
+      - contains: "NEVER"
+      - contains: "infinite"
+    timeout: 30

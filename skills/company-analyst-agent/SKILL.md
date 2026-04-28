@@ -5,6 +5,12 @@ description: Agent that orchestrates company analysis pipeline. MUST trigger all
 
 # Company Analyst Agent
 
+## Overview
+
+Orchestrates the complete research pipeline for a company/idea.
+Runs 9 agents in sequence, producing all artifacts.
+Ensures Telegram notification is ALWAYS sent.
+
 ## Trigger
 
 When user requests company analysis OR when DealFlowTracker finds a deal.
