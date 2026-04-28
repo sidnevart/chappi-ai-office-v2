@@ -1,66 +1,54 @@
-# Basic Eval for feedback-loop
+# Evals for feedback-loop
 
 eval_id: feedback-loop-basic
 skill: feedback-loop
-description: "Базовые требования к скиллу"
+description: "Feedback loop tests"
 version: "1.0"
 
 cases:
-  - id: has-description
-    name: "Есть описание"
+  - id: has-reactions
+    name: "Есть реакции"
     input:
       task: "check_skill"
     expected:
-      - contains: "description"
+      - contains: "reaction"
+      - contains: "👍"
+      - contains: "👎"
     timeout: 30
 
-  - id: has-overview
-    name: "Есть overview/overview"
+  - id: has-comments
+    name: "Есть обработка комментариев"
     input:
       task: "check_skill"
     expected:
-      - contains: "Overview"
-      - contains: "## Overview"
-      - contains: "# Overview"
+      - contains: "comment"
+      - contains: "parse"
     timeout: 30
 
-  - id: has-output
-    name: "Есть описание выходных данных"
+  - id: has-preferences
+    name: "Есть preferences"
     input:
       task: "check_skill"
     expected:
-      - contains: "Output"
-      - contains: "## Output"
-      - contains: "output"
+      - contains: "preferences"
+      - contains: "config"
     timeout: 30
 
-  - id: has-workflow
-    name: "Есть workflow/процесс"
+  - id: has-blacklist
+    name: "Есть blacklist"
     input:
       task: "check_skill"
     expected:
-      - contains: "Workflow"
-      - contains: "## Workflow"
-      - contains: "## Steps"
-      - contains: "## Process"
+      - contains: "blacklist"
+      - contains: "block"
     timeout: 30
 
-  - id: has-best-practices
-    name: "Есть best practices/правила"
+  - id: has-adaptation
+    name: "Есть адаптация"
     input:
       task: "check_skill"
     expected:
-      - contains: "Best Practices"
-      - contains: "## Best Practices"
-      - contains: "Rules"
-      - contains: "## CRITICAL"
-    timeout: 30
-
-  - id: not-empty
-    name: "Скилл не пустой (минимум 500 символов)"
-    input:
-      task: "check_skill"
-    expected:
-      - contains: "description"
-      - contains: "##"
+      - contains: "adapt"
+      - contains: "update"
+      - contains: "adjust"
     timeout: 30
