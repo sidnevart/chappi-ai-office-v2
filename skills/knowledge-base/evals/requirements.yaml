@@ -1,0 +1,52 @@
+# Evals for knowledge-base
+
+eval_id: knowledge-base-basic
+skill: knowledge-base
+description: "Knowledge base tests"
+version: "1.0"
+
+cases:
+  - id: has-schema
+    name: "Есть схема данных"
+    input:
+      task: "check_skill"
+    expected:
+      - contains: "schema"
+      - contains: "json"
+    timeout: 30
+
+  - id: has-check-before
+    name: "Проверка перед исследованием"
+    input:
+      task: "check_skill"
+    expected:
+      - contains: "check_kb"
+      - contains: "check"
+    timeout: 30
+
+  - id: has-store
+    name: "Сохранение результатов"
+    input:
+      task: "check_skill"
+    expected:
+      - contains: "store"
+      - contains: "save"
+    timeout: 30
+
+  - id: has-relationships
+    name: "Связи между сущностями"
+    input:
+      task: "check_skill"
+    expected:
+      - contains: "relationship"
+      - contains: "related"
+    timeout: 30
+
+  - id: has-api
+    name: "API для работы"
+    input:
+      task: "check_skill"
+    expected:
+      - contains: "class"
+      - contains: "def"
+    timeout: 30
