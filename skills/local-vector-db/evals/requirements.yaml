@@ -1,66 +1,74 @@
-# Basic Eval for local-vector-db
+# Eval for local-vector-db (unified knowledge system)
 
-eval_id: local-vector-db-basic
+eval_id: local-vector-db-unified
 skill: local-vector-db
-description: "Базовые требования к скиллу"
-version: "1.0"
+description: "Единственная система знаний"
+version: "2.0"
 
 cases:
-  - id: has-description
-    name: "Есть описание"
+  - id: single-source
+    name: "Единственная система знаний"
     input:
       task: "check_skill"
     expected:
-      - contains: "description"
+      - contains: "ЕДИНСТВЕННАЯ"
+      - contains: "единственная"
     timeout: 30
 
-  - id: has-overview
-    name: "Есть overview/overview"
+  - id: has-facts-table
+    name: "Таблица facts"
     input:
       task: "check_skill"
     expected:
-      - contains: "Overview"
-      - contains: "## Overview"
-      - contains: "# Overview"
+      - contains: "facts"
+      - contains: "embedding"
+      - contains: "entity_type"
     timeout: 30
 
-  - id: has-output
-    name: "Есть описание выходных данных"
+  - id: has-feedback-table
+    name: "Таблица feedback"
     input:
       task: "check_skill"
     expected:
-      - contains: "Output"
-      - contains: "## Output"
-      - contains: "output"
+      - contains: "feedback"
+      - contains: "reaction"
+      - contains: "preferences"
     timeout: 30
 
-  - id: has-workflow
-    name: "Есть workflow/процесс"
+  - id: no-json-knowledge
+    name: "Никаких JSON файлов"
     input:
       task: "check_skill"
     expected:
-      - contains: "Workflow"
-      - contains: "## Workflow"
-      - contains: "## Steps"
-      - contains: "## Process"
+      - contains: "knowledge.json"
+      - contains: "state.json"
+      - contains: "feedback.json"
     timeout: 30
 
-  - id: has-best-practices
-    name: "Есть best practices/правила"
+  - id: semantic-search
+    name: "Семантический поиск"
     input:
       task: "check_skill"
     expected:
-      - contains: "Best Practices"
-      - contains: "## Best Practices"
-      - contains: "Rules"
-      - contains: "## CRITICAL"
+      - contains: "semantic"
+      - contains: "search"
+      - contains: "embedding"
     timeout: 30
 
-  - id: not-empty
-    name: "Скилл не пустой (минимум 500 символов)"
+  - id: cross-domain
+    name: "Кросс-доменное использование"
     input:
       task: "check_skill"
     expected:
-      - contains: "description"
-      - contains: "##"
+      - contains: "Cross-Domain"
+      - contains: "cross-domain"
+    timeout: 30
+
+  - id: pipeline-integration
+    name: "Интеграция в пайплайн"
+    input:
+      task: "check_skill"
+    expected:
+      - contains: "pipeline"
+      - contains: "before research"
     timeout: 30

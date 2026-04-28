@@ -7,6 +7,11 @@ description: Use when searching for bootcamps and educational programs with veri
 
 ## Overview
 
+**Vector DB Integration:**
+- Check /mnt/files/research-state/db/knowledge.db before research
+- Save findings with embeddings
+- Search related facts for context
+
 Finds bootcamps and produces **HTML evidence report** with:
 - Program verification from official sources
 - Cost comparison with evidence

@@ -7,6 +7,11 @@ description: Use when searching for grants and scholarships with verification an
 
 ## Overview
 
+**Vector DB Integration:**
+- Check /mnt/files/research-state/db/knowledge.db before research
+- Save findings with embeddings
+- Search related facts for context
+
 Finds grants and produces **HTML evidence report** with:
 - Official verification from grant providers
 - Eligibility requirements with proofs

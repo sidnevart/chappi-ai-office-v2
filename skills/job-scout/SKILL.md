@@ -7,6 +7,11 @@ description: Use when searching for job opportunities with market analysis and s
 
 ## Overview
 
+**Vector DB Integration:**
+- Check /mnt/files/research-state/db/knowledge.db before research
+- Save findings with embeddings
+- Search related facts for context
+
 Finds jobs and produces **HTML evidence report** with:
 - Salary verification from multiple sources
 - Market demand analysis

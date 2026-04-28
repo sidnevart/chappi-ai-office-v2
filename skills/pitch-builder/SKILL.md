@@ -7,6 +7,11 @@ description: Use when creating investor pitch decks with evidence-based claims a
 
 ## Overview
 
+**Vector DB Integration:**
+- Check /mnt/files/research-state/db/knowledge.db before research
+- Save findings with embeddings
+- Search related facts for context
+
 Generates investor pitch decks as **HTML** (primary) with:
 - Every claim backed by evidence
 - Source citations in speaker notes

@@ -7,6 +7,11 @@ description: Use when matching CVs with opportunities using evidence-based scori
 
 ## Overview
 
+**Vector DB Integration:**
+- Check /mnt/files/research-state/db/knowledge.db before research
+- Save findings with embeddings
+- Search related facts for context
+
 Matches CVs with opportunities and produces **HTML evidence report** with:
 - Score breakdown with justification
 - Skill gap analysis

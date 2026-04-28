@@ -7,6 +7,11 @@ description: Use when writing technical specifications with architecture decisio
 
 ## Overview
 
+**Vector DB Integration:**
+- Check /mnt/files/research-state/db/knowledge.db before research
+- Save findings with embeddings
+- Search related facts for context
+
 Writes technical specifications as **Markdown** (primary) with:
 - Architecture decisions with justification
 - Technology choices with comparison

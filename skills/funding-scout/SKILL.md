@@ -7,6 +7,11 @@ description: Use when searching for investors with evidence-based matching and t
 
 ## Overview
 
+**Vector DB Integration:**
+- Check /mnt/files/research-state/db/knowledge.db before research
+- Save findings with embeddings
+- Search related facts for context
+
 Finds investors and produces **HTML evidence report** with:
 - Investor track record with data
 - Portfolio analysis with sources

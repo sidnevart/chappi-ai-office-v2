@@ -7,6 +7,11 @@ description: Use when analyzing Russian/CIS market entry with regulatory evidenc
 
 ## Overview
 
+**Vector DB Integration:**
+- Check /mnt/files/research-state/db/knowledge.db before research
+- Save findings with embeddings
+- Search related facts for context
+
 Analyzes Russian market and produces **HTML evidence report** with:
 - Regulatory requirements with official sources
 - Competitor analysis with local data

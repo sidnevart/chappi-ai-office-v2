@@ -33,6 +33,12 @@ Every claim MUST have:
 
 ## Workflow
 
+### 0. Check Vector DB
+- Load /mnt/files/research-state/db/knowledge.db
+- Search for existing facts
+- Skip if data is fresh (TTL not expired)
+
+
 ### 1. Systematic Search
 
 ```

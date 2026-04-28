@@ -7,6 +7,11 @@ description: Use when analyzing companies with deep evidence, competitor compari
 
 ## Overview
 
+**Vector DB Integration:**
+- Check /mnt/files/research-state/db/knowledge.db before research
+- Save findings with embeddings
+- Search related facts for context
+
 Analyzes companies and produces **HTML evidence report** with:
 - Competitor comparison matrices with sources
 - Product analysis with screenshots/evidence

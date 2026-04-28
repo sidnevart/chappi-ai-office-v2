@@ -7,6 +7,11 @@ description: Use when building SERIOUS financial models with Excel/Google Sheets
 
 ## Overview
 
+**Vector DB Integration:**
+- Check /mnt/files/research-state/db/knowledge.db before research
+- Save findings with embeddings
+- Search related facts for context
+
 Builds **professional financial models** as Excel (.xlsx) or Google Sheets with:
 - All formulas (not hardcoded values)
 - Sensitivity analysis tables

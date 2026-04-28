@@ -1,168 +1,176 @@
 ---
 name: local-vector-db
 description: |
-  Local vector database for semantic search using SQLite + sentence-transformers.
-  Use when: (1) Need to store embeddings for semantic search, (2) Memory retrieval by meaning,
-  (3) Fast local search without external APIs, (4) Indexing digests, entities, research data.
-  
-  Replaces: MEM0, Supabase vector storage
-  Location: /home/user/research-system/vector_db/
+  ЕДИНСТВЕННАЯ система хранения знаний.
+  SQLite + sentence-transformers для семантического поиска.
+  Хранит: entities, facts, feedback, session state.
+  Replaces: MEM0, Supabase, knowledge.json, state.json, feedback.json
 ---
 
-# Local Vector Database Skill
+# Local Vector Database
+
+## Overview
+
+**ЕДИНСТВЕННАЯ** база знаний системы.
+Всё хранится здесь — никаких дублирующих JSON файлов.
 
 ## Architecture
 
 ```
 vector_db/
-├── knowledge.db          # SQLite database
+├── knowledge.db          # SQLite
 │   ├── entities          # Companies, programs, jobs
-│   ├── digests           # Generated digests
-│   ├── sessions          # Chat sessions
-│   └── vectors           # Vector embeddings (FAISS or numpy)
+│   ├── facts             # Research findings with embeddings
+│   ├── feedback          # User reactions and preferences
+│   ├── sessions          # Session state
+│   └── vectors           # Vector embeddings (FAISS)
 └── embeddings/           # Cached sentence embeddings
 ```
 
-## Implementation
+## Schema
+
+### Table: facts (основная таблица знаний)
+```sql
+CREATE TABLE facts (
+    id INTEGER PRIMARY KEY,
+    entity_type TEXT,      -- 'company', 'trend', 'job', 'idea'
+    entity_id TEXT,        -- 'otter.ai', 'ai-meeting'
+    content TEXT,          -- текст с данными
+    embedding BLOB,        -- векторное представление
+    source_url TEXT,       -- источник
+    confidence TEXT,       -- High/Medium/Low
+    discovered_by TEXT,    -- какой скилл нашёл
+    used_by TEXT,         -- какие скиллы использовали
+    created_at TIMESTAMP,
+    updated_at TIMESTAMP,
+    ttl_days INTEGER       -- время жизни
+);
+```
+
+### Table: feedback (обратная связь)
+```sql
+CREATE TABLE feedback (
+    id INTEGER PRIMARY KEY,
+    skill_name TEXT,
+    report_path TEXT,
+    reaction TEXT,         -- 👍, 👎, ❤️, 🤔, 🗑️
+    comment TEXT,
+    adjustments TEXT,      -- JSON с изменениями
+    created_at TIMESTAMP
+);
+```
+
+### Table: preferences (предпочтения пользователя)
+```sql
+CREATE TABLE preferences (
+    skill_name TEXT PRIMARY KEY,
+    min_sources INTEGER DEFAULT 2,
+    depth TEXT DEFAULT 'standard',
+    focus TEXT DEFAULT 'balanced',
+    blacklist TEXT         -- JSON array
+);
+```
+
+## API
 
 ```python
-import sqlite3
-import numpy as np
-from sentence_transformers import SentenceTransformer
-
-class LocalVectorDB:
-    def __init__(self, db_path="/home/user/research-system/vector_db/knowledge.db"):
+class VectorDB:
+    def __init__(self, db_path="/mnt/files/research-state/db/knowledge.db"):
         self.db = sqlite3.connect(db_path)
         self.encoder = SentenceTransformer('all-MiniLM-L6-v2')
         self._init_tables()
     
-    def _init_tables(self):
-        """Create tables if not exist"""
+    def add_fact(self, entity_type, entity_id, content, source_url, confidence, discovered_by, ttl_days=7):
+        """Добавить факт с эмбеддингом"""
+        embedding = self.encoder.encode(content)
         self.db.execute("""
-            CREATE TABLE IF NOT EXISTS vectors (
-                id INTEGER PRIMARY KEY,
-                text TEXT,
-                embedding BLOB,
-                entity_type TEXT,
-                entity_id TEXT,
-                metadata TEXT,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-            )
-        """)
-        self.db.execute("""
-            CREATE TABLE IF NOT EXISTS entities (
-                id INTEGER PRIMARY KEY,
-                name TEXT UNIQUE,
-                type TEXT,
-                data TEXT,
-                tags TEXT,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-            )
-        """)
+            INSERT INTO facts (entity_type, entity_id, content, embedding, source_url, confidence, discovered_by, ttl_days)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        """, (entity_type, entity_id, content, embedding.tobytes(), source_url, confidence, discovered_by, ttl_days))
         self.db.commit()
     
-    def add(self, text: str, entity_type: str, entity_id: str, metadata: dict = None):
-        """Add text with vector embedding"""
-        embedding = self.encoder.encode(text)
-        embedding_bytes = embedding.tobytes()
-        
-        self.db.execute("""
-            INSERT INTO vectors (text, embedding, entity_type, entity_id, metadata)
-            VALUES (?, ?, ?, ?, ?)
-        """, (text, embedding_bytes, entity_type, entity_id, str(metadata)))
-        self.db.commit()
-    
-    def search(self, query: str, top_k: int = 5) -> list:
-        """Semantic search by query"""
+    def search(self, query, top_k=5):
+        """Семантический поиск"""
         query_vector = self.encoder.encode(query)
-        
-        cursor = self.db.execute("SELECT text, embedding, entity_type, entity_id, metadata FROM vectors")
-        results = []
-        
-        for row in cursor.fetchall():
-            text, embedding_bytes, entity_type, entity_id, metadata = row
-            stored_vector = np.frombuffer(embedding_bytes, dtype=np.float32)
-            
-            # Cosine similarity
-            similarity = np.dot(query_vector, stored_vector) / (np.linalg.norm(query_vector) * np.linalg.norm(stored_vector))
-            
-            results.append({
-                "text": text,
-                "similarity": float(similarity),
-                "entity_type": entity_type,
-                "entity_id": entity_id,
-                "metadata": metadata
-            })
-        
-        # Sort by similarity
-        results.sort(key=lambda x: x["similarity"], reverse=True)
-        return results[:top_k]
+        # ... поиск по косинусному сходству
+        return results
     
-    def get_entity(self, name: str) -> dict:
-        """Get entity by name"""
-        cursor = self.db.execute("SELECT * FROM entities WHERE name = ?", (name,))
-        row = cursor.fetchone()
-        if row:
-            return {
-                "id": row[0],
-                "name": row[1],
-                "type": row[2],
-                "data": row[3],
-                "tags": row[4]
-            }
-        return {}
+    def get_fact(self, entity_type, entity_id):
+        """Получить факт по ID"""
+        cursor = self.db.execute(
+            "SELECT * FROM facts WHERE entity_type = ? AND entity_id = ?",
+            (entity_type, entity_id)
+        )
+        return cursor.fetchone()
     
-    def add_entity(self, name: str, entity_type: str, data: dict, tags: str = ""):
-        """Add or update entity"""
-        self.db.execute("""
-            INSERT OR REPLACE INTO entities (name, type, data, tags)
-            VALUES (?, ?, ?, ?)
-        """, (name, entity_type, str(data), tags))
-        self.db.commit()
-        
-        # Also add to vectors for semantic search
-        text = f"{name}: {data}"
-        self.add(text, entity_type, name, data)
+    def is_fresh(self, entity_type, entity_id):
+        """Проверить не устарел ли факт"""
+        fact = self.get_fact(entity_type, entity_id)
+        if not fact:
+            return False
+        age = (datetime.now() - fact['updated_at']).days
+        return age < fact['ttl_days']
 ```
 
-## Usage
+## Usage in Skills
 
+### Before Research — Check Vector DB
 ```python
-# Initialize
-from local_vector_db import LocalVectorDB
-
-db = LocalVectorDB()
-
-# Add digest content
-db.add(
-    text="OpenAI raised $122B in funding for AI/LLM development",
-    entity_type="company",
-    entity_id="OpenAI",
-    metadata={"amount": "$122B", "field": "AI/LLM", "date": "2026-04-27"}
-)
-
-# Semantic search
-results = db.search("AI funding rounds 2026", top_k=5)
-for r in results:
-    print(f"{r['similarity']:.3f}: {r['text']}")
+# В trend-monitor
+def run():
+    db = VectorDB()
+    
+    # Проверить, знаем ли мы уже этот тренд
+    if db.is_fresh('trend', 'ai-meeting-assistants'):
+        return db.search('AI meeting assistants market 2026')
+    
+    # Иначе — research
+    data = web_search('AI meeting assistants market 2026')
+    db.add_fact('trend', 'ai-meeting-assistants', data, 'https://...', 'High', 'trend-monitor')
+    return data
 ```
 
-## Installation
-
-```bash
-pip3 install sentence-transformers numpy --break-system-packages
+### Cross-Domain Learning
+```python
+# В idea-generator
+def generate_idea(trend):
+    db = VectorDB()
+    
+    # Найти связанные факты
+    related = db.search(f'startup ideas {trend}')
+    
+    # Использовать для генерации
+    return generate_with_context(related)
 ```
 
-## Auto-indexing
+### Feedback Storage
+```python
+# В telegram-reporter
+def send_report(report, skill_name):
+    # Отправить в Telegram...
+    
+    # Сохранить для feedback
+    db = VectorDB()
+    db.add_feedback(skill_name, report, reaction=None)
+```
 
-All skills auto-index their output:
-1. **DealFlowTracker** → index deals as "company" entities
-2. **TrendMonitor** → index trends as "trend" entities  
-3. **JobScout** → index jobs as "job" entities
-4. **EduBootcampScout** → index programs as "program" entities
+## Integration
 
-## Performance
+**КАЖДЫЙ скилл ДОЛЖЕН:**
+1. Проверять Vector DB перед research
+2. Сохранять findings в Vector DB
+3. Искать связанные факты
 
-- **Query time**: < 100ms for 10K vectors
-- **Storage**: ~50MB per 10K vectors
-- **Memory**: ~200MB for model
+**НИКОГДА не использовать:**
+- ❌ knowledge.json
+- ❌ state.json  
+- ❌ feedback.json
+- ❌ Любые другие JSON для знаний
+
+## Best Practices
+
+- ✅ Единая точка входа — VectorDB
+- ✅ Все данные с эмбеддингами
+- ✅ TTL для устаревания
+- ✅ Семантический поиск
+- ❌ Никаких дублирующих систем

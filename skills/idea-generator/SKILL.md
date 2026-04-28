@@ -34,6 +34,12 @@ Every idea MUST answer:
 
 ## Workflow
 
+### 0. Check Vector DB
+- Load /mnt/files/research-state/db/knowledge.db
+- Search for existing facts
+- Skip if data is fresh (TTL not expired)
+
+
 ### 1. Deep Research
 
 For each trend/weakness pair:

@@ -7,6 +7,11 @@ description: Use when tracking startup funding and investment deals with verifie
 
 ## Overview
 
+**Vector DB Integration:**
+- Check /mnt/files/research-state/db/knowledge.db before research
+- Save findings with embeddings
+- Search related facts for context
+
 Tracks startup funding rounds and produces **HTML evidence report** with:
 - Verified deal data from multiple sources
 - Cross-referenced amounts
