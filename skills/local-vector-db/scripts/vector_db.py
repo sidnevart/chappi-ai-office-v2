@@ -99,7 +99,7 @@ class VectorDB:
     def get_fact(self, entity_type, entity_id):
         """Get fact by entity"""
         cursor = self.db.execute(
-            "SELECT * FROM facts WHERE entity_type = ? AND entity_id = ? ORDER BY updated_at DESC LIMIT 1",
+            "SELECT * FROM facts WHERE entity_type = ? AND entity_id = ? ORDER BY created_at DESC LIMIT 1",
             (entity_type, entity_id)
         )
         row = cursor.fetchone()
@@ -113,8 +113,7 @@ class VectorDB:
                 'confidence': row[6],
                 'discovered_by': row[7],
                 'created_at': row[9],
-                'updated_at': row[10],
-                'ttl_days': row[11]
+                'ttl_days': row[11] if len(row) > 11 else 7
             }
         return None
     
@@ -124,8 +123,12 @@ class VectorDB:
         if not fact:
             return False
         
-        age = datetime.now() - datetime.fromisoformat(fact['updated_at'].replace('Z', '+00:00'))
-        return age.days < fact['ttl_days']
+        try:
+            age = datetime.now() - datetime.fromisoformat(fact['created_at'].replace('Z', '+00:00'))
+            return age.days < fact['ttl_days']
+        except:
+            # If created_at is not parseable, consider it fresh
+            return True
     
     def add_feedback(self, skill_name, report_path, reaction, comment=None):
         """Add user feedback"""
