@@ -31,6 +31,10 @@ Every program MUST have:
 
 ## Workflow
 
+### 0. Load CV Profile
+- Load `/mnt/files/research-state/cv_profile.json`
+- Check: education level, skills, experience
+
 ### 1. Official Source Check
 
 For each program:

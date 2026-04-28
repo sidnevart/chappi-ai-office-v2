@@ -30,6 +30,10 @@ Every job MUST have:
 
 ## Workflow
 
+### 0. Load CV Profile
+- Load `/mnt/files/research-state/cv_profile.json`
+- Extract: skills, experience, location pref, salary target
+
 ### 1. Multi-Source Search
 
 Search:
@@ -39,7 +43,17 @@ Search:
 - Company career pages
 - AngelList (for startups)
 
-### 2. Salary Verification
+### 2. CV Match Filter
+
+For each job found:
+1. **Tech Match**: Required skills vs CV skills (40%)
+2. **Level Match**: Required level vs CV experience (30%)  
+3. **Location Match**: Required vs preferred (15%)
+4. **Salary Match**: Offered vs target (15%)
+
+**Skip jobs with score < 50%** (explain why in log)
+
+### 3. Salary Verification
 
 For each job:
 1. Check posted range

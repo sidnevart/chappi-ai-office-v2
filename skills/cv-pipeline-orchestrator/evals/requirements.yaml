@@ -1,0 +1,36 @@
+# Evals for cv-pipeline-orchestrator
+
+eval_id: cv-pipeline-orchestrator-basic
+skill: cv-pipeline-orchestrator
+description: "CV integration tests"
+version: "1.0"
+
+cases:
+  - id: has-cv-reference
+    name: "Ссылки на CV profile"
+    input:
+      task: "check_skill"
+    expected:
+      - contains: "cv_profile.json"
+      - contains: "Artem"
+    timeout: 30
+
+  - id: has-matching
+    name: "Есть match scoring"
+    input:
+      task: "check_skill"
+    expected:
+      - contains: "match"
+      - contains: "score"
+      - contains: "%"
+    timeout: 30
+
+  - id: has-filtering
+    name: "Есть фильтрация"
+    input:
+      task: "check_skill"
+    expected:
+      - contains: "filter"
+      - contains: "skip"
+      - contains: "Score"
+    timeout: 30

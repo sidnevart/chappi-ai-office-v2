@@ -32,6 +32,11 @@ Every grant MUST have:
 
 ## Workflow
 
+### 0. Load CV Profile
+- Load /mnt/files/research-state/cv_profile.json
+- Use for matching and filtering
+
+
 ### 1. Official Source Check
 
 For each grant:
