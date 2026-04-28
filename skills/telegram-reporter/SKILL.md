@@ -10,9 +10,52 @@ description: Agent that sends Telegram notifications. MUST send after EVERY pipe
 - S3 URLs
 - Metrics summary
 
+## Workflow
+
+### 1. Quality Gate Check
+```python
+# ALWAYS run quality gate before sending
+score, status = quality_gate.check(report_path)
+
+if status == 'FAIL':
+    log_error(f"Report blocked by quality gate: {failures}")
+    send_to_telegram("⚠️ Отчёт не прошёл проверку качества. Дорабатываю...")
+    return
+
+if status == 'WARNING':
+    prefix = "⚠️ Черновик — требует доработки\n\n"
+else:
+    prefix = ""
+```
+
+### 2. Format Message
+
+```markdown
+prefix + """
+🤖 *{skill_name} — Отчёт*
+
+📊 *Ключевые метрики:*
+{metrics}
+
+🔗 *Артефакты:*
+{artifact_links}
+
+🧠 *Источники:*
+{sources_summary}
+
+📁 *GitHub:* https://github.com/sidnevart/chappi-ai-office-v2
+"""
+```
+
+### 3. Send to Telegram
+- Use Markdown formatting
+- Include all links
+- Attach files if needed
+
 ## Output (ALWAYS)
-1. **Telegram Message** → `@chappi_ai_office_digest`
-2. **Confirmation** → log file
+1. **Quality Gate Check** → validate before send
+2. **Telegram Message** → `@chappi_ai_office_digest`
+3. **Confirmation** → log file
 
 ## Message MUST include:
 - Pipeline completion status
