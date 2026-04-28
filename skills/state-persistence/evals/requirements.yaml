@@ -1,0 +1,53 @@
+# Evals for state-persistence
+
+eval_id: state-persistence-basic
+skill: state-persistence
+description: "State persistence tests"
+version: "1.0"
+
+cases:
+  - id: has-state-file
+    name: "Есть файл состояния"
+    input:
+      task: "check_skill"
+    expected:
+      - contains: "state.json"
+      - contains: "db"
+    timeout: 30
+
+  - id: has-ttl
+    name: "Есть TTL для типов"
+    input:
+      task: "check_skill"
+    expected:
+      - contains: "ttl"
+      - contains: "TTL"
+      - contains: "days"
+    timeout: 30
+
+  - id: has-incremental
+    name: "Есть инкрементальные обновления"
+    input:
+      task: "check_skill"
+    expected:
+      - contains: "incremental"
+      - contains: "update"
+    timeout: 30
+
+  - id: has-check-before
+    name: "Проверка перед исследованием"
+    input:
+      task: "check_skill"
+    expected:
+      - contains: "should_research"
+      - contains: "check"
+    timeout: 30
+
+  - id: has-logging
+    name: "Логирование решений"
+    input:
+      task: "check_skill"
+    expected:
+      - contains: "log"
+      - contains: "decision"
+    timeout: 30
