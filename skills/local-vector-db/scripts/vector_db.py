@@ -31,7 +31,7 @@ def get_model():
     if _model is None:
         logger.info(f"Loading model: {MODEL_NAME}")
         kwargs = {}
-        if os.environ.get('HF_TOKEN'):
+        if 
             kwargs['use_auth_token'] = os.environ['HF_TOKEN']
         _model = SentenceTransformer(MODEL_NAME, **kwargs)
         logger.info("Model loaded")
