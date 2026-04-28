@@ -11,6 +11,32 @@ Orchestrates the complete research pipeline for a company/idea.
 Runs 9 agents in sequence, producing all artifacts.
 Ensures Telegram notification is ALWAYS sent.
 
+## Vector DB Integration
+
+Before running pipeline:
+1. Check `/mnt/files/research-state/db/knowledge.db`
+2. Search for existing facts about target company
+3. Skip research if data is fresh (TTL not expired)
+4. Store new findings after each agent completes
+
+```python
+from skills.local-vector-db import VectorDB
+
+db = VectorDB()
+
+# Before pipeline
+if db.is_fresh('company', target):
+    company_data = db.get_fact('company', target)
+else:
+    company_data = None
+
+# After each agent
+if company_data:
+    db.add_fact('company', target, json.dumps(company_data), 
+                source_url='https://...', confidence='High', 
+                discovered_by='company-analyst-agent')
+```
+
 ## Trigger
 
 When user requests company analysis OR when DealFlowTracker finds a deal.
