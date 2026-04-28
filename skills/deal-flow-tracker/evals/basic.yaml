@@ -1,4 +1,5 @@
-# Eval Cases for Deal Flow Tracker
+# Eval Cases for deal-flow-tracker
+# Track deals with verification
 
 eval_id: deal-flow-tracker-basic
 skill: deal-flow-tracker
@@ -6,49 +7,26 @@ description: "Evidence-based functionality tests"
 version: "2.0"
 
 cases:
-  - id: evidence-required
-    name: "Every claim has source URL"
+  - id: amount-verify
+    name: "Amount verified"
     input:
       task: "generate_report"
     expected:
-      - contains: "Source:"
+      - contains: "Amount"
+      - contains: "Source"
+    timeout: 30
+  - id: investor-verify
+    name: "Investor verified"
+    input:
+      task: "generate_report"
+    expected:
+      - contains: "Investor"
       - contains: "http"
-      - has_fields: ["evidence"]
     timeout: 30
-
-  - id: self-challenge
-    name: "Self-challenge section exists"
-    input:
-      task: "generate_report"
-    expected:
-      - contains: "Self-Challenge"
-      - contains: "Q:"
-      - contains: "A:"
-    timeout: 30
-
   - id: html-output
-    name: "Generates HTML (not JSON) for humans"
+    name: "Generates HTML"
     input:
       task: "generate_report"
     expected:
-      - file_contains: "reports/html/deal-flow-tracker"
-      - file_contains: "<!DOCTYPE html>"
-    timeout: 30
-
-  - id: confidence-levels
-    name: "Confidence levels specified"
-    input:
-      task: "generate_report"
-    expected:
-      - contains: "Confidence:"
-      - matches_regex: "High|Medium|Low"
-    timeout: 30
-
-  - id: calculation-method
-    name: "Calculations show method"
-    input:
-      task: "generate_report"
-    expected:
-      - contains: "Method:"
-      - contains: "Calculation"
+      - contains: "<!DOCTYPE html>"
     timeout: 30

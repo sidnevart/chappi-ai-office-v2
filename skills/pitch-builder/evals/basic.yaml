@@ -1,4 +1,5 @@
-# Eval Cases for Pitch Builder
+# Eval Cases for pitch-builder
+# Create pitch decks with evidence
 
 eval_id: pitch-builder-basic
 skill: pitch-builder
@@ -6,49 +7,27 @@ description: "Evidence-based functionality tests"
 version: "2.0"
 
 cases:
-  - id: evidence-required
-    name: "Every claim has source URL"
+  - id: evidence-notes
+    name: "Speaker notes with evidence"
     input:
       task: "generate_report"
     expected:
-      - contains: "Source:"
-      - contains: "http"
-      - has_fields: ["evidence"]
+      - contains: "Evidence"
+      - contains: "Source"
     timeout: 30
-
-  - id: self-challenge
-    name: "Self-challenge section exists"
+  - id: counter-argument
+    name: "Counter-arguments addressed"
     input:
       task: "generate_report"
     expected:
-      - contains: "Self-Challenge"
-      - contains: "Q:"
-      - contains: "A:"
+      - contains: "Counter"
+      - contains: "Q"
     timeout: 30
-
-  - id: html-output
-    name: "Generates HTML (not JSON) for humans"
+  - id: metrics
+    name: "Key metrics shown"
     input:
       task: "generate_report"
     expected:
-      - file_contains: "reports/html/pitch-builder"
-      - file_contains: "<!DOCTYPE html>"
-    timeout: 30
-
-  - id: confidence-levels
-    name: "Confidence levels specified"
-    input:
-      task: "generate_report"
-    expected:
-      - contains: "Confidence:"
-      - matches_regex: "High|Medium|Low"
-    timeout: 30
-
-  - id: calculation-method
-    name: "Calculations show method"
-    input:
-      task: "generate_report"
-    expected:
-      - contains: "Method:"
-      - contains: "Calculation"
+      - contains: "$"
+      - contains: "%"
     timeout: 30

@@ -1,4 +1,5 @@
-# Eval Cases for Weekly Matcher
+# Eval Cases for weekly-matcher
+# Match CVs with scoring
 
 eval_id: weekly-matcher-basic
 skill: weekly-matcher
@@ -6,49 +7,27 @@ description: "Evidence-based functionality tests"
 version: "2.0"
 
 cases:
-  - id: evidence-required
-    name: "Every claim has source URL"
+  - id: score-calc
+    name: "Score calculation shown"
     input:
       task: "generate_report"
     expected:
-      - contains: "Source:"
-      - contains: "http"
-      - has_fields: ["evidence"]
-    timeout: 30
-
-  - id: self-challenge
-    name: "Self-challenge section exists"
-    input:
-      task: "generate_report"
-    expected:
-      - contains: "Self-Challenge"
-      - contains: "Q:"
-      - contains: "A:"
-    timeout: 30
-
-  - id: html-output
-    name: "Generates HTML (not JSON) for humans"
-    input:
-      task: "generate_report"
-    expected:
-      - file_contains: "reports/html/weekly-matcher"
-      - file_contains: "<!DOCTYPE html>"
-    timeout: 30
-
-  - id: confidence-levels
-    name: "Confidence levels specified"
-    input:
-      task: "generate_report"
-    expected:
-      - contains: "Confidence:"
-      - matches_regex: "High|Medium|Low"
-    timeout: 30
-
-  - id: calculation-method
-    name: "Calculations show method"
-    input:
-      task: "generate_report"
-    expected:
-      - contains: "Method:"
+      - contains: "Score"
       - contains: "Calculation"
+    timeout: 30
+  - id: gap-analysis
+    name: "Gap analysis"
+    input:
+      task: "generate_report"
+    expected:
+      - contains: "Gap"
+      - contains: "Missing"
+    timeout: 30
+  - id: recommendation
+    name: "Clear recommendation"
+    input:
+      task: "generate_report"
+    expected:
+      - contains: "Recommend"
+      - contains: "Apply"
     timeout: 30

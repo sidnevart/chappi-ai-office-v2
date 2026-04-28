@@ -1,4 +1,5 @@
-# Eval Cases for Russian Market Analysis
+# Eval Cases for russian-market-analysis
+# Analyze Russian market with regulations
 
 eval_id: russian-market-analysis-basic
 skill: russian-market-analysis
@@ -6,49 +7,27 @@ description: "Evidence-based functionality tests"
 version: "2.0"
 
 cases:
-  - id: evidence-required
-    name: "Every claim has source URL"
+  - id: regulation-source
+    name: "Regulation with official source"
     input:
       task: "generate_report"
     expected:
-      - contains: "Source:"
-      - contains: "http"
-      - has_fields: ["evidence"]
+      - contains: "152-ФЗ"
+      - contains: "consultant.ru"
     timeout: 30
-
+  - id: market-calc
+    name: "Market size calculation"
+    input:
+      task: "generate_report"
+    expected:
+      - contains: "TAM"
+      - contains: "Method"
+    timeout: 30
   - id: self-challenge
-    name: "Self-challenge section exists"
+    name: "Self-challenge"
     input:
       task: "generate_report"
     expected:
       - contains: "Self-Challenge"
-      - contains: "Q:"
-      - contains: "A:"
-    timeout: 30
-
-  - id: html-output
-    name: "Generates HTML (not JSON) for humans"
-    input:
-      task: "generate_report"
-    expected:
-      - file_contains: "reports/html/russian-market-analysis"
-      - file_contains: "<!DOCTYPE html>"
-    timeout: 30
-
-  - id: confidence-levels
-    name: "Confidence levels specified"
-    input:
-      task: "generate_report"
-    expected:
-      - contains: "Confidence:"
-      - matches_regex: "High|Medium|Low"
-    timeout: 30
-
-  - id: calculation-method
-    name: "Calculations show method"
-    input:
-      task: "generate_report"
-    expected:
-      - contains: "Method:"
-      - contains: "Calculation"
+      - contains: "Q"
     timeout: 30

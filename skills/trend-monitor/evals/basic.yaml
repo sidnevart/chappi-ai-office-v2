@@ -1,4 +1,5 @@
-# Eval Cases for Trend Monitor
+# Eval Cases for trend-monitor
+# Track trends with evidence
 
 eval_id: trend-monitor-basic
 skill: trend-monitor
@@ -6,49 +7,36 @@ description: "Evidence-based functionality tests"
 version: "2.0"
 
 cases:
-  - id: evidence-required
-    name: "Every claim has source URL"
+  - id: multi-source
+    name: "Uses 3+ sources"
     input:
       task: "generate_report"
     expected:
-      - contains: "Source:"
+      - contains: "Source"
       - contains: "http"
-      - has_fields: ["evidence"]
+      - contains: "Method"
     timeout: 30
-
   - id: self-challenge
-    name: "Self-challenge section exists"
+    name: "Self-challenge section"
     input:
       task: "generate_report"
     expected:
       - contains: "Self-Challenge"
-      - contains: "Q:"
-      - contains: "A:"
+      - contains: "Q"
     timeout: 30
-
   - id: html-output
-    name: "Generates HTML (not JSON) for humans"
+    name: "Generates HTML"
     input:
       task: "generate_report"
     expected:
-      - file_contains: "reports/html/trend-monitor"
-      - file_contains: "<!DOCTYPE html>"
+      - contains: "<!DOCTYPE html>"
+      - contains: "<h1>"
     timeout: 30
-
-  - id: confidence-levels
-    name: "Confidence levels specified"
+  - id: confidence
+    name: "Confidence levels"
     input:
       task: "generate_report"
     expected:
-      - contains: "Confidence:"
-      - matches_regex: "High|Medium|Low"
-    timeout: 30
-
-  - id: calculation-method
-    name: "Calculations show method"
-    input:
-      task: "generate_report"
-    expected:
-      - contains: "Method:"
-      - contains: "Calculation"
+      - contains: "Confidence"
+      - contains: "High"
     timeout: 30

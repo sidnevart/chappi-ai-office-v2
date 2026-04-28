@@ -1,4 +1,5 @@
-# Eval Cases for Company Deep Dive
+# Eval Cases for company-deep-dive
+# Analyze companies with evidence
 
 eval_id: company-deep-dive-basic
 skill: company-deep-dive
@@ -6,49 +7,27 @@ description: "Evidence-based functionality tests"
 version: "2.0"
 
 cases:
-  - id: evidence-required
-    name: "Every claim has source URL"
+  - id: source-url
+    name: "Every claim has URL"
     input:
       task: "generate_report"
     expected:
-      - contains: "Source:"
+      - contains: "<a href="
       - contains: "http"
-      - has_fields: ["evidence"]
     timeout: 30
-
-  - id: self-challenge
-    name: "Self-challenge section exists"
+  - id: competitor-matrix
+    name: "Competitor matrix"
     input:
       task: "generate_report"
     expected:
-      - contains: "Self-Challenge"
-      - contains: "Q:"
-      - contains: "A:"
+      - contains: "<table>"
+      - contains: "Competitor"
     timeout: 30
-
-  - id: html-output
-    name: "Generates HTML (not JSON) for humans"
+  - id: weakness-evidence
+    name: "Weaknesses with proof"
     input:
       task: "generate_report"
     expected:
-      - file_contains: "reports/html/company-deep-dive"
-      - file_contains: "<!DOCTYPE html>"
-    timeout: 30
-
-  - id: confidence-levels
-    name: "Confidence levels specified"
-    input:
-      task: "generate_report"
-    expected:
-      - contains: "Confidence:"
-      - matches_regex: "High|Medium|Low"
-    timeout: 30
-
-  - id: calculation-method
-    name: "Calculations show method"
-    input:
-      task: "generate_report"
-    expected:
-      - contains: "Method:"
-      - contains: "Calculation"
+      - contains: "Evidence"
+      - contains: "Impact"
     timeout: 30

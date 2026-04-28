@@ -1,0 +1,33 @@
+# Eval Cases for telegram-reporter
+# Send Telegram with all links
+
+eval_id: telegram-reporter-basic
+skill: telegram-reporter
+description: "Evidence-based functionality tests"
+version: "2.0"
+
+cases:
+  - id: all-links
+    name: "All artifact links included"
+    input:
+      task: "generate_report"
+    expected:
+      - contains: "http"
+      - contains: "reports"
+    timeout: 30
+  - id: markdown
+    name: "Markdown formatting"
+    input:
+      task: "generate_report"
+    expected:
+      - contains: "**"
+      - contains: "*"
+    timeout: 30
+  - id: metrics
+    name: "Key metrics included"
+    input:
+      task: "generate_report"
+    expected:
+      - contains: "$"
+      - contains: "%"
+    timeout: 30

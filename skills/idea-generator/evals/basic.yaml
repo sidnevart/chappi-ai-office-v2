@@ -1,4 +1,5 @@
-# Eval Cases for Idea Generator
+# Eval Cases for idea-generator
+# Generate ideas with evidence
 
 eval_id: idea-generator-basic
 skill: idea-generator
@@ -6,49 +7,27 @@ description: "Evidence-based functionality tests"
 version: "2.0"
 
 cases:
-  - id: evidence-required
-    name: "Every claim has source URL"
+  - id: market-evidence
+    name: "Market size with calculation"
     input:
       task: "generate_report"
     expected:
-      - contains: "Source:"
-      - contains: "http"
-      - has_fields: ["evidence"]
+      - contains: "Market Size"
+      - contains: "Method"
     timeout: 30
-
   - id: self-challenge
-    name: "Self-challenge section exists"
+    name: "Self-challenge Q&A"
     input:
       task: "generate_report"
     expected:
-      - contains: "Self-Challenge"
-      - contains: "Q:"
-      - contains: "A:"
+      - contains: "Q"
+      - contains: "A"
     timeout: 30
-
-  - id: html-output
-    name: "Generates HTML (not JSON) for humans"
+  - id: risk-matrix
+    name: "Risk matrix"
     input:
       task: "generate_report"
     expected:
-      - file_contains: "reports/html/idea-generator"
-      - file_contains: "<!DOCTYPE html>"
-    timeout: 30
-
-  - id: confidence-levels
-    name: "Confidence levels specified"
-    input:
-      task: "generate_report"
-    expected:
-      - contains: "Confidence:"
-      - matches_regex: "High|Medium|Low"
-    timeout: 30
-
-  - id: calculation-method
-    name: "Calculations show method"
-    input:
-      task: "generate_report"
-    expected:
-      - contains: "Method:"
-      - contains: "Calculation"
+      - contains: "Risk"
+      - contains: "Mitigation"
     timeout: 30

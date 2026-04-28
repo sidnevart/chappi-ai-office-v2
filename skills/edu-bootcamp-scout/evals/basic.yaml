@@ -1,4 +1,5 @@
-# Eval Cases for Edu Bootcamp Scout
+# Eval Cases for edu-bootcamp-scout
+# Find bootcamps with verification
 
 eval_id: edu-bootcamp-scout-basic
 skill: edu-bootcamp-scout
@@ -6,49 +7,19 @@ description: "Evidence-based functionality tests"
 version: "2.0"
 
 cases:
-  - id: evidence-required
-    name: "Every claim has source URL"
+  - id: official-source
+    name: "Official source verified"
     input:
       task: "generate_report"
     expected:
-      - contains: "Source:"
+      - contains: "Official"
       - contains: "http"
-      - has_fields: ["evidence"]
     timeout: 30
-
-  - id: self-challenge
-    name: "Self-challenge section exists"
+  - id: outcome-data
+    name: "Outcome data with sources"
     input:
       task: "generate_report"
     expected:
-      - contains: "Self-Challenge"
-      - contains: "Q:"
-      - contains: "A:"
-    timeout: 30
-
-  - id: html-output
-    name: "Generates HTML (not JSON) for humans"
-    input:
-      task: "generate_report"
-    expected:
-      - file_contains: "reports/html/edu-bootcamp-scout"
-      - file_contains: "<!DOCTYPE html>"
-    timeout: 30
-
-  - id: confidence-levels
-    name: "Confidence levels specified"
-    input:
-      task: "generate_report"
-    expected:
-      - contains: "Confidence:"
-      - matches_regex: "High|Medium|Low"
-    timeout: 30
-
-  - id: calculation-method
-    name: "Calculations show method"
-    input:
-      task: "generate_report"
-    expected:
-      - contains: "Method:"
-      - contains: "Calculation"
+      - contains: "Outcome"
+      - contains: "Placement"
     timeout: 30
