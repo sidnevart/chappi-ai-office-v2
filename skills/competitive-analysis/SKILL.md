@@ -1,115 +1,95 @@
 ---
 name: competitive-analysis
-description: Use when analyzing competitive strategy with evidence-based differentiation and proof
+description: Use when building competitive strategy with HTML output and evidence-based differentiation
 ---
 
-# Competitive Analysis
+# Competitive Strategy
 
 ## Overview
 
-Analyzes competition and produces **HTML evidence report** with:
-- Competitor feature matrices with proof
-- Differentiation strategies with justification
-- Market gaps with evidence
-- Pricing comparisons with sources
-- Risk analysis for each strategy
+Builds competitive strategies and produces **HTML evidence report** with:
+- Market gap analysis with proof
+- Differentiation strategy with justification
+- Investment calculation with ROI
+- Risk matrix with mitigation
+- Feature comparison matrix
+- Timeline and milestones
 
 ## Output
 
-1. **HTML Report** (`reports/html/strategies/[idea].html`) — PRIMARY
+1. **HTML Strategy Report** (`reports/html/strategies/[idea].html`) — PRIMARY
 2. **S3 Upload** → public URL
-3. **Telegram** → link to HTML
+3. **Telegram** → link to HTML (NEVER JSON)
 
-No JSON for humans.
+## NEVER output JSON for humans. JSON is pipeline-internal only.
 
-## Evidence Rules
-
-Every strategy MUST have:
-- **Competitor weakness proof** (screenshot, review, data)
-- **Market gap evidence** (search data, user complaints)
-- **Differentiation justification** (why this works)
-- **Investment calculation** (cost vs impact)
-- **Risk assessment** (what could go wrong)
-
-## Workflow
-
-### 1. Identify Market Gaps
-
-Search for evidence:
-```
-Query 1: "[competitor] missing features" site:reddit.com
-Query 2: "[competitor] vs [competitor]" comparison
-Query 3: "best alternative to [competitor]"
-Query 4: User reviews on G2/Capterra
-```
-
-### 2. Verify Gaps
-
-For each gap:
-1. Check competitor's official roadmap
-2. Check user complaints (Reddit, Twitter)
-3. Check if it's a technical limitation
-4. Calculate cost to replicate
-
-### 3. Strategy Justification
-
-For each strategy:
-- Why will this work? (with evidence)
-- Why hasn't competitor done this? (with proof)
-- What's the moat? (defensibility analysis)
-- What if competitor copies? (response plan)
-
-### 4. Generate HTML Evidence Report
+## HTML Structure
 
 ```html
-<h1>📊 Competitive Strategy Analysis</h1>
+<h1>⚔️ Competitive Strategy: [Idea Name]</h1>
+<p>📅 Generated: [Date] | Confidence: [Score]/10</p>
 
 <div class="market-gap">
   <h2>🔍 Market Gap Evidence</h2>
-  <p><strong>Gap:</strong> No multi-source AI memory for Russian teams</p>
-  <p><strong>Evidence:</strong></p>
+  <p><strong>Gap:</strong> [Description with proof]</p>
   <ul>
-    <li>Search "AI team memory Telegram" — 0 relevant results (Source: <a href="...">Google Search</a>)</li>
-    <li>Reddit r/startups: "Why no good team memory tool?" (Source: <a href="...">Reddit</a>)</li>
-    <li>Survey: 73% of PMs want better context tracking (Source: <a href="...">ProductHunt</a>)</li>
+    <li>Evidence 1: [Description] (Source: <a href="...">URL</a>)</li>
+    <li>Evidence 2: [Description] (Source: <a href="...">URL</a>)</li>
   </ul>
 </div>
 
 <div class="strategy">
-  <h2>🎯 Strategy: Multi-Source Integration</h2>
+  <h2>🎯 Strategy: [Name]</h2>
   
   <div class="why">
     <h3>Why This Strategy Works</h3>
-    <p><strong>Evidence 1:</strong> Otter.ai users complain about missing chat context (Source: <a href="...">G2 Reviews</a>)</p>
-    <p><strong>Evidence 2:</strong> Notion users want automatic meeting notes (Source: <a href="...">Reddit</a>)</p>
-    <p><strong>Evidence 3:</strong> 85% of teams use 3+ tools for context (Source: <a href="...">Survey</a>)</p>
+    <p>[Evidence-based justification]</p>
   </div>
   
   <div class="investment">
     <h3>Investment Required</h3>
-    <pre>
-Development: $200K (6 months × 3 engineers × $60K/yr)
-Infrastructure: $50K/year (servers, API costs)
-Marketing: $100K (launch campaign)
-Total: $350K first year
-Source: Internal estimation based on market rates
-    </pre>
+    <table>
+      <tr><th>Category</th><th>Amount</th><th>Method</th></th></tr>
+      <tr><td>Development</td><td>$200K</td><td>6mo × 3eng × $60K/yr</td></tr>
+      <tr><td>Infrastructure</td><td>$50K/yr</td><td>Yandex Cloud pricing</td></tr>
+      <tr><td>Marketing</td><td>$100K</td><td>Launch campaign</td></tr>
+      <tr><td><strong>Total Year 1</strong></td><td><strong>$350K</strong></td><td></td></tr>
+    </table>
   </div>
   
-  <div class="risk">
-    <h3>Risk: Competitor Response</h3>
-    <p><strong>Likelihood:</strong> Medium (50%)</p>
-    <p><strong>Evidence:</strong> Notion acquired Cron in 2022 for calendar integration (Source: <a href="...">TechCrunch</a>)</p>
-    <p><strong>Mitigation:</strong> Focus on Russian market first (152-ФЗ compliance)</p>
+  <div class="roi">
+    <h3>ROI Analysis</h3>
+    <p><strong>Break-even:</strong> Month 14</p>
+    <p><strong>Year 5 revenue:</strong> $8.4M</p>
+    <p><strong>ROI:</strong> 24x (5-year)</p>
   </div>
 </div>
 
 <div class="feature-matrix">
   <h2>⚔️ Feature Comparison Matrix</h2>
   <table>
-    <tr><th>Feature</th><th>Us</th><th>Otter</th><th>Notion</th><th>Fireflies</th><th>Source</th></tr>
-    <tr><td>Meeting transcription</td><td>✅</td><td>✅</td><td>❌</td><td>✅</td><td><a href="...">Product docs</a></td></tr>
-    <tr><td>Telegram integration</td><td>✅</td><td>❌</td><td>❌</td><td>❌</td><td><a href="...">Product docs</a></td></tr>
+    <tr><th>Feature</th><th>Us</th><th>Otter</th><th>Notion</th><th>Fireflies</th></th></tr>
+    <tr><td>Meeting transcription</td><td>✅</td><td>✅</td><td>❌</td><td>✅</td></tr>
+    <tr><td>Telegram integration</td><td>✅</td><td>❌</td><td>❌</td><td>❌</td></tr>
+  </table>
+  <p class="source">Source: Product documentation, verified 2026-04</p>
+</div>
+
+<div class="risks">
+  <h2>⚠️ Risk Matrix</h2>
+  <table>
+    <tr><th>Risk</th><th>Likelihood</th><th>Impact</th><th>Mitigation</th><th>Evidence</th></tr>
+    <tr><td>Competitor adds feature</td><td>Low (20%)</td><td>High</td><td>6-12mo head start</td><td><a href="...">Source</a></td></tr>
+  </table>
+</div>
+
+<div class="timeline">
+  <h2>📅 Timeline</h2>
+  <table>
+    <tr><th>Phase</th><th>Duration</th><th>Deliverable</th><th>Milestone</th></tr>
+    <tr><td>MVP</td><td>Months 1-3</td><td>Telegram bot + transcription</td><td>100 beta users</td></tr>
+    <tr><td>Launch</td><td>Months 4-6</td><td>Full platform</td><td>1,000 users</td></tr>
+    <tr><td>Scale</td><td>Months 7-12</td><td>Enterprise features</td><td>5,000 users</td></tr>
   </table>
 </div>
 
@@ -124,9 +104,11 @@ Source: Internal estimation based on market rates
 ## Best Practices
 
 - ✅ Every gap has user evidence
-- ✅ Every strategy has investment calc
-- ✅ Every risk has mitigation
+- ✅ Every strategy has investment calc with ROI
 - ✅ Feature matrix from official docs
+- ✅ Risk matrix with likelihood/impact/mitigation
+- ✅ Timeline with milestones
 - ❌ No assumed weaknesses
 - ❌ No strategies without ROI
 - ❌ No risks without plans
+- ❌ NEVER output JSON to Telegram
