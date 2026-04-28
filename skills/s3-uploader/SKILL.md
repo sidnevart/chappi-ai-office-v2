@@ -29,7 +29,7 @@ s3:
   region: "us-east-1"
   bucket: "ai-office"
   access_key: "minio"
-  secret_key: "minio123"
+  secret_key: "${MINIO_ROOT_PASSWORD}"
 ```
 
 ## Workflow
@@ -43,7 +43,7 @@ from botocore.config import Config
 s3 = boto3.client('s3',
     endpoint_url='http://127.0.0.1:9000',
     aws_access_key_id='minio',
-    aws_secret_access_key='minio123',
+    aws_secret_access_key='${MINIO_ROOT_PASSWORD}',
     config=Config(signature_version='s3v4'),
     region_name='us-east-1'
 )
