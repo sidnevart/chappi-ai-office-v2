@@ -1,63 +1,51 @@
 """
-Unified Vector Database for AI Office
+Vector Database for AI Office
 SQLite + FAISS + sentence-transformers
+
+CRITICAL: NO SINGLETON. Each session creates its own connection.
+SQLite handles concurrency. FAISS index loaded from disk.
 """
 
 import sqlite3
 import numpy as np
 import faiss
 import os
-import pickle
 import logging
 from sentence_transformers import SentenceTransformer
 from datetime import datetime, timedelta
-from functools import lru_cache
 
-# Logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger('vector_db')
 
-# Config
 DB_PATH = os.environ.get('VECTOR_DB_PATH', "/mnt/files/research-state/db/knowledge.db")
 MODEL_NAME = 'all-MiniLM-L6-v2'
-EMBEDDING_DIM = 384  # all-MiniLM-L6-v2 dimension
+EMBEDDING_DIM = 384
 FAISS_INDEX_PATH = "/mnt/files/research-state/db/faiss.index"
-HF_TOKEN = os.environ.get('HF_TOKEN')
 
-# Singleton instance
-_db_instance = None
+# Lazy model cache (per-process, not singleton)
+_model = None
 
-def get_db():
-    """Get singleton VectorDB instance"""
-    global _db_instance
-    if _db_instance is None:
-        _db_instance = VectorDB()
-    return _db_instance
+def get_model():
+    """Get model (lazy load, cached per process)"""
+    global _model
+    if _model is None:
+        logger.info(f"Loading model: {MODEL_NAME}")
+        kwargs = {}
+        if os.environ.get('HF_TOKEN'):
+            kwargs['use_auth_token'] = os.environ['HF_TOKEN']
+        _model = SentenceTransformer(MODEL_NAME, **kwargs)
+        logger.info("Model loaded")
+    return _model
 
 class VectorDB:
-    _model = None  # Class-level model (lazy loaded once)
-    _index = None  # Class-level FAISS index
+    """Vector database - create new instance per session"""
     
     def __init__(self, db_path=DB_PATH):
         os.makedirs(os.path.dirname(db_path), exist_ok=True)
         self.db = sqlite3.connect(db_path, check_same_thread=False)
         self.db_path = db_path
         self._init_tables()
-        self._load_or_create_faiss()
-        logger.info(f"VectorDB initialized: {db_path}")
-    
-    @classmethod
-    def _get_model(cls):
-        """Lazy load model once"""
-        if cls._model is None:
-            logger.info(f"Loading model: {MODEL_NAME}")
-            kwargs = {}
-            if HF_TOKEN:
-                kwargs['use_auth_token'] = HF_TOKEN
-                logger.info("Using HF_TOKEN for authentication")
-            cls._model = SentenceTransformer(MODEL_NAME, **kwargs)
-            logger.info("Model loaded")
-        return cls._model
+        self._load_faiss()
     
     def _init_tables(self):
         """Create tables if not exist"""
@@ -98,75 +86,60 @@ class VectorDB:
         """)
         self.db.commit()
     
-    def _load_or_create_faiss(self):
-        """Load existing FAISS index or create new"""
+    def _load_faiss(self):
+        """Load or create FAISS index"""
         if os.path.exists(FAISS_INDEX_PATH):
-            try:
-                self.__class__._index = faiss.read_index(FAISS_INDEX_PATH)
-                logger.info(f"FAISS index loaded: {self._index.ntotal} vectors")
-            except Exception as e:
-                logger.warning(f"Failed to load FAISS index: {e}")
-                self._create_faiss()
+            self.index = faiss.read_index(FAISS_INDEX_PATH)
+            logger.info(f"FAISS loaded: {self.index.ntotal} vectors")
         else:
-            self._create_faiss()
-    
-    def _create_faiss(self):
-        """Create new FAISS index"""
-        self.__class__._index = faiss.IndexFlatIP(EMBEDDING_DIM)  # Inner Product
-        logger.info("New FAISS index created")
+            self.index = faiss.IndexFlatIP(EMBEDDING_DIM)
+            logger.info("New FAISS index created")
     
     def _save_faiss(self):
         """Save FAISS index to disk"""
-        if self._index is not None:
-            faiss.write_index(self._index, FAISS_INDEX_PATH)
+        if self.index:
+            faiss.write_index(self.index, FAISS_INDEX_PATH)
     
     def add_fact(self, entity_type, entity_id, content, source_url, 
                  confidence, discovered_by, ttl_days=7):
-        """Add fact with vector embedding to FAISS"""
-        model = self._get_model()
+        """Add fact with vector embedding"""
+        model = get_model()
         embedding = model.encode(content, normalize_embeddings=True)
         embedding_bytes = embedding.astype(np.float32).tobytes()
         
-        # Add to SQLite
         cursor = self.db.execute("""
             INSERT INTO facts (entity_type, entity_id, content, embedding, 
                              source_url, confidence, discovered_by, ttl_days)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?)
         """, (entity_type, entity_id, content, embedding_bytes, 
               source_url, confidence, discovered_by, ttl_days))
-        fact_id = cursor.lastrowid
         self.db.commit()
         
         # Add to FAISS
-        if self._index is not None:
-            self._index.add(embedding.reshape(1, -1).astype(np.float32))
-            self._save_faiss()
+        self.index.add(embedding.reshape(1, -1).astype(np.float32))
+        self._save_faiss()
         
-        logger.info(f"Added fact: {entity_type}/{entity_id} (id={fact_id})")
-        return fact_id
+        logger.info(f"Added: {entity_type}/{entity_id}")
+        return cursor.lastrowid
     
     def search(self, query, top_k=5):
         """Semantic search with FAISS"""
-        model = self._get_model()
+        model = get_model()
         query_vector = model.encode(query, normalize_embeddings=True)
         query_vector = query_vector.reshape(1, -1).astype(np.float32)
         
-        if self._index is None or self._index.ntotal == 0:
-            logger.warning("FAISS index empty, falling back to keyword search")
+        if self.index.ntotal == 0:
             return self._keyword_search(query, top_k)
         
-        # FAISS search
-        D, I = self._index.search(query_vector, min(top_k, self._index.ntotal))
+        D, I = self.index.search(query_vector, min(top_k, self.index.ntotal))
         
         results = []
         for i in range(len(I[0])):
             if I[0][i] < 0:
                 continue
-            # Get fact by FAISS index position (SQLite ids are 1-based sequential)
-            faiss_idx = int(I[0][i])
             cursor = self.db.execute(
                 "SELECT content, entity_type, entity_id, source_url, confidence FROM facts ORDER BY id LIMIT 1 OFFSET ?",
-                (faiss_idx,)
+                (int(I[0][i]),)
             )
             row = cursor.fetchone()
             if row:
@@ -225,11 +198,10 @@ class VectorDB:
         return None
     
     def is_fresh(self, entity_type, entity_id):
-        """Check if fact is fresh (not expired)"""
+        """Check if fact is fresh"""
         fact = self.get_fact(entity_type, entity_id)
         if not fact:
             return False
-        
         try:
             age = datetime.now() - datetime.fromisoformat(fact['created_at'].replace('Z', '+00:00'))
             return age.days < fact['ttl_days']
@@ -245,34 +217,15 @@ class VectorDB:
         self.db.commit()
     
     def get_preferences(self, skill_name):
-        """Get user preferences for skill"""
+        """Get user preferences"""
         cursor = self.db.execute(
-            "SELECT * FROM preferences WHERE skill_name = ?",
-            (skill_name,)
+            "SELECT * FROM preferences WHERE skill_name = ?", (skill_name,)
         )
         row = cursor.fetchone()
         if row:
-            return {
-                'min_sources': row[1],
-                'depth': row[2],
-                'focus': row[3],
-                'blacklist': row[4]
-            }
+            return {'min_sources': row[1], 'depth': row[2], 'focus': row[3], 'blacklist': row[4]}
         return {'min_sources': 2, 'depth': 'standard', 'focus': 'balanced'}
-    
-    def set_preferences(self, skill_name, **kwargs):
-        """Set user preferences for skill"""
-        self.db.execute("""
-            INSERT OR REPLACE INTO preferences (skill_name, min_sources, depth, focus)
-            VALUES (?, ?, ?, ?)
-        """, (skill_name, kwargs.get('min_sources', 2), 
-              kwargs.get('depth', 'standard'), kwargs.get('focus', 'balanced')))
-        self.db.commit()
 
 if __name__ == '__main__':
-    db = get_db()
-    print("✅ VectorDB initialized with FAISS")
-    print(f"   DB: {DB_PATH}")
-    print(f"   Model: {MODEL_NAME}")
-    print(f"   FAISS: {FAISS_INDEX_PATH}")
-    print(f"   Vectors: {db._index.ntotal if db._index else 0}")
+    db = VectorDB()
+    print(f"VectorDB: {db.index.ntotal} vectors")
