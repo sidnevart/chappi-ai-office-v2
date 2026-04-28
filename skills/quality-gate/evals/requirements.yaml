@@ -1,0 +1,57 @@
+# Evals for quality-gate
+
+eval_id: quality-gate-basic
+skill: quality-gate
+description: "Quality gate validation tests"
+version: "1.0"
+
+cases:
+  - id: has-checks
+    name: "Есть проверки качества"
+    input:
+      task: "check_skill"
+    expected:
+      - contains: "Content"
+      - contains: "Language"
+      - contains: "Evidence"
+      - contains: "Structure"
+    timeout: 30
+
+  - id: has-scoring
+    name: "Есть scoring система"
+    input:
+      task: "check_skill"
+    expected:
+      - contains: "Score"
+      - contains: "weight"
+      - contains: "%"
+    timeout: 30
+
+  - id: has-fail-actions
+    name: "Есть действия при FAIL"
+    input:
+      task: "check_skill"
+    expected:
+      - contains: "FAIL"
+      - contains: "block"
+      - contains: "log"
+    timeout: 30
+
+  - id: has-integration
+    name: "Есть интеграция с telegram-reporter"
+    input:
+      task: "check_skill"
+    expected:
+      - contains: "telegram"
+      - contains: "Telegram"
+      - contains: "send"
+    timeout: 30
+
+  - id: has-russian-check
+    name: "Есть проверка русского языка"
+    input:
+      task: "check_skill"
+    expected:
+      - contains: "Russian"
+      - contains: "русский"
+    timeout: 30
